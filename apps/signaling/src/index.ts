@@ -1,12 +1,28 @@
-import http from 'node:http';
+import cookie from '@fastify/cookie';
+import websocketPlugin from '@fastify/websocket';
+import Fastify from 'fastify';
+import { StreamsController } from './controllers/streams.controller';
+import dbPlugin from './plugins/db.plugin';
+import diPlugin from './plugins/di.plugin';
+import { MediasoupService } from './services/mediasoup.service';
+import cors from '@fastify/cors';
 
-const PORT = 4000;
+const startServer = async () => {
+  const app = Fastify({ logger: true });
+  await app.register(cookie);
+  await app.register(cors, {
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+  await app.register(websocketPlugin);
+  await app.register(dbPlugin);
+  await app.register(diPlugin);
+  await app.di.init();
 
-const server = http.createServer((_req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Signaling server OK\n');
-});
+  await app.di.resolve(MediasoupService).createWorkers();
+  app.di.resolve(StreamsController).initRoutes();
 
-server.listen(PORT, () => {
-  console.log(`Signaling server listening on http://localhost:${PORT}`);
-});
+  await app.listen({ port: 4000 });
+};
+
+startServer().catch(console.error);

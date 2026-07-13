@@ -7,8 +7,18 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/*": ["./src/*"],
+      "@stream-share/shared": ["../../packages/shared/src"],
+      "@stream-share/db": ["../../packages/db/src"]
+    }
   },
-  "include": ["next-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    ".next/types/**/*.ts",
+    "../../packages/shared/src",
+    "../../packages/db/src"
+  ],
   "exclude": ["node_modules"]
 }

@@ -19,5 +19,8 @@
     "electron-vite": "^5.0.0",
     "typescript": "^5.0.0",
     "vite": "^6.0.0"
+  },
+  "peerDependencies": {
+    "@stream-share/shared": "workspace:*"
   }
 }

@@ -13,4 +13,8 @@ export default defineConfig(js.configs.recommended, tseslint.configs.recommended
       tsconfigRootDir: import.meta.dirname,
     },
   },
+  rules: {
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/no-misused-promises': 'error',
+  },
 });

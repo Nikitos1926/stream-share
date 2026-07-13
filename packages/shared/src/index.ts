@@ -1,6 +1,4 @@
-export type AppConfig = {
-  version: string;
-  environment: 'development' | 'production' | 'test';
-};
-
-export const placeholder = 'stream-share/shared';
+export * from './protocol';
+export * from './ws';
+export * from './enums';
+export * from './errors';
