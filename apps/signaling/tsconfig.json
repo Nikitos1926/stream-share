@@ -1,15 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-      "@stream-share/shared": ["../../packages/shared/src"],
-      "@stream-share/db": ["../../packages/db/src"]
-    },
     "outDir": "dist",
+    "rootDir": "./",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["node"]
   },
-  "include": ["src", "tsup.config.ts", "../../packages/shared/src", "../../packages/db/src"],
+  "include": ["src", "tsup.config.ts"],
   "exclude": ["node_modules"]
 }

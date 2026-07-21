@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio --port 7000"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",

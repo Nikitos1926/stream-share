@@ -8,17 +8,9 @@
     "moduleResolution": "bundler",
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./src/*"],
-      "@stream-share/shared": ["../../packages/shared/src"],
-      "@stream-share/db": ["../../packages/db/src"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "src/**/*",
-    ".next/types/**/*.ts",
-    "../../packages/shared/src",
-    "../../packages/db/src"
-  ],
+  "include": ["next-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

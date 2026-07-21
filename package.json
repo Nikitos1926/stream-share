@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "dev:desktop": "concurrently \"pnpm --filter @stream-share/web dev\" \"wait-on http://localhost:3000 && pnpm --filter @stream-share/desktop dev\"",
+    "dev:lib": "concurrently \"pnpm --filter @stream-share/db dev\" \"wait-on ./packages/db/dist/index.js && pnpm --filter @stream-share/shared dev\"",
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",

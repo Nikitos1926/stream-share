@@ -23,6 +23,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "drizzle-orm": "1.0.0-beta.22",
     "mediasoup-client": "^3.21.0"
+  },
+  "peerDependencies": {
+    "@stream-share/db": "workspace:*"
   }
 }
