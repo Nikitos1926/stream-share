@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022"],
 
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -15,10 +15,6 @@
     "isolatedModules": true,
 
     "noEmit": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "rootDir": "../../"
-  },
-  "exclude": ["node_modules"]
+    "incremental": true
+  }
 }

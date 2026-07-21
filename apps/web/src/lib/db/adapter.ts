@@ -1,9 +1,8 @@
 import { and, eq } from 'drizzle-orm';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Adapter, AdapterAccount, AdapterUser } from '@auth/core/adapters';
-import { users, accounts } from '@stream-share/db';
+import { users, accounts, type Database } from '@stream-share/db';
 
-type DB = NodePgDatabase;
+type DB = Database;
 
 export function DrizzleAdapter(db: DB): Adapter {
   return {

@@ -15,14 +15,14 @@ function createWindow(): void {
   });
 
   if (isDev) {
-    win.loadURL('http://localhost:3000');
+    void win.loadURL('http://localhost:3000');
     win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(app.getAppPath(), '../web/out/index.html'));
+    void win.loadFile(path.join(app.getAppPath(), '../web/out/index.html'));
   }
 }
 
-app.whenReady().then(() => {
+void app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {

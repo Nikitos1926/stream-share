@@ -11,26 +11,20 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "tsup": "^8.3.5",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@stream-share/db": "workspace:*",
+    "@stream-share/shared": "workspace:*",
     "@auth/core": "0.41.2",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.3.0",
     "@fastify/websocket": "^11.2.0",
-    "@types/ws": "^8.18.1",
     "drizzle-orm": "1.0.0-beta.22",
     "fastify": "^5.8.5",
     "fastify-plugin": "^6.0.0",
-    "ioredis": "^5.11.1",
-    "jose": "^6.2.3",
     "mediasoup": "^3.20.5"
-  },
-  "peerDependencies": {
-    "@stream-share/db": "workspace:*",
-    "@stream-share/shared": "workspace:*"
   }
 }

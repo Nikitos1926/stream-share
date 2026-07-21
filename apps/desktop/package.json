@@ -10,17 +10,11 @@
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "electron": "^35.0.0"
-  },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "electron": "^35.0.0",
     "electron-builder": "^26.0.0",
     "electron-vite": "^5.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^7.0.2",
     "vite": "^6.0.0"
-  },
-  "peerDependencies": {
-    "@stream-share/shared": "workspace:*"
   }
 }

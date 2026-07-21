@@ -38,33 +38,33 @@ export function Sidebar() {
   return (
     <nav
       className={cn(
-        'flex flex-col min-h-full p-2 bg-[#30302E] transition-all duration-300 justify-between',
+        'flex min-h-full flex-col justify-between bg-[#30302E] p-2 transition-all duration-300',
         isOpen ? 'w-64' : 'w-9',
       )}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between mb-4 h-7">
+        <div className="mb-4 flex h-7 items-center justify-between">
           <div
             className={cn(
-              'text-lg font-bold transition-[width] overflow-hidden duration-150 delay-150',
-              isOpen ? 'w-full' : 'w-0 pointer-events-none ',
+              'overflow-hidden text-lg font-bold transition-[width] delay-150 duration-150',
+              isOpen ? 'w-full' : 'pointer-events-none w-0',
             )}
           >
             StreamShare
           </div>
-          <button className="cursor-pointer relative" onClick={() => setIsOpen(!isOpen)}>
+          <button className="relative cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
             <span
               className={cn(
-                'transition-opacity duration-0 delay-200 ',
-                !isOpen ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0',
+                'transition-opacity delay-200 duration-0',
+                !isOpen ? 'z-10 opacity-100' : 'pointer-events-none z-0 opacity-0',
               )}
             >
               ☰
             </span>
             <span
               className={cn(
-                'transition-opacity duration-0 delay-200 absolute top-0 right-0 z-10',
-                isOpen ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0',
+                'absolute top-0 right-0 z-10 transition-opacity delay-200 duration-0',
+                isOpen ? 'z-10 opacity-100' : 'pointer-events-none z-0 opacity-0',
               )}
             >
               ✕
@@ -74,12 +74,12 @@ export function Sidebar() {
         <div className="flex flex-col gap-2">
           {sidebarOptions.map((option) => (
             <div key={option.name}>
-              <Link className="flex items-center gap-2 h-5" href={option.href}>
+              <Link className="flex h-5 items-center gap-2" href={option.href}>
                 <Image src={option.icon} alt={option.name} width={16} height={16} />
                 <div
                   className={cn(
-                    'text-sm transition-[width] duration-150 delay-150 overflow-hidden whitespace-nowrap',
-                    isOpen ? 'w-full' : 'w-0 pointer-events-none',
+                    'overflow-hidden text-sm whitespace-nowrap transition-[width] delay-150 duration-150',
+                    isOpen ? 'w-full' : 'pointer-events-none w-0',
                   )}
                 >
                   {option.name.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}
@@ -89,7 +89,7 @@ export function Sidebar() {
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-2 p-3 rounded-lg bg-[#262624]">
+      <div className="flex items-center gap-2 rounded-lg bg-[#262624] p-3">
         <Image
           src={session?.user?.image || '/default-avatar.png'}
           alt="User Avatar"
@@ -99,7 +99,7 @@ export function Sidebar() {
         />
         <div
           className={cn(
-            'transition-[width] duration-150 delay-150 overflow-hidden whitespace-nowrap',
+            'overflow-hidden whitespace-nowrap transition-[width] delay-150 duration-150',
             isOpen ? 'w-full' : 'w-0',
           )}
         >
