@@ -5,8 +5,8 @@ import Image from 'next/image';
 export default function LoginPage() {
   const providers = Object.values(PROVIDERS_CONFIG);
   return (
-    <div className="flex min-h-screen flex-col items-center p-4">
-      <div className="m-8 flex w-full max-w-lg flex-col items-center rounded-xl bg-[#0a0a0a]">
+    <div className="flex flex-col items-center min-h-screen mx-auto p-4">
+      <div className="flex flex-col items-center w-full max-w-lg bg-[#0a0a0a] rounded-xl m-8">
         <div className="flex flex-col items-center p-4">
           <h1 className="mb-4 text-2xl font-bold">Stream Share</h1>
           <h2 className="text-xl font-bold">Welcome back!</h2>

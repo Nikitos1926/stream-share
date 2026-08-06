@@ -1,10 +1,8 @@
-import { and, eq } from 'drizzle-orm';
 import type { Adapter, AdapterAccount, AdapterUser } from '@auth/core/adapters';
-import { users, accounts, type Database } from '@stream-share/db';
+import { accounts, Database, users } from '@stream-share/db';
+import { and, eq } from 'drizzle-orm';
 
-type DB = Database;
-
-export function DrizzleAdapter(db: DB): Adapter {
+export function DrizzleAdapter(db: Database): Adapter {
   return {
     async createUser(data) {
       const [user] = await db

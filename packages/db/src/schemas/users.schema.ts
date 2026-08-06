@@ -5,16 +5,13 @@ export const users = t.pgTable('user', {
     .text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  email: t.varchar({ length: 512 }).notNull().unique('user_email_unique'),
+  email: t.varchar({ length: 512 }).unique('user_email_unique'),
   emailVerified: t.timestamp('emailVerified', { mode: 'date' }),
   image: t.text('image'),
-  // Display name from the OAuth profile: NOT unique (people share names),
-  // wide enough not to overflow. If you need a unique username, add a
-  // separate `username` column managed by the app, not by Auth.js.
   name: t.varchar({ length: 255 }),
   passwordHash: t.text('password_hash'),
   role: t
-    .varchar({ enum: ['user', 'admin'] })
+    .varchar({ enum: ['user', 'admin', 'guest'] })
     .notNull()
     .default('user'),
   status: t
@@ -34,3 +31,6 @@ export const userView = {
   role: true,
   createdAt: true,
 } as const;
+
+export type NewUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;

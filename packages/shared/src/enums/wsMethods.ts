@@ -7,7 +7,7 @@ export const StreamerActions = {
   ...CommonActions,
   GetRtpCapabilities: 'getRtpCapabilities',
   Produce: 'produce',
-  CloseProducer: 'closeProducer',
+  EndStream: 'endStream',
 } as const;
 
 export const ViewerActions = {
@@ -20,6 +20,7 @@ export const ViewerActions = {
 export const WsEvents = {
   StreamEnd: 'streamEnd',
   StreamerDisconnect: 'streamerDisconnect',
+  StreamerReconnected: 'streamerReconnected',
 } as const;
 
 export type StreamerActionsType = typeof StreamerActions;

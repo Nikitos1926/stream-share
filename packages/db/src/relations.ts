@@ -26,7 +26,7 @@ export type InferQueryModel<
   TConfig extends QueryConfig<TTableName> = Record<string, never>,
 > = BuildQueryResult<Relations, Relations[TTableName], TConfig>;
 
-export type StreamsWithRelations = InferQueryModel<
+export type StreamWithRelations = InferQueryModel<
   'streams',
   {
     with: {

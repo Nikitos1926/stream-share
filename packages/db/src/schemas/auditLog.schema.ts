@@ -3,7 +3,7 @@ import { users } from './users.schema';
 
 export const auditLog = t.pgTable('audit_log', {
   id: t.uuid().defaultRandom().primaryKey(),
-  actorUserId: t.text('actor_user_id').references(() => users.id),
+  actorUserId: t.text('actor_user_id').references(() => users.id, { onDelete: 'cascade' }),
   action: t.text(),
   targetType: t.text(),
   targetId: t.text(),

@@ -1,3 +1,4 @@
+import { WebSocket } from '@fastify/websocket';
 import {
   ConsumerErrors,
   RegistryErrors,
@@ -11,11 +12,12 @@ import { Consumer, MediaKind, WebRtcTransport } from 'mediasoup/types';
 import { StreamsRepository } from '../repositories/streams.repository';
 import { MediasoupService } from './mediasoup.service';
 import { StreamContext, StreamsService, StreamViewerContext } from './streams.service';
-import { WebSocket } from '@fastify/websocket';
+import { UsersRepository } from '../repositories/users.repository';
 
 export class ViewersService {
   constructor(
     private readonly streamsRepository: StreamsRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly streamsService: StreamsService,
     private readonly mediasoupService: MediasoupService,
   ) {}
@@ -42,7 +44,7 @@ export class ViewersService {
       ...streamContext,
       viewers: {
         ...streamContext.viewers,
-        [viewerId]: { transport: null, consumer: null, socket },
+        [viewerId]: { transport: null, socket },
       },
     });
 
@@ -140,12 +142,21 @@ export class ViewersService {
         producerId,
         rtpCapabilities,
       });
+      const consumers = viewer.consumers?.slice() ?? [];
+      if (viewer.consumers?.length) {
+        const prevConsumer = viewer.consumers.find((c) => c.kind === consumer.kind);
+        if (prevConsumer) {
+          prevConsumer.close();
+          consumers.splice(consumers.indexOf(prevConsumer), 1);
+        }
+      }
+      consumers.push(consumer);
 
       this.streamsService.setContext(streamId, {
         ...streamContext,
         viewers: {
           ...streamContext.viewers,
-          [viewerId]: { ...viewer, consumer },
+          [viewerId]: { ...viewer, consumers },
         },
       });
       return { consumer, kind: producer.kind };
@@ -163,8 +174,8 @@ export class ViewersService {
     const { [userId]: viewer, ...otherViewers } = streamContext.viewers;
     if (!viewer) return;
 
-    const { consumer, transport } = viewer;
-    consumer?.close();
+    const { consumers, transport } = viewer;
+    consumers?.forEach((c) => c.close());
     transport?.close();
 
     this.streamsService.setContext(streamId, { ...streamContext, viewers: otherViewers });

@@ -6,6 +6,8 @@ import dbPlugin from './plugins/db.plugin';
 import diPlugin from './plugins/di.plugin';
 import { MediasoupService } from './services/mediasoup.service';
 import cors from '@fastify/cors';
+import { StreamsService } from './services/streams.service';
+import { UsersController } from './controllers/users.controller';
 
 const startServer = async () => {
   const app = Fastify({ logger: true });
@@ -19,8 +21,11 @@ const startServer = async () => {
   await app.register(diPlugin);
   await app.di.init();
 
+  await app.di.resolve(StreamsService).stopUnfinishedStreams();
+  // TODO: await app.di.resolve(UsersService).pruneGuests();
   await app.di.resolve(MediasoupService).createWorkers();
   app.di.resolve(StreamsController).initRoutes();
+  app.di.resolve(UsersController).initRoutes();
 
   await app.listen({ port: 4000 });
 };

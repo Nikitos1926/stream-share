@@ -13,7 +13,7 @@ type Pending = {
 };
 
 export class WsClient {
-  private ws: WebSocket;
+  readonly ws: WebSocket;
   private pending = new Map<number, Pending>();
   private eventHandlers = new Map<WsEvent['name'], Set<(msg: WsEvent) => void>>();
   private nextId = 1;

@@ -1,4 +1,4 @@
-import { WsEvent, WsRequestEnvelope, WsResponseEnvelope } from '../protocol';
+import { WsEvent, WsRequestEnvelope, WsResponseEnvelope } from '../types/protocol/ws';
 
 export const parseMessage = (message: string): WsRequestEnvelope | WsEvent | WsResponseEnvelope => {
   try {

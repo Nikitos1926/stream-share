@@ -14,11 +14,11 @@ export const streamsToUsers = t.pgTable(
     streamId: t
       .text('stream_id')
       .notNull()
-      .references(() => streams.id),
+      .references(() => streams.id, { onDelete: 'cascade' }),
     userId: t
       .text('user_id')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
   },
   (streamsToUsers) => [
     {

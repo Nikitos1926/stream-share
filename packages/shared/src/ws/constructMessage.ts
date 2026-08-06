@@ -1,5 +1,10 @@
 import { SignalingAction } from '../enums';
-import { SignalingApiKeys, SuccessWsResponse, WsEvent, WsRequestEnvelope } from '../protocol';
+import {
+  SignalingApiKeys,
+  SuccessWsResponse,
+  WsEvent,
+  WsRequestEnvelope,
+} from '../types/protocol/ws';
 
 export const constructSuccessResponse = <T extends SignalingAction>(
   method: T,
@@ -17,7 +22,7 @@ export const constructSuccessResponse = <T extends SignalingAction>(
 
 export const constructErrorResponse = (
   method: SignalingApiKeys,
-  error: { code: string; msg: string },
+  error: { code: string | number; msg: string },
   requestId: number,
 ): string => {
   return JSON.stringify({
@@ -29,13 +34,13 @@ export const constructErrorResponse = (
   });
 };
 
-export function constructRequest(data: WsRequestEnvelope): string {
+export const constructRequest = (data: WsRequestEnvelope): string => {
   return JSON.stringify({
     ...data,
     type: 'req',
   });
-}
+};
 
-export function constructEvent(data: Omit<WsEvent, 'type'>): string {
-  return JSON.stringify({ ...data, type: 'event' });
-}
+export const constructEvent = (data: WsEvent): string => {
+  return JSON.stringify(data);
+};

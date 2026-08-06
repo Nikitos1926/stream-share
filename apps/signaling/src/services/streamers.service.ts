@@ -1,17 +1,20 @@
+import { ProducerErrors, TransportErrors } from '@stream-share/shared';
 import {
-  ProducerErrors,
-  SignalingApi,
-  StreamerActions,
-  TransportErrors,
-} from '@stream-share/shared';
-import { DtlsParameters, Producer, WebRtcTransport } from 'mediasoup/types';
+  DtlsParameters,
+  MediaKind,
+  Producer,
+  RtpParameters,
+  WebRtcTransport,
+} from 'mediasoup/types';
 import { StreamsRepository } from '../repositories/streams.repository';
 import { MediasoupService } from './mediasoup.service';
 import { StreamContext, StreamsService } from './streams.service';
+import { UsersRepository } from '../repositories/users.repository';
 
 export class StreamersService {
   constructor(
     private readonly streamsRepository: StreamsRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly streamsService: StreamsService,
     private readonly mediasoupService: MediasoupService,
   ) {}
@@ -19,8 +22,15 @@ export class StreamersService {
   async createTransport(streamId: string, streamContext: StreamContext): Promise<WebRtcTransport> {
     try {
       const transport = await this.mediasoupService.createTransport(streamContext.router, 'send');
-
-      this.streamsService.setContext(streamId, { ...streamContext, transport });
+      let producers = streamContext.producers;
+      if (producers?.length) {
+        producers.forEach((p) => p.close());
+        producers = [];
+      }
+      if (streamContext.transport) {
+        streamContext.transport.close();
+      }
+      this.streamsService.setContext(streamId, { ...streamContext, transport, producers });
       return transport;
     } catch (error) {
       throw new Error(TransportErrors.CREATION_ERROR, { cause: error });
@@ -41,7 +51,7 @@ export class StreamersService {
   async produce(
     streamId: string,
     streamContext: StreamContext,
-    params: SignalingApi[typeof StreamerActions.Produce]['params'],
+    params: { kind: MediaKind; rtpParameters: RtpParameters },
   ): Promise<Producer> {
     try {
       const producer = await streamContext.transport!.produce(params);
@@ -60,8 +70,8 @@ export class StreamersService {
     if (!streamContext) return;
 
     await this.streamsRepository.removeViewersByStream(streamId);
-    Object.values(streamContext.viewers).forEach(({ consumer, transport, socket }) => {
-      consumer?.close();
+    Object.values(streamContext.viewers).forEach(({ consumers, transport, socket }) => {
+      consumers?.forEach((c) => c.close());
       transport?.close();
       socket.close();
     });
@@ -72,9 +82,5 @@ export class StreamersService {
     streamContext.router.close();
 
     this.streamsService.removeContext(streamId);
-  }
-
-  closeProducer(): void {
-    // streamContext.producer!.close();
   }
 }

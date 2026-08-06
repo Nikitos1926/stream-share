@@ -6,7 +6,13 @@ import {
   RtpCapabilities,
   RtpParameters,
 } from 'mediasoup-client/types';
-import { CommonActions, StreamerActions, ViewerActions, WsEventsValues } from './enums/wsMethods';
+import {
+  CommonActions,
+  StreamerActions,
+  ViewerActions,
+  WsEvents,
+  WsEventsValues,
+} from '../../enums/wsMethods';
 
 export type SignalingApi = {
   [StreamerActions.GetRtpCapabilities]: {
@@ -30,11 +36,11 @@ export type SignalingApi = {
   };
 
   [StreamerActions.Produce]: {
-    params: { rtpParameters: RtpParameters; kind: MediaKind };
+    params: { rtpParameters: RtpParameters; kind: MediaKind; last: boolean };
     result: { producerId: string };
   };
 
-  [StreamerActions.CloseProducer]: {
+  [StreamerActions.EndStream]: {
     params: null;
     result: null;
   };
@@ -60,6 +66,18 @@ export type SignalingApi = {
   };
 };
 export type SignalingApiKeys = keyof SignalingApi;
+
+export type EventApi = {
+  [WsEvents.StreamEnd]: {
+    data: null;
+  };
+  [WsEvents.StreamerDisconnect]: {
+    data: null;
+  };
+  [WsEvents.StreamerReconnected]: {
+    data: { producerId: string };
+  };
+};
 
 export type WsRequest = {
   [M in SignalingApiKeys]: {
@@ -90,7 +108,7 @@ export type WsResponse = SuccessWsResponse | ErrorWsResponse;
 export type WsEvent = {
   [N in WsEventsValues]: {
     type: 'event';
-    data?: Record<string, unknown>;
+    data: EventApi[N]['data'];
     name: N;
   };
 }[WsEventsValues];

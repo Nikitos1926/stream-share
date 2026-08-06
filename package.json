@@ -10,7 +10,8 @@
     "typecheck": "pnpm -r run typecheck",
     "format": "prettier --write .",
     "infra:up": "docker compose -f infra/docker-compose.yml up -d",
-    "infra:down": "docker compose -f infra/docker-compose.yml down"
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "db:reset": "node ./reset-db.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

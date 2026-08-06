@@ -1,10 +1,14 @@
-import { Sidebar } from '../components/window/Sidebar';
+import { auth } from '@/lib/auth/auth';
+import { Footer } from '../components/Footer';
+import { Header } from '../components/Header';
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
   return (
-    <>
-      <Sidebar />
-      <main className="min-h-full w-full">{children}</main>
-    </>
+    <div className="flex min-h-dvh flex-col">
+      <Header user={session?.user} />
+      <main className="flex min-h-0 grow flex-col">{children}</main>
+      <Footer />
+    </div>
   );
 }

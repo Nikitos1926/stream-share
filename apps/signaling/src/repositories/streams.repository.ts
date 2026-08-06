@@ -1,16 +1,16 @@
 import {
   NewStream,
-  StreamsToUsers,
+  shortUserView,
   Stream,
   streams,
+  StreamStatus,
+  StreamsToUsers,
   streamsToUsers,
-  StreamColumns,
-  Relations,
-  shortUserView,
-  StreamsWithRelations,
+  StreamWithRelations,
 } from '@stream-share/db';
+import { ListParams } from '@stream-share/shared';
+import { and, eq, inArray, ne, relationsFilterToSQL } from 'drizzle-orm';
 import { FastifyInstance } from 'fastify';
-import { eq, and, RelationsFilter, relationsFilterToSQL } from 'drizzle-orm';
 
 export class StreamsRepository {
   constructor(private readonly app: FastifyInstance) {}
@@ -23,7 +23,16 @@ export class StreamsRepository {
     return this.db.query.streams.findFirst({ where: { id: streamId } });
   }
 
-  async getList(params: ListParams): Promise<{ streams: StreamsWithRelations[]; count: number }> {
+  async getLiveByUserId(userId: string): Promise<Stream | undefined> {
+    return this.db.query.streams.findFirst({
+      where: { userId, status: StreamStatus.Live },
+      orderBy: { startedAt: 'desc' },
+    });
+  }
+
+  async getList(
+    params: ListParams<Stream>,
+  ): Promise<{ streams: StreamWithRelations[]; count: number }> {
     const { limit, offset, filters, sort } = params;
     const [list, count] = await Promise.all([
       this.db.query.streams.findMany({
@@ -45,12 +54,12 @@ export class StreamsRepository {
     return { streams: list, count };
   }
 
-  async insertStream(stream: NewStream): Promise<Stream | undefined> {
+  async insert(stream: NewStream): Promise<Stream | undefined> {
     const [result] = await this.db.insert(streams).values(stream).returning();
     return result;
   }
 
-  async updateStream(
+  async update(
     stream: Partial<Omit<NewStream, 'id'>> & { id: string },
   ): Promise<Stream | undefined> {
     const [result] = await this.db
@@ -61,15 +70,23 @@ export class StreamsRepository {
     return result;
   }
 
-  async addViewer(data: StreamsToUsers): Promise<void> {
-    await this.db.insert(streamsToUsers).values(data);
+  async batchUpdate(
+    streamIds: string[],
+    stream: Partial<Omit<NewStream, 'id'>>,
+  ): Promise<Stream[]> {
+    return this.db.update(streams).set(stream).where(inArray(streams.id, streamIds)).returning();
   }
 
-  async removeViewersByStream(streamId: string): Promise<{ id: string }[] | undefined> {
+  async updateUnfinishedStreams(stream: Partial<Omit<NewStream, 'id'>>): Promise<Stream[]> {
     return this.db
-      .delete(streamsToUsers)
-      .where(eq(streamsToUsers.streamId, streamId))
-      .returning({ id: streamsToUsers.id });
+      .update(streams)
+      .set(stream)
+      .where(ne(streams.status, StreamStatus.Ended))
+      .returning();
+  }
+
+  async addViewer(data: StreamsToUsers): Promise<void> {
+    await this.db.insert(streamsToUsers).values(data);
   }
 
   async removeViewer(data: StreamsToUsers): Promise<{ id: string } | undefined> {
@@ -81,15 +98,20 @@ export class StreamsRepository {
       .returning({ id: streamsToUsers.id });
     return result;
   }
+
+  async removeViewersByStream(streamId: string): Promise<{ id: string }[] | undefined> {
+    return this.db
+      .delete(streamsToUsers)
+      .where(eq(streamsToUsers.streamId, streamId))
+      .returning({ id: streamsToUsers.id });
+  }
+
+  async removeViewersByStreams(streamIds: string[]): Promise<{ id: string }[] | undefined> {
+    return this.db
+      .delete(streamsToUsers)
+      .where(inArray(streamsToUsers.streamId, streamIds))
+      .returning({ id: streamsToUsers.id });
+  }
 }
 
 type RelationsFilterArg = Parameters<typeof relationsFilterToSQL>[1];
-
-export type StreamsFilter = RelationsFilter<Relations['streams'], Relations>;
-
-export type ListParams = {
-  limit: number;
-  offset: number;
-  filters: StreamsFilter;
-  sort: [StreamColumns, 'asc' | 'desc'][];
-};

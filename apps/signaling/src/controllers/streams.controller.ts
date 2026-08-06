@@ -1,28 +1,32 @@
 import { WebSocket } from '@fastify/websocket';
+import { Stream, StreamEndReason, StreamStatus } from '@stream-share/db';
 import {
   CommonActions,
   constructErrorResponse,
   constructEvent,
   constructSuccessResponse,
+  ListParams,
   parseMessage,
   StreamerActions,
   ViewerActions,
+  WsEvent,
   WsEvents,
-  WsEventsValues,
   WsRequestEnvelope,
 } from '@stream-share/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { validateWsJwt } from '../auth/validators';
-import { ListParams } from '../repositories/streams.repository';
 import { StreamersService } from '../services/streamers.service';
 import { StreamsService } from '../services/streams.service';
+import { UsersService } from '../services/users.service';
 import { ViewersService } from '../services/viewers.service';
+import { EntityNotFoundError } from '../errors/EntityNotFound.error';
 
 export class StreamsController {
   private static readonly MAX_ATTEMPTS = 5;
   constructor(
     private readonly app: FastifyInstance,
     private readonly streamsService: StreamsService,
+    private readonly usersService: UsersService,
     private readonly streamerService: StreamersService,
     private readonly viewerService: ViewersService,
   ) {}
@@ -39,10 +43,14 @@ export class StreamsController {
 
         app.post('/', this.handleCreateStream);
 
-        app.post<{ Body: ListParams }>('/search', this.handleGetStreams);
+        app.post<{ Body: ListParams<Stream> }>('/search', this.handleGetStreams);
+
+        app.get<{ Params: { userId: string } }>('/:userId/active', this.handleGetActiveStream);
       },
       { prefix: '/streams' },
     );
+
+    this.app.get<{ Params: { streamId: string } }>('/streams/:streamId', this.handleGetStream);
 
     this.app.register(
       (app) => {
@@ -76,8 +84,33 @@ export class StreamsController {
     );
   }
 
+  private handleGetStream = async (
+    req: FastifyRequest<{ Params: { streamId: string } }>,
+    res: FastifyReply,
+  ) => {
+    try {
+      const stream = await this.streamsService.getOne(req.params.streamId);
+      res.status(200).send({ data: stream });
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        res.status(404).send({
+          error: {
+            message: error.message,
+          },
+        });
+      } else if (error instanceof Error) {
+        res.status(500).send({
+          error: {
+            message: error.message,
+          },
+        });
+      }
+      this.app.log.error(error);
+    }
+  };
+
   private handleGetStreams = async (
-    req: FastifyRequest<{ Body: ListParams }>,
+    req: FastifyRequest<{ Body: ListParams<Stream> }>,
     res: FastifyReply,
   ) => {
     try {
@@ -94,7 +127,27 @@ export class StreamsController {
         filters,
         sort,
       });
+
       res.status(200).send({ data: streams, meta: { limit, offset, count } });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).send({
+          error: {
+            message: error.message,
+          },
+        });
+        this.app.log.error(error);
+      }
+    }
+  };
+
+  private handleGetActiveStream = async (
+    req: FastifyRequest<{ Params: { userId: string } }>,
+    res: FastifyReply,
+  ) => {
+    try {
+      const stream = await this.streamsService.getLiveByUserId(req.params.userId);
+      res.status(200).send({ data: stream });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).send({
@@ -128,7 +181,14 @@ export class StreamsController {
     req: FastifyRequest<{ Params: { streamId: string } }>,
   ) => {
     const streamId = req.params.streamId;
-    void this.streamsService.updateStream({ id: streamId, status: 'connecting' });
+    let status: StreamStatus.Connecting | StreamStatus.Reconnecting = StreamStatus.Connecting;
+    const streamContext = this.streamsService.getContext(streamId);
+    if (streamContext?.reconnectionId) {
+      status = StreamStatus.Reconnecting;
+      clearInterval(streamContext.reconnectionId);
+      this.streamsService.setContext(streamId, { ...streamContext, reconnectionId: null });
+    }
+    void this.streamsService.updateStream({ id: streamId, status });
 
     socket.on('message', (message) => {
       void this.handleStreamerMessage({
@@ -147,7 +207,10 @@ export class StreamsController {
     socket: WebSocket,
     req: FastifyRequest<{ Params: { streamId: string } }>,
   ) => {
-    const context = { viewerId: req.context.userId as string, streamId: req.params.streamId };
+    const userId = req.context.userId as string;
+    const streamId = req.params.streamId;
+    const context = { viewerId: userId, streamId };
+
     socket.on('message', (message) => {
       void this.handleViewerMessage({
         message: message.toString(),
@@ -157,6 +220,7 @@ export class StreamsController {
     });
 
     socket.on('close', () => {
+      console.log('Socket closed', context);
       void this.handleViewerSocketClose(context);
     });
   };
@@ -169,14 +233,28 @@ export class StreamsController {
     const { message, socket, streamId } = data;
     const { method, params, requestId } = parseMessage(message) as WsRequestEnvelope;
 
-    const streamContext = await this.streamsService.requireContext(streamId);
+    let streamContext;
+    let stream;
+    try {
+      stream = await this.streamsService.requireStream(streamId);
+      streamContext = await this.streamsService.requireContext(streamId);
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        socket.send(constructErrorResponse(method, { code: 404, msg: error.message }, requestId));
+      } else if (error instanceof Error) {
+        socket.send(constructErrorResponse(method, { code: 404, msg: error.message }, requestId));
+      }
+      this.app.log.error(error);
+      return;
+    }
 
     try {
       switch (method) {
-        case StreamerActions.GetRtpCapabilities:
+        case StreamerActions.GetRtpCapabilities: {
           return socket.send(
             constructSuccessResponse(method, streamContext.router.rtpCapabilities, requestId),
           );
+        }
         case CommonActions.CreateTransport: {
           const transport = await this.streamerService.createTransport(streamId, streamContext);
           return socket.send(
@@ -197,15 +275,31 @@ export class StreamsController {
           return socket.send(constructSuccessResponse(method, null, requestId));
         }
         case StreamerActions.Produce: {
-          const producer = await this.streamerService.produce(streamId, streamContext, params);
-          await this.streamsService.updateStream({ id: streamId, status: 'live' });
+          const { last, ...restParams } = params;
+          const producer = await this.streamerService.produce(streamId, streamContext, restParams);
+          if (last) {
+            await this.streamsService.updateStream({ id: streamId, status: StreamStatus.Live });
+          }
+
+          if (stream.status === 'reconnecting') {
+            this.notifyViewers(streamId, {
+              type: 'event',
+              name: WsEvents.StreamerReconnected,
+              data: { producerId: producer.id },
+            });
+          }
 
           return socket.send(
             constructSuccessResponse(method, { producerId: producer.id }, requestId),
           );
         }
-        case StreamerActions.CloseProducer: {
-          this.streamerService.closeProducer();
+        case StreamerActions.EndStream: {
+          await this.streamsService.updateStream({
+            id: streamId,
+            status: StreamStatus.Ended,
+            endReason: StreamEndReason.StreamerStop,
+            endedAt: new Date(),
+          });
           return socket.send(constructSuccessResponse(method, null, requestId));
         }
       }
@@ -230,7 +324,21 @@ export class StreamsController {
       context: { viewerId, streamId },
     } = data;
     const { method, params, requestId } = parseMessage(message) as WsRequestEnvelope;
-    const streamContext = await this.streamsService.requireContext(streamId);
+    let streamContext;
+    try {
+      await this.streamsService.requireStream(streamId);
+      await this.usersService.requireUser(viewerId);
+      streamContext = await this.streamsService.requireContext(streamId);
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        socket.send(constructErrorResponse(method, { code: 404, msg: error.message }, requestId));
+      } else if (error instanceof Error) {
+        socket.send(constructErrorResponse(method, { code: 500, msg: error.message }, requestId));
+      }
+      this.app.log.error(error);
+      return;
+    }
+
     const actionData = { viewerId, streamId, streamContext, socket };
 
     try {
@@ -294,26 +402,38 @@ export class StreamsController {
 
   private handleStreamerSocketClose = async (streamId: string): Promise<void> => {
     let reconnectingAttempts = 0;
-    const stream = await this.streamsService.getOne(streamId);
-    if (stream.status === 'ended') {
+    let stream;
+    try {
+      stream = await this.streamsService.getOne(streamId);
+    } catch {
       return this.streamerService.releaseResources(streamId);
     }
+    if (stream.status === StreamStatus.Ended) {
+      this.notifyViewers(streamId, { type: 'event', name: WsEvents.StreamEnd, data: null });
+      return this.streamerService.releaseResources(streamId);
+    }
+
     const reconnectionId = setInterval(() => {
       if (reconnectingAttempts++ >= StreamsController.MAX_ATTEMPTS) {
         void this.streamsService
           .updateStream({
             id: streamId,
-            status: 'ended',
-            endReason: 'timeout',
+            status: StreamStatus.Ended,
+            endReason: StreamEndReason.Timeout,
+            endedAt: new Date(),
           })
           .then(() => this.streamerService.releaseResources(streamId));
-        this.notifyViewers(streamId, WsEvents.StreamEnd);
+        this.notifyViewers(streamId, { type: 'event', name: WsEvents.StreamEnd, data: null });
 
         return clearInterval(reconnectionId);
       }
-    }, 1000);
+    }, 6000);
+    const streamContext = this.streamsService.getContext(streamId);
+    if (streamContext) {
+      this.streamsService.setContext(streamId, { ...streamContext, reconnectionId });
+    }
 
-    this.notifyViewers(streamId, WsEvents.StreamerDisconnect);
+    this.notifyViewers(streamId, { type: 'event', name: WsEvents.StreamerDisconnect, data: null });
   };
 
   private handleViewerSocketClose = async (data: {
@@ -321,23 +441,14 @@ export class StreamsController {
     streamId: string;
   }): Promise<void> => {
     const { viewerId, streamId } = data;
-    const stream = await this.streamsService.getOne(streamId);
-    let reconnectingAttempts = 0;
-
-    if (stream.status === 'ended') return;
-    const reconnectionId = setInterval(() => {
-      if (reconnectingAttempts++ >= StreamsController.MAX_ATTEMPTS) {
-        void this.viewerService.releaseResources(viewerId, streamId);
-        return clearInterval(reconnectionId);
-      }
-    }, 1000);
+    return this.viewerService.releaseResources(viewerId, streamId);
   };
 
-  private notifyViewers(streamId: string, eventName: WsEventsValues) {
+  private notifyViewers(streamId: string, event: WsEvent) {
     const streamContext = this.streamsService.getContext(streamId);
     if (!streamContext) return;
     Object.values(streamContext.viewers).forEach(({ socket }) => {
-      socket.send(constructEvent({ name: eventName }));
+      socket.send(constructEvent(event));
     });
   }
 }
