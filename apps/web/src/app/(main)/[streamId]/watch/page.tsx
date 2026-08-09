@@ -1,9 +1,6 @@
-import { auth, signIn } from '@/lib/auth/auth';
-import { Watch } from './Watch';
-import { getStream } from '@/app/api/streams';
+import { getStream } from '@/app/api/streams/client';
 import { StreamStatus } from '@stream-share/db';
-import { redirect } from 'next/navigation';
-import { getUser } from '@/app/api/users';
+import { Watch } from './Watch';
 
 export default async function WatchPage({ params }: { params: Promise<{ streamId: string }> }) {
   const { streamId } = await params;

@@ -25,16 +25,7 @@ export const streams = t.pgTable('stream', {
     .text('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
-  startedAt: t.timestamp({ withTimezone: true }).defaultNow(),
-  endedAt: t.timestamp({ withTimezone: true }),
-  endReason: t.varchar({
-    enum: [
-      StreamEndReason.StreamerStop,
-      StreamEndReason.AdminForce,
-      StreamEndReason.Timeout,
-      StreamEndReason.ServerForce,
-    ],
-  }),
+  isPrivate: t.boolean().default(false),
   status: t
     .varchar({
       enum: [
@@ -46,6 +37,16 @@ export const streams = t.pgTable('stream', {
       ],
     })
     .default(StreamStatus.Created),
+  endReason: t.varchar({
+    enum: [
+      StreamEndReason.StreamerStop,
+      StreamEndReason.AdminForce,
+      StreamEndReason.Timeout,
+      StreamEndReason.ServerForce,
+    ],
+  }),
+  startedAt: t.timestamp({ withTimezone: true }).defaultNow(),
+  endedAt: t.timestamp({ withTimezone: true }),
 });
 
 export type NewStream = typeof streams.$inferInsert;

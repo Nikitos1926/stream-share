@@ -1,4 +1,3 @@
-import { getStreams } from '@/app/api/streams';
 import { redirect } from 'next/navigation';
 import { StreamCard } from './StreamCard';
 import { Paginator } from '@/app/components/Paginator';
@@ -7,6 +6,7 @@ import { Typography } from '@/app/components/ui/Typography';
 import { Button } from '@/app/components/ui/Button';
 import { Link } from '@/app/components/ui/Link';
 import { StreamStatus } from '@stream-share/db';
+import { getStreams } from '@/app/api/streams/server';
 
 export async function StreamList(props: { currentPage: number }) {
   const limit = 12;

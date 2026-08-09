@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { StreamQuality, StreamStatus } from './useStreamer';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 import screenfull from 'screenfull';
 
 export function useMediaControls(

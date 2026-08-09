@@ -52,10 +52,10 @@ export class StreamsService {
     }
   }
 
-  async createStream(streamerId: string): Promise<Stream> {
+  async createStream(streamerId: string, isPrivate = false): Promise<Stream> {
     let stream;
     try {
-      stream = await this.streamsRepository.insert({ userId: streamerId });
+      stream = await this.streamsRepository.insert({ userId: streamerId, isPrivate });
     } catch (error) {
       throw new Error(StreamErrors.CREATION_ERROR, { cause: error });
     }

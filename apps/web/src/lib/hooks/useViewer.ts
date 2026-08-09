@@ -90,7 +90,7 @@ export function useViewer() {
   const handleSocketClose = useCallback(() => {
     releaseResources();
     setStatus(StreamStatus.Unavailable);
-  }, []);
+  }, [releaseResources]);
 
   const handleStreamerReconnected = useCallback(
     (event: Extract<WsEvent, { name: WsEventsType['StreamerReconnected'] }>) => {

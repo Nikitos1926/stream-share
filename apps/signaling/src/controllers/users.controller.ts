@@ -20,8 +20,6 @@ export class UsersController {
       return res.status(400).send({ error: { message: 'User id is required' } });
     try {
       const user = await this.usersService.getOne(req.params.userId);
-      console.log(req.params);
-      console.log('User sever:', user);
       res.status(200).send({ data: user });
     } catch (error) {
       if (error instanceof EntityNotFoundError) {

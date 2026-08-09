@@ -1,29 +1,52 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/app/components/ui/Button';
+import { Input } from '@/app/components/ui/Input';
 import { Typography } from '@/app/components/ui/Typography';
 import { StreamQuality, StreamStatus, useStreamer } from '@/lib/hooks/useStreamer';
+import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
+import { useState } from 'react';
 
 const qualities = Object.values(StreamQuality);
 
 export default function Broadcast() {
+  const [isCopied, setIsCopied] = useState<boolean>(false);
   const {
     videoRef,
+    isPrivate,
+    isMuted,
+    isMuteToggleEnabled,
+    currentStream,
     status,
     quality,
+    setIsPrivate,
+    toggleMute,
     changeQuality,
     pickSource,
     changeSource,
     broadcast,
     stopBroadcast,
-    activeStream,
+    hasActiveStream,
     reconnect,
   } = useStreamer();
-
-  // TODO: заменить на isPrivate/setIsPrivate из useStreamer, когда хук будет расширен
-  const [isPrivate, setIsPrivate] = useState(false);
   const isLive = status === StreamStatus.Live;
+
+  const constructInviteLink = () => {
+    return currentStream
+      ? `${window.location.host}/${currentStream.id}/watch`
+      : 'Stream is not live yet';
+  };
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      // toastContext
+    }
+  };
 
   return (
     <div className="container flex flex-col gap-4 py-4 landscape:h-[calc(100dvh-var(--header-h))]">
@@ -34,7 +57,7 @@ export default function Broadcast() {
             autoPlay
             playsInline
             muted
-            className="h-full w-full bg-black object-contain"
+            className="h-full w-full rounded-md bg-black object-contain"
           />
           <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-sm border-2 border-line bg-surface px-2 py-1">
             <span className={`h-2 w-2 rounded-full ${isLive ? 'bg-red-500' : 'bg-stroke-muted'}`} />
@@ -46,7 +69,7 @@ export default function Broadcast() {
       </div>
 
       <div className="flex flex-col gap-4 rounded-md border-2 border-line bg-surface p-4">
-        {activeStream ? (
+        {hasActiveStream ? (
           <div className="flex flex-col items-center gap-3 py-4">
             <Typography>You have an unfinished stream</Typography>
             <Button appearance="solid" onClick={reconnect}>
@@ -55,82 +78,97 @@ export default function Broadcast() {
           </div>
         ) : (
           <>
-            <Typography
-              className="border-b-2 border-line pb-3 font-semibold tracking-wide uppercase"
-              size="sm"
-            >
-              Control
-            </Typography>
-
-            <div className="flex flex-col gap-1.5">
-              <Typography size="sm" className="text-stroke-muted">
-                Source
-              </Typography>
-              {!isLive ? (
-                <Button onClick={pickSource}>Pick source</Button>
-              ) : (
-                <Button variant="secondary" onClick={changeSource}>
-                  Change source
-                </Button>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Typography size="sm" className="text-stroke-muted">
-                Quality
-              </Typography>
-              <div className="flex flex-wrap gap-1.5">
-                {qualities.map((q) => (
-                  <Button
-                    key={q}
-                    variant={quality === q ? 'primary' : 'ghost'}
-                    onClick={() => changeQuality(q)}
-                  >
-                    {q === StreamQuality.Source ? q : `${q}p`}
+            <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+              <div className="flex flex-col items-center gap-4 md:flex-row">
+                {!isLive ? (
+                  <Button className="w-full md:w-auto" onClick={pickSource}>
+                    <Monitor />
+                    Pick source
                   </Button>
-                ))}
-              </div>
-            </div>
+                ) : (
+                  <Button className="w-full md:w-auto" variant="secondary" onClick={changeSource}>
+                    Change source
+                  </Button>
+                )}
 
-            <div className="flex flex-col gap-1.5">
-              <Typography size="sm" className="text-stroke-muted">
-                Visibility
-              </Typography>
-              <div className="flex flex-wrap gap-1.5">
-                <Button
-                  variant={!isPrivate ? 'primary' : 'ghost'}
-                  onClick={() => setIsPrivate(false)}
-                >
-                  Public
-                </Button>
-                <Button
-                  variant={isPrivate ? 'primary' : 'ghost'}
-                  onClick={() => setIsPrivate(true)}
-                >
-                  Private
-                </Button>
+                <div className="flex flex-col gap-1.5">
+                  <fieldset className="rounded-lg border border-line px-2.5 pb-2.5 md:-mt-3.25">
+                    <legend className="mx-auto px-2">
+                      <Typography tone="muted" size="sm">
+                        Quality
+                      </Typography>
+                    </legend>
+                    <div className="flex flex-wrap gap-1.5">
+                      {qualities.map((q) => (
+                        <Button
+                          key={q}
+                          size="sm"
+                          variant={quality === q ? 'primary' : 'ghost'}
+                          onClick={() => changeQuality(q)}
+                        >
+                          {q === StreamQuality.Source ? q : `${q}p`}
+                        </Button>
+                      ))}
+                    </div>
+                  </fieldset>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <label
+                    title={
+                      isMuteToggleEnabled
+                        ? ''
+                        : 'Audio is disabled. Enable audio when picking source.'
+                    }
+                  >
+                    <Button
+                      variant={!isMuteToggleEnabled || isMuted ? 'ghost' : 'primary'}
+                      disabled={!isMuteToggleEnabled}
+                      onClick={toggleMute}
+                    >
+                      {!isMuteToggleEnabled || isMuted ? <VolumeX /> : <Volume2 />}
+                    </Button>
+                  </label>
+                  <label title={isLive ? 'Restart stream to change privacy settings' : ''}>
+                    <Button
+                      variant={isPrivate ? 'primary' : 'ghost'}
+                      size="md"
+                      disabled={isLive}
+                      onClick={() => setIsPrivate(!isPrivate)}
+                    >
+                      {isPrivate ? <Lock /> : <LockOpen />}
+                    </Button>
+                  </label>
+                </div>
               </div>
-              <Typography size="sm" className="text-stroke-muted">
-                {isPrivate
-                  ? 'Only people with the link can watch'
-                  : 'Anyone can find and watch this stream'}
-              </Typography>
-            </div>
 
-            <div className="pt-1">
               {!isLive ? (
                 <Button
-                  className="w-full"
+                  className="w-full md:w-auto"
+                  variant="destructive"
+                  appearance="solid"
                   disabled={status !== StreamStatus.Preview}
                   onClick={() => broadcast()}
                 >
                   Start stream
                 </Button>
               ) : (
-                <Button className="w-full" variant="destructive" onClick={stopBroadcast}>
+                <Button className="w-full md:w-auto" variant="destructive" onClick={stopBroadcast}>
                   Stop stream
                 </Button>
               )}
+            </div>
+            <div className="flex items-center gap-2 border-t border-line pt-3">
+              <Typography size="xs" tone="muted" className="whitespace-nowrap">
+                Stream link
+              </Typography>
+              <Input value={constructInviteLink()} readOnly />
+              <Button
+                size="sm"
+                disabled={!currentStream}
+                onClick={() => handleCopy(constructInviteLink())}
+              >
+                {isCopied ? 'Copied' : 'Copy'}
+              </Button>
             </div>
           </>
         )}

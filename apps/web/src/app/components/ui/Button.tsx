@@ -26,14 +26,12 @@ const buttonVariants = cva(
         outline: '',
       },
       size: {
-        default: 'h-9 px-4 py-2',
         sm: 'h-6 gap-1.5 rounded-md px-2',
         md: 'h-8 gap-1.5 rounded-md px-3',
         lg: 'h-10 rounded-md px-6',
       },
     },
     compoundVariants: [
-      // primary
       {
         variant: 'primary',
         appearance: 'outline',
@@ -45,7 +43,6 @@ const buttonVariants = cva(
         appearance: 'solid',
         class: 'border-accent bg-accent text-surface hover:bg-accent/90 active:bg-accent/80',
       },
-      // secondary
       {
         variant: 'secondary',
         appearance: 'outline',
@@ -56,7 +53,6 @@ const buttonVariants = cva(
         appearance: 'solid',
         class: 'text-fg border-line bg-surface hover:bg-surface/70 active:bg-surface/50',
       },
-      // ghost — outline у ghost обычно не имеет смысла, но для единообразия API можно оставить оба
       {
         variant: 'ghost',
         appearance: 'outline',
@@ -67,7 +63,6 @@ const buttonVariants = cva(
         appearance: 'solid',
         class: 'text-fg-muted hover:text-fg border-transparent bg-surface/50 hover:bg-surface/70',
       },
-      // destructive
       {
         variant: 'destructive',
         appearance: 'outline',
@@ -76,22 +71,23 @@ const buttonVariants = cva(
       {
         variant: 'destructive',
         appearance: 'solid',
-        class: 'border-danger bg-danger text-surface hover:bg-danger/90 active:bg-danger/80',
+        class: 'border-danger bg-danger text-stroke hover:bg-danger/90 active:bg-danger/80',
       },
     ],
     defaultVariants: {
       variant: 'primary',
       appearance: 'outline',
-      size: 'default',
+      size: 'md',
     },
   },
 );
 
 export function Button({
   className,
-  variant = 'primary',
-  size = 'default',
+  variant,
+  size,
   type = 'button',
+  appearance,
   children,
   ...props
 }: React.ComponentProps<'button'> & VariantProps<typeof buttonVariants>) {
@@ -99,7 +95,7 @@ export function Button({
     <button
       type={type}
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className, appearance }))}
       {...props}
     >
       {children}

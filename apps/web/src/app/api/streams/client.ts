@@ -1,13 +1,13 @@
 import { Stream, StreamWithRelations } from '@stream-share/db';
-import { ListParams } from '@stream-share/shared';
-import { cookies } from 'next/headers';
 
-export const createStream = async () => {
+export const createStream = async (isPrivate = false) => {
   let response;
   try {
     response = await fetch('http://localhost:4000/streams', {
       method: 'post',
       credentials: 'include',
+      body: JSON.stringify({ isPrivate }),
+      headers: { 'content-type': 'application/json' },
     });
   } catch (error) {
     console.log(error);
@@ -37,35 +37,5 @@ export const getStream = async (streamId: string) => {
 
   return response.json() as Promise<{
     data: StreamWithRelations;
-  }>;
-};
-
-export const getStreams = async (params?: Partial<ListParams<Stream>>) => {
-  const cookieStore = await cookies();
-  let response;
-  try {
-    response = await fetch('http://localhost:4000/streams/search', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: cookieStore.toString(),
-      },
-      body: JSON.stringify(params),
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-  if (!response.ok) {
-    throw new Error(`Failed to fetch streams: ${response.status}`);
-  }
-
-  return response.json() as Promise<{
-    data: StreamWithRelations[];
-    meta: {
-      limit: number;
-      offset: number;
-      count: number;
-    };
   }>;
 };

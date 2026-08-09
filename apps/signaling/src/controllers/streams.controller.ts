@@ -41,7 +41,7 @@ export class StreamsController {
         });
         app.addHook('preValidation', validateWsJwt);
 
-        app.post('/', this.handleCreateStream);
+        app.post<{ Body: { isPrivate: boolean } }>('/', this.handleCreateStream);
 
         app.post<{ Body: ListParams<Stream> }>('/search', this.handleGetStreams);
 
@@ -120,6 +120,7 @@ export class StreamsController {
         filters = {},
         sort = [['startedAt', 'desc']],
       } = req.body ?? {};
+      filters.isPrivate = false;
       //TODO: sanitize filter params
       const { streams, count } = await this.streamsService.getList({
         limit,
@@ -160,9 +161,15 @@ export class StreamsController {
     }
   };
 
-  private handleCreateStream = async (req: FastifyRequest, res: FastifyReply) => {
+  private handleCreateStream = async (
+    req: FastifyRequest<{ Body?: { isPrivate?: boolean } }>,
+    res: FastifyReply,
+  ) => {
     try {
-      const stream = await this.streamsService.createStream(req.context.userId as string);
+      const stream = await this.streamsService.createStream(
+        req.context.userId as string,
+        req.body?.isPrivate,
+      );
       res.status(201).send({ data: stream });
     } catch (error) {
       if (error instanceof Error) {
@@ -220,7 +227,6 @@ export class StreamsController {
     });
 
     socket.on('close', () => {
-      console.log('Socket closed', context);
       void this.handleViewerSocketClose(context);
     });
   };

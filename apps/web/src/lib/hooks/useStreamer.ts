@@ -5,11 +5,16 @@ import { Producer, ProducerOptions, Transport } from 'mediasoup-client/types';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
+import { createStream } from '@/app/api/streams/client';
 
 export function useStreamer() {
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMuteToggleEnabled, setIsMuteToggleEnabled] = useState<boolean>(false);
+  const [hasActiveStream, setHasActiveStream] = useState<boolean>(false);
+  const [currentStream, setCurrentStream] = useState<Stream | null>(null);
   const [status, setStatus] = useState<StreamStatus | null>(null);
   const [quality, setQuality] = useState<StreamQuality>(StreamQuality.HD);
-  const [activeStream, setActiveStream] = useState<Stream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream>(null);
   const wsClientRef = useRef<WsClient>(null);
@@ -17,6 +22,16 @@ export function useStreamer() {
   const producersRef = useRef<Producer[]>([]);
   const { data: session } = useSession();
   const userId = session?.user.id;
+
+  const toggleMute = useCallback(() => {
+    setIsMuted((prevIsMuted) => {
+      const audioProducer = producersRef.current.find((p) => p.kind === 'audio');
+      if (!audioProducer) return !prevIsMuted;
+      if (prevIsMuted) audioProducer.resume();
+      else audioProducer.pause();
+      return !prevIsMuted;
+    });
+  }, []);
 
   const checkActiveStream = useCallback(async () => {
     if (!userId) return;
@@ -37,7 +52,8 @@ export function useStreamer() {
 
     try {
       const { data } = (await response.json()) as { data: Stream };
-      setActiveStream(data ?? null);
+      setHasActiveStream(data ? true : false);
+      setCurrentStream(data ?? null);
     } catch (error) {
       console.log(error);
       // toastContext.error
@@ -80,9 +96,13 @@ export function useStreamer() {
           encodings: [getVideoEncodingByQuality(quality)],
         };
       }
-      producersRef.current.push(await transportRef.current!.produce(producerOptions));
+      const producer = await transportRef.current!.produce(producerOptions);
+      if (track.kind === 'audio' && isMuted) {
+        producer.pause();
+      }
+      producersRef.current.push(producer);
     },
-    [getVideoEncodingByQuality, quality],
+    [getVideoEncodingByQuality, isMuted, quality],
   );
 
   const replaceStream = useCallback(
@@ -96,11 +116,13 @@ export function useStreamer() {
 
           await producer.replaceTrack({ track: track });
           if (producer.kind === 'video') applyRtpSenderParameters(producer, quality);
-          producer.resume();
+          if (producer.kind !== 'audio' || !isMuted) {
+            producer.resume();
+          }
         }),
       );
     },
-    [applyRtpSenderParameters, createProducer, quality],
+    [applyRtpSenderParameters, createProducer, isMuted, quality],
   );
 
   const changeQuality = useCallback(
@@ -157,7 +179,11 @@ export function useStreamer() {
       audio: true,
       controller,
     });
+
     const [videoTrack] = stream.getVideoTracks();
+    const [audioTrack] = stream.getAudioTracks();
+    setIsMuteToggleEnabled(!!audioTrack);
+
     videoTrack?.addEventListener('ended', stopBroadcast);
 
     const surface = videoTrack?.getSettings().displaySurface;
@@ -193,31 +219,6 @@ export function useStreamer() {
 
     setStatus(StreamStatus.Preview);
   }, [captureStream, stopBroadcast, stopMediaTracks]);
-
-  const createStream = useCallback(async () => {
-    let response;
-    try {
-      response = await fetch('http://localhost:4000/streams', {
-        method: 'post',
-        credentials: 'include',
-      });
-    } catch (error) {
-      console.log(error);
-      // toastContext.error
-      return;
-    }
-    if (!response.ok) {
-      // toastContext.error
-      return;
-    }
-    try {
-      const { data } = (await response.json()) as { data: Stream };
-      return data;
-    } catch (error) {
-      console.log(error);
-      // toastContext.error
-    }
-  }, []);
 
   const connectToStream = useCallback(
     async (stream: Stream) => {
@@ -285,19 +286,20 @@ export function useStreamer() {
   );
 
   const broadcast = useCallback(async () => {
-    const stream = await createStream();
+    const stream = await createStream(isPrivate);
     if (!stream) return;
-    connectToStream(stream);
-  }, [connectToStream, createStream]);
+    await connectToStream(stream);
+    setCurrentStream(stream);
+  }, [connectToStream, isPrivate]);
 
   const reconnect = useCallback(async () => {
-    if (!activeStream || !videoRef.current) return;
+    if (!currentStream || !hasActiveStream || !videoRef.current) return;
     await pickSource();
 
     if (!mediaStreamRef.current) return;
-    await connectToStream(activeStream);
-    setActiveStream(null);
-  }, [activeStream, connectToStream, pickSource]);
+    await connectToStream(currentStream);
+    setHasActiveStream(false);
+  }, [currentStream, hasActiveStream, pickSource, connectToStream]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -306,14 +308,20 @@ export function useStreamer() {
 
   return {
     videoRef,
+    isPrivate,
+    isMuted,
+    isMuteToggleEnabled,
+    hasActiveStream,
+    currentStream,
     status,
     quality,
+    setIsPrivate,
+    toggleMute,
     changeQuality,
     pickSource,
     changeSource,
     broadcast,
     stopBroadcast,
-    activeStream,
     reconnect,
   };
 }
