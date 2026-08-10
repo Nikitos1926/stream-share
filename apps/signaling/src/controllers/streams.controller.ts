@@ -150,7 +150,13 @@ export class StreamsController {
       const stream = await this.streamsService.getLiveByUserId(req.params.userId);
       res.status(200).send({ data: stream });
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof EntityNotFoundError) {
+        res.status(404).send({
+          error: {
+            message: error.message,
+          },
+        });
+      } else if (error instanceof Error) {
         res.status(400).send({
           error: {
             message: error.message,

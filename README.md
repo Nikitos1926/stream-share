@@ -6,8 +6,9 @@
 - [x] authentication using Google provider
 - [x] anonymous session 
 - [x] private stream sessions
-- [ ] toast notifications 
+- [x] toast notifications 
 - [ ] stream thumbnails
+- [ ] prune unused guest sessions 
 - [ ] deploy to hosting
 - [ ] desktop app
 - [ ] replace client fetches with react-query

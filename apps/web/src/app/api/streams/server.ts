@@ -2,6 +2,19 @@ import { Stream, StreamWithRelations } from '@stream-share/db';
 import { ListParams } from '@stream-share/shared';
 import { cookies } from 'next/headers';
 
+export const getStream = async (streamId: string) => {
+  const response = await fetch(`http://localhost:4000/streams/${streamId}`);
+
+  if (!response.ok) {
+    if (response.status === 404) return { data: null };
+    throw new Error(`Failed to fetch stream by id "${streamId}": ${response.status}`);
+  }
+
+  return response.json() as Promise<{
+    data: StreamWithRelations;
+  }>;
+};
+
 export const getStreams = async (params?: Partial<ListParams<Stream>>) => {
   const cookieStore = await cookies();
   let response;

@@ -1,13 +1,13 @@
-import { getStream } from '@/app/api/streams/client';
 import { StreamStatus } from '@stream-share/db';
 import { Watch } from './Watch';
+import { getStream } from '@/app/api/streams/server';
 
 export default async function WatchPage({ params }: { params: Promise<{ streamId: string }> }) {
   const { streamId } = await params;
   let response;
   try {
     response = await getStream(streamId);
-  } catch (error) {
+  } catch {
     return (
       <>
         <div>Error</div>

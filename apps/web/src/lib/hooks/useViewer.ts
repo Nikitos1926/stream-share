@@ -4,6 +4,7 @@ import { Consumer, RtpCapabilities, Transport } from 'mediasoup-client/types';
 import { useCallback, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
 import { StreamStatus } from './useStreamer';
+import toast from 'react-hot-toast';
 
 export function useViewer() {
   const [status, setStatus] = useState<StreamStatus | null>(null);
@@ -23,7 +24,7 @@ export function useViewer() {
     videoRef.current
       .play()
       .then(() => setIsPlayVisible(false))
-      .catch(() => alert('Cannot play video')); //toastContext
+      .catch(() => toast.error('Cannot play video'));
   }, []);
 
   const setMediaStreamToVideo = useCallback(() => {
@@ -179,7 +180,7 @@ export function useViewer() {
         wsClientRef.current = null;
         deviceRef.current = null;
         setStatus(StreamStatus.Unavailable);
-        // toastContext.error
+        toast.error('Something went wrong');
         throw error;
       }
     },

@@ -6,6 +6,7 @@ import { Typography } from '@/app/components/ui/Typography';
 import { StreamQuality, StreamStatus, useStreamer } from '@/lib/hooks/useStreamer';
 import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const qualities = Object.values(StreamQuality);
 
@@ -40,11 +41,15 @@ export default function Broadcast() {
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard!', {
+        id: 'clipboard',
+      });
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
-      // toastContext
+      toast.success(`Failed to copy: ${err}`, {
+        id: 'clipboard',
+      });
     }
   };
 

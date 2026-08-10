@@ -11,6 +11,7 @@ import { MonitorX, Play } from 'lucide-react';
 import { signIn, useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const guestUserIdKey = 'guestUserId';
 const newGuestIdStub = 'newGuestIdStub';
@@ -39,7 +40,7 @@ export function Watch() {
       }
       const existingGuestId = localStorage.getItem(guestUserIdKey);
       const response = await signIn('guest', { redirect: false, userId: existingGuestId || '' });
-      if (!response.ok) return alert(response.error); //toastContext
+      if (!response.ok) return toast.error('Failed to create guest session');
       setVerifiedUserId(existingGuestId || newGuestIdStub);
     })();
   }, [session, sessionUser]);

@@ -1,4 +1,5 @@
-import { Stream, StreamWithRelations } from '@stream-share/db';
+import { Stream } from '@stream-share/db';
+import toast from 'react-hot-toast';
 
 export const createStream = async (isPrivate = false) => {
   let response;
@@ -11,11 +12,11 @@ export const createStream = async (isPrivate = false) => {
     });
   } catch (error) {
     console.log(error);
-    // toastContext.error
+    toast.error('Something went wrong');
     return;
   }
   if (!response.ok) {
-    // toastContext.error
+    toast.error('Cannot create stream. Try again later');
     return;
   }
   try {
@@ -23,19 +24,6 @@ export const createStream = async (isPrivate = false) => {
     return data;
   } catch (error) {
     console.log(error);
-    // toastContext.error
+    toast.error('Something went wrong');
   }
-};
-
-export const getStream = async (streamId: string) => {
-  const response = await fetch(`http://localhost:4000/streams/${streamId}`);
-
-  if (!response.ok) {
-    if (response.status === 404) return { data: null };
-    throw new Error(`Failed to fetch stream by id "${streamId}": ${response.status}`);
-  }
-
-  return response.json() as Promise<{
-    data: StreamWithRelations;
-  }>;
 };

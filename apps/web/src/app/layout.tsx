@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers/providers';
+import { Toaster } from 'react-hot-toast';
 
 export const viewport: Viewport = {
   width: 425,
@@ -33,6 +34,16 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="h-dvh">
         <Providers>{children}</Providers>
+        <Toaster
+          toastOptions={{
+            style: {
+              background: 'var(--surface)',
+              color: 'var(--stroke)',
+              border: '1px solid var(--line)',
+            },
+            duration: 2000,
+          }}
+        />
       </body>
     </html>
   );

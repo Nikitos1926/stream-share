@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
 import { createStream } from '@/app/api/streams/client';
+import toast from 'react-hot-toast';
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -42,11 +43,12 @@ export function useStreamer() {
       });
     } catch (error) {
       console.log(error);
-      // toastContext.error
+      toast.error('Something went wrong');
       return;
     }
     if (!response.ok) {
-      // toastContext.error
+      setHasActiveStream(false);
+      setCurrentStream(null);
       return;
     }
 
@@ -56,7 +58,7 @@ export function useStreamer() {
       setCurrentStream(data ?? null);
     } catch (error) {
       console.log(error);
-      // toastContext.error
+      toast.error('Something went wrong');
     }
   }, [userId]);
 
@@ -223,7 +225,7 @@ export function useStreamer() {
   const connectToStream = useCallback(
     async (stream: Stream) => {
       if (!mediaStreamRef.current) {
-        // toastContext.error
+        toast.error('Stream is not created yet');
         return;
       }
       const isTrackByKindSent = Object.fromEntries(
