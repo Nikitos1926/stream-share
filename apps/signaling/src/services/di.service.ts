@@ -28,7 +28,7 @@ export class DiService {
     const streamsService = new StreamsService(streamsRepository, mediasoupService);
     this.register(StreamsService, streamsService);
 
-    const usersService = new UsersService(usersRepository);
+    const usersService = new UsersService(this.app, usersRepository);
     this.register(UsersService, usersService);
 
     const streamerService = new StreamersService(

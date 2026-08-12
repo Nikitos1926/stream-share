@@ -52,7 +52,7 @@ export class StreamsService {
     }
   }
 
-  async createStream(streamerId: string, isPrivate = false): Promise<Stream> {
+  async create(streamerId: string, isPrivate = false): Promise<Stream> {
     let stream;
     try {
       stream = await this.streamsRepository.insert({ userId: streamerId, isPrivate });
@@ -63,7 +63,7 @@ export class StreamsService {
     return stream;
   }
 
-  async updateStream(stream: Partial<Omit<NewStream, 'id'>> & { id: string }): Promise<Stream> {
+  async update(stream: Partial<Omit<NewStream, 'id'>> & { id: string }): Promise<Stream> {
     let updatedStream;
     if (stream.status === StreamStatus.Ended && !stream.endReason)
       throw new Error(StreamErrors.UPDATE_ERROR);

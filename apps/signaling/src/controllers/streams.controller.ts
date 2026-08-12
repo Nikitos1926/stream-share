@@ -197,7 +197,7 @@ export class StreamsController {
     res: FastifyReply,
   ) => {
     try {
-      const stream = await this.streamsService.createStream(
+      const stream = await this.streamsService.create(
         req.context.userId as string,
         req.body?.isPrivate,
       );
@@ -226,7 +226,7 @@ export class StreamsController {
       return res.code(403).send({ error: { message: 'forbidden' } });
     }
 
-    await this.streamsService.updateStream({id: streamId, thumbnailUpdatedAt: new Date()});
+    await this.streamsService.update({ id: streamId, thumbnailUpdatedAt: new Date() });
     const filename = `${streamId}.jpg`;
     const filePath = path.join(StreamsController.THUMBNAILS_DIR, filename);
 
@@ -247,7 +247,7 @@ export class StreamsController {
       clearInterval(streamContext.reconnectionId);
       this.streamsService.setContext(streamId, { ...streamContext, reconnectionId: null });
     }
-    void this.streamsService.updateStream({ id: streamId, status });
+    void this.streamsService.update({ id: streamId, status });
 
     socket.on('message', (message) => {
       void this.handleStreamerMessage({
@@ -336,7 +336,7 @@ export class StreamsController {
           const { last, ...restParams } = params;
           const producer = await this.streamerService.produce(streamId, streamContext, restParams);
           if (last) {
-            await this.streamsService.updateStream({ id: streamId, status: StreamStatus.Live });
+            await this.streamsService.update({ id: streamId, status: StreamStatus.Live });
           }
 
           if (stream.status === 'reconnecting') {
@@ -352,7 +352,7 @@ export class StreamsController {
           );
         }
         case StreamerActions.EndStream: {
-          await this.streamsService.updateStream({
+          await this.streamsService.update({
             id: streamId,
             status: StreamStatus.Ended,
             endReason: StreamEndReason.StreamerStop,
@@ -474,7 +474,7 @@ export class StreamsController {
     const reconnectionId = setInterval(() => {
       if (reconnectingAttempts++ >= StreamsController.MAX_ATTEMPTS) {
         void this.streamsService
-          .updateStream({
+          .update({
             id: streamId,
             status: StreamStatus.Ended,
             endReason: StreamEndReason.Timeout,

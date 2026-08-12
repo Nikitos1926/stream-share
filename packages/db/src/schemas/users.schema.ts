@@ -21,6 +21,7 @@ export const users = t.pgTable('user', {
   failedLoginCount: t.integer('failed_login_count').notNull().default(0),
   lockedUntil: t.timestamp('locked_until', { withTimezone: true }),
   createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  activeAt: t.timestamp({ withTimezone: true }).defaultNow()
 });
 
 export const shortUserView = { id: true, name: true, image: true } as const;

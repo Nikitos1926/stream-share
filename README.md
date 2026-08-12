@@ -8,8 +8,8 @@
 - [x] private stream sessions
 - [x] toast notifications 
 - [x] stream thumbnails
+- [x] prune unused guest sessions 
 - [ ] env using dotenv
-- [ ] prune unused guest sessions 
 - [ ] deploy to hosting
 - [ ] desktop app
 - [ ] replace client fetches with react-query

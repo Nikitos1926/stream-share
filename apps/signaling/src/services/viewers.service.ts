@@ -35,7 +35,8 @@ export class ViewersService {
     }
 
     try {
-      void this.streamsRepository.addViewer({ userId: viewerId, streamId });
+      await this.streamsRepository.addViewer({ userId: viewerId, streamId });
+      await this.usersRepository.update({ id: viewerId, activeAt: new Date() });
     } catch (error) {
       throw new Error(StreamErrors.ADD_VIEWER_ERROR, { cause: error });
     }
