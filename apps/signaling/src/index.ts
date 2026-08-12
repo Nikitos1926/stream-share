@@ -8,8 +8,12 @@ import { MediasoupService } from './services/mediasoup.service';
 import cors from '@fastify/cors';
 import { StreamsService } from './services/streams.service';
 import { UsersController } from './controllers/users.controller';
+import staticPlugin from '@fastify/static';
+import { mkdir } from 'fs/promises';
 
 const startServer = async () => {
+  await mkdir(StreamsController.THUMBNAILS_DIR, { recursive: true });
+
   const app = Fastify({ logger: true });
   await app.register(cookie);
   await app.register(cors, {
@@ -19,6 +23,12 @@ const startServer = async () => {
   await app.register(websocketPlugin);
   await app.register(dbPlugin);
   await app.register(diPlugin);
+  app.addContentTypeParser('application/octet-stream', { parseAs: 'buffer' }, (req, body, done) =>
+    done(null, body),
+  );
+  await app.register(staticPlugin, {
+    root: StreamsController.THUMBNAILS_DIR,
+  });
   await app.di.init();
 
   await app.di.resolve(StreamsService).stopUnfinishedStreams();

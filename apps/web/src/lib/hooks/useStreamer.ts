@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
 import { createStream } from '@/app/api/streams/client';
 import toast from 'react-hot-toast';
+import { useThumbnailCapture } from './useThumbnailCapture';
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -21,8 +22,10 @@ export function useStreamer() {
   const wsClientRef = useRef<WsClient>(null);
   const transportRef = useRef<Transport>(null);
   const producersRef = useRef<Producer[]>([]);
+  const stopCapturingThumbnailRef = useRef<() => void>(null);
   const { data: session } = useSession();
   const userId = session?.user.id;
+  const startCapturingThumbnail = useThumbnailCapture(videoRef);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prevIsMuted) => {
@@ -148,6 +151,8 @@ export function useStreamer() {
     producersRef.current = [];
     transportRef.current = null;
     wsClientRef.current = null;
+    stopCapturingThumbnailRef.current?.();
+
     stopMediaTracks();
     setStatus(null);
   }, [stopMediaTracks]);
@@ -162,6 +167,7 @@ export function useStreamer() {
       wsClientRef.current.close();
     }
 
+    stopCapturingThumbnailRef.current?.();
     stopMediaTracks();
     setStatus(null);
   }, [stopMediaTracks]);
@@ -200,6 +206,7 @@ export function useStreamer() {
     if (!videoRef.current) return;
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
+      mediaStreamRef.current.getTracks().forEach((t) => t.stop());
     }
     const newStream = await captureStream();
     mediaStreamRef.current = newStream;
@@ -292,7 +299,8 @@ export function useStreamer() {
     if (!stream) return;
     await connectToStream(stream);
     setCurrentStream(stream);
-  }, [connectToStream, isPrivate]);
+    stopCapturingThumbnailRef.current = startCapturingThumbnail(stream.id);
+  }, [connectToStream, isPrivate, startCapturingThumbnail]);
 
   const reconnect = useCallback(async () => {
     if (!currentStream || !hasActiveStream || !videoRef.current) return;
@@ -301,7 +309,8 @@ export function useStreamer() {
     if (!mediaStreamRef.current) return;
     await connectToStream(currentStream);
     setHasActiveStream(false);
-  }, [currentStream, hasActiveStream, pickSource, connectToStream]);
+    stopCapturingThumbnailRef.current = startCapturingThumbnail(currentStream.id);
+  }, [currentStream, hasActiveStream, pickSource, connectToStream, startCapturingThumbnail]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

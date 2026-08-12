@@ -47,6 +47,7 @@ export const streams = t.pgTable('stream', {
   }),
   startedAt: t.timestamp({ withTimezone: true }).defaultNow(),
   endedAt: t.timestamp({ withTimezone: true }),
+  thumbnailUpdatedAt: t.timestamp({ withTimezone: true }),
 });
 
 export type NewStream = typeof streams.$inferInsert;

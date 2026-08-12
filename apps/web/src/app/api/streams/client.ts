@@ -27,3 +27,30 @@ export const createStream = async (isPrivate = false) => {
     toast.error('Something went wrong');
   }
 };
+
+export const uploadThumbnail = async (streamId: string, image: Blob) => {
+  let response;
+  try {
+    response = await fetch(`http://localhost:4000/streams/${streamId}/thumbnail`, {
+      method: 'post',
+      credentials: 'include',
+      body: image,
+      headers: { 'content-type': 'application/octet-stream' },
+    });
+  } catch (error) {
+    console.log(error);
+    toast.error('Something went wrong');
+    return;
+  }
+  if (!response.ok) {
+    toast.error('Cannot upload stream thumbnail');
+    return;
+  }
+  try {
+    const { data } = (await response.json()) as { data: Stream };
+    return data;
+  } catch (error) {
+    console.log(error);
+    toast.error('Something went wrong');
+  }
+};

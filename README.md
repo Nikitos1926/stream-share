@@ -7,7 +7,8 @@
 - [x] anonymous session 
 - [x] private stream sessions
 - [x] toast notifications 
-- [ ] stream thumbnails
+- [x] stream thumbnails
+- [ ] env using dotenv
 - [ ] prune unused guest sessions 
 - [ ] deploy to hosting
 - [ ] desktop app

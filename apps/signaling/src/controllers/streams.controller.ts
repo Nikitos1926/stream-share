@@ -14,15 +14,20 @@ import {
   WsRequestEnvelope,
 } from '@stream-share/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { writeFile } from 'fs/promises';
+import path from 'path';
 import { validateWsJwt } from '../auth/validators';
+import { EntityNotFoundError } from '../errors/EntityNotFound.error';
 import { StreamersService } from '../services/streamers.service';
 import { StreamsService } from '../services/streams.service';
 import { UsersService } from '../services/users.service';
 import { ViewersService } from '../services/viewers.service';
-import { EntityNotFoundError } from '../errors/EntityNotFound.error';
+import { existsSync } from 'fs';
 
 export class StreamsController {
+  static readonly THUMBNAILS_DIR = '/data/thumbnails';
   private static readonly MAX_ATTEMPTS = 5;
+
   constructor(
     private readonly app: FastifyInstance,
     private readonly streamsService: StreamsService,
@@ -41,16 +46,22 @@ export class StreamsController {
         });
         app.addHook('preValidation', validateWsJwt);
 
-        app.post<{ Body: { isPrivate: boolean } }>('/', this.handleCreateStream);
+        app.post<{ Body: { isPrivate: boolean } }>('/', this.handleCreate);
 
-        app.post<{ Body: ListParams<Stream> }>('/search', this.handleGetStreams);
+        app.post<{ Body: ListParams<Stream> }>('/search', this.handleGetList);
 
-        app.get<{ Params: { userId: string } }>('/:userId/active', this.handleGetActiveStream);
+        app.get<{ Params: { userId: string } }>('/:userId/active', this.handleGetActive);
+
+        app.get<{ Params: { streamId: string } }>('/:streamId/thumbnail', this.handleGetThumbnail);
+        app.post<{ Params: { streamId: string } }>(
+          '/:streamId/thumbnail',
+          this.handleChangeThumbnail,
+        );
       },
       { prefix: '/streams' },
     );
 
-    this.app.get<{ Params: { streamId: string } }>('/streams/:streamId', this.handleGetStream);
+    this.app.get<{ Params: { streamId: string } }>('/streams/:streamId', this.handleGetOne);
 
     this.app.register(
       (app) => {
@@ -84,7 +95,7 @@ export class StreamsController {
     );
   }
 
-  private handleGetStream = async (
+  private handleGetOne = async (
     req: FastifyRequest<{ Params: { streamId: string } }>,
     res: FastifyReply,
   ) => {
@@ -109,7 +120,32 @@ export class StreamsController {
     }
   };
 
-  private handleGetStreams = async (
+  private handleGetActive = async (
+    req: FastifyRequest<{ Params: { userId: string } }>,
+    res: FastifyReply,
+  ) => {
+    try {
+      const stream = await this.streamsService.getLiveByUserId(req.params.userId);
+      res.status(200).send({ data: stream });
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        res.status(404).send({
+          error: {
+            message: error.message,
+          },
+        });
+      } else if (error instanceof Error) {
+        res.status(400).send({
+          error: {
+            message: error.message,
+          },
+        });
+        this.app.log.error(error);
+      }
+    }
+  };
+
+  private handleGetList = async (
     req: FastifyRequest<{ Body: ListParams<Stream> }>,
     res: FastifyReply,
   ) => {
@@ -142,32 +178,21 @@ export class StreamsController {
     }
   };
 
-  private handleGetActiveStream = async (
-    req: FastifyRequest<{ Params: { userId: string } }>,
+  private handleGetThumbnail = async (
+    req: FastifyRequest<{ Params: { streamId: string } }>,
     res: FastifyReply,
   ) => {
-    try {
-      const stream = await this.streamsService.getLiveByUserId(req.params.userId);
-      res.status(200).send({ data: stream });
-    } catch (error) {
-      if (error instanceof EntityNotFoundError) {
-        res.status(404).send({
-          error: {
-            message: error.message,
-          },
-        });
-      } else if (error instanceof Error) {
-        res.status(400).send({
-          error: {
-            message: error.message,
-          },
-        });
-        this.app.log.error(error);
-      }
+    const { streamId } = req.params;
+    const filePath = path.join(StreamsController.THUMBNAILS_DIR, `${streamId}.jpg`);
+
+    if (!existsSync(filePath)) {
+      return res.header('content-type', 'image/jpg').sendFile('_placeholder.jpg');
     }
+
+    return res.header('content-type', 'image/jpg').sendFile(`${streamId}.jpg`);
   };
 
-  private handleCreateStream = async (
+  private handleCreate = async (
     req: FastifyRequest<{ Body?: { isPrivate?: boolean } }>,
     res: FastifyReply,
   ) => {
@@ -187,6 +212,27 @@ export class StreamsController {
         this.app.log.error(error);
       }
     }
+  };
+
+  private handleChangeThumbnail = async (
+    req: FastifyRequest<{ Params: { streamId: string } }>,
+    res: FastifyReply,
+  ) => {
+    const { streamId } = req.params;
+    const userId = req.context.userId;
+    const stream = await this.streamsService.getOne(streamId);
+
+    if (!stream || stream.userId !== userId) {
+      return res.code(403).send({ error: { message: 'forbidden' } });
+    }
+
+    await this.streamsService.updateStream({id: streamId, thumbnailUpdatedAt: new Date()});
+    const filename = `${streamId}.jpg`;
+    const filePath = path.join(StreamsController.THUMBNAILS_DIR, filename);
+
+    await writeFile(filePath, req.body as Buffer);
+
+    return res.send({ ok: true });
   };
 
   private handleBroadcast = (
