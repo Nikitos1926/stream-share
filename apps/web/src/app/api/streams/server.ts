@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { signalingUrl } from '@/lib/signaling';
 
 export const getStream = async (streamId: string) => {
-  const response = await fetch(`/streams/${streamId}`);
+  const response = await fetch(signalingUrl(`/streams/${streamId}`));
 
   if (!response.ok) {
     if (response.status === 404) return { data: null };
