@@ -25,7 +25,7 @@ import { ViewersService } from '../services/viewers.service';
 import { existsSync } from 'fs';
 
 export class StreamsController {
-  static readonly THUMBNAILS_DIR = '/data/thumbnails';
+  static readonly THUMBNAILS_DIR = process.env.THUMBNAILS_DIR ?? '/data/thumbnails';
   private static readonly MAX_ATTEMPTS = 5;
 
   constructor(

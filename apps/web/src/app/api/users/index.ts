@@ -1,7 +1,8 @@
 import { User } from '@stream-share/db';
+import { API } from '../constants';
 
 export const getUser = async (userId: string) => {
-  const response = await fetch(`http://localhost:4000/users/${userId}`);
+  const response = await fetch(`${API}/users/${userId}`);
 
   if (!response.ok) {
     if (response.status === 404) return { data: null };

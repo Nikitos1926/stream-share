@@ -1,0 +1,79 @@
+name: stream-share
+
+x-images: &registry ghcr.io/nikitos1926/stream-share
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # no published port: only the app network needs it
+
+  migrate:
+    image: ${REGISTRY:-ghcr.io/nikitos1926/stream-share}/migrate:${IMAGE_TAG:-latest}
+    restart: 'no'
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  signaling:
+    image: ${REGISTRY:-ghcr.io/nikitos1926/stream-share}/signaling:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_SECRET: ${AUTH_SECRET} # MUST match the web app's AUTH_SECRET
+      CORS_ORIGIN: ${PUBLIC_WEB_ORIGIN}
+      THUMBNAILS_DIR: /data/thumbnails
+      MEDIASOUP_ANNOUNCED_IP: ${MEDIASOUP_ANNOUNCED_IP} # public IP of this host
+      MEDIASOUP_RTC_MIN_PORT: 40000
+      MEDIASOUP_RTC_MAX_PORT: 40100
+      MEDIASOUP_NUM_WORKERS: ${MEDIASOUP_NUM_WORKERS:-2}
+    volumes:
+      - thumbnails:/data/thumbnails
+    ports:
+      - '4000:4000'
+      - '40000-40100:40000-40100/udp'
+      - '40000-40100:40000-40100/tcp'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    # Alternative for large RTC ranges — one docker-proxy per published port is
+    # expensive, so on a dedicated host prefer:
+    #   network_mode: host   (then drop `ports:` and reach postgres over the host)
+
+  web:
+    image: ${REGISTRY:-ghcr.io/nikitos1926/stream-share}/web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_URL: ${PUBLIC_WEB_ORIGIN}
+      AUTH_TRUST_HOST: 'true'
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    ports:
+      - '3000:3000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+  thumbnails:

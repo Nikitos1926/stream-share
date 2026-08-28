@@ -6,7 +6,7 @@ export const NEXT_AUTH_SALT =
 export async function decodeAuthToken(rawToken: string): Promise<JWT | null> {
   const payload = await decode({
     salt: NEXT_AUTH_SALT,
-    secret: '8e880fb85520e3353a7beaea0f3c2073516d9e21de4c79d42e7069204ba8b896',
+    secret: process.env.AUTH_SECRET!,
     token: rawToken,
   });
 

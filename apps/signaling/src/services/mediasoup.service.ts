@@ -4,6 +4,18 @@ import os from 'os';
 
 export type TransportRole = 'send' | 'recv';
 
+const RTC_MIN_PORT = Number(process.env.MEDIASOUP_RTC_MIN_PORT ?? 40000);
+const RTC_MAX_PORT = Number(process.env.MEDIASOUP_RTC_MAX_PORT ?? 49999);
+const NUM_WORKERS = Number(process.env.MEDIASOUP_NUM_WORKERS) || os.cpus().length;
+
+// Must be the public IPv4 of the host: it is what ends up in the ICE candidates
+// the browser dials back on. Wrong value => transports connect nowhere.
+const ANNOUNCED_IP = process.env.MEDIASOUP_ANNOUNCED_IP ?? '127.0.0.1';
+
+if (process.env.NODE_ENV === 'production' && !process.env.MEDIASOUP_ANNOUNCED_IP) {
+  throw new Error('MEDIASOUP_ANNOUNCED_IP is required in production');
+}
+
 export class MediasoupService {
   private readonly workers: Worker[] = [];
   constructor() {}
@@ -25,11 +37,11 @@ export class MediasoupService {
   }
 
   async createWorkers(): Promise<Worker[]> {
-    for (let i = 0; i < os.cpus().length; i++) {
+    for (let i = 0; i < NUM_WORKERS; i++) {
       const worker = await mediasoup.createWorker({
         logLevel: 'warn',
-        rtcMinPort: 40000,
-        rtcMaxPort: 49999,
+        rtcMinPort: RTC_MIN_PORT,
+        rtcMaxPort: RTC_MAX_PORT,
       });
       this.workers.push(worker);
     }
@@ -64,7 +76,7 @@ export class MediasoupService {
 
   async createTransport(router: Router, direction: TransportRole): Promise<WebRtcTransport> {
     const transport = await router.createWebRtcTransport({
-      listenIps: [{ ip: '0.0.0.0', announcedIp: '127.0.0.1' }],
+      listenIps: [{ ip: '0.0.0.0', announcedIp: ANNOUNCED_IP }],
       enableUdp: true,
       enableTcp: true,
       preferUdp: true,

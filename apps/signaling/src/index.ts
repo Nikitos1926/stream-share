@@ -12,6 +12,7 @@ import { UsersController } from './controllers/users.controller';
 import staticPlugin from '@fastify/static';
 import { mkdir } from 'fs/promises';
 import { UsersService } from './services/users.service';
+import path from 'path';
 
 const startServer = async () => {
   await mkdir(StreamsController.THUMBNAILS_DIR, { recursive: true });
@@ -24,15 +25,19 @@ const startServer = async () => {
 
   await app.register(cookie);
   await app.register(cors, {
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
     credentials: true,
   });
+
   await app.register(websocketPlugin);
   await app.register(schedulePlugin);
   await app.register(dbPlugin);
   await app.register(diPlugin);
   await app.register(staticPlugin, {
-    root: StreamsController.THUMBNAILS_DIR,
+    root: [
+      StreamsController.THUMBNAILS_DIR,
+      process.env.ASSETS_DIR ?? path.join(import.meta.dirname, '../assets'),
+    ],
   });
 
   await app.di.init();
@@ -44,7 +49,7 @@ const startServer = async () => {
   app.di.resolve(StreamsController).initRoutes();
   app.di.resolve(UsersController).initRoutes();
 
-  await app.listen({ port: 4000 });
+  await app.listen({ port: Number(process.env.PORT ?? 4000), host: process.env.HOST ?? '0.0.0.0' });
 };
 
 startServer().catch(console.error);
