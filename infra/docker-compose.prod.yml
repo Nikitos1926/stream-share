@@ -44,8 +44,8 @@ services:
       MEDIASOUP_NUM_WORKERS: ${MEDIASOUP_NUM_WORKERS:-2}
     volumes:
       - thumbnails:/data/thumbnails
+    expose: ['4000']
     ports:
-      - '4000:4000'
       - '40000-40100:40000-40100/udp'
       - '40000-40100:40000-40100/tcp'
     depends_on:
@@ -68,12 +68,28 @@ services:
       AUTH_TRUST_HOST: 'true'
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-    ports:
-      - '3000:3000'
+    expose: ['3000']
     depends_on:
       migrate:
         condition: service_completed_successfully
 
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on: [web, signaling]
+
 volumes:
   postgres_data:
   thumbnails:
+  caddy_data:
+  caddy_config:
