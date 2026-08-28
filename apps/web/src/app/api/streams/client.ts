@@ -1,11 +1,11 @@
 import { Stream } from '@stream-share/db';
 import toast from 'react-hot-toast';
-import { API } from '../constants';
+import { signalingUrl } from '@/lib/signaling';
 
 export const createStream = async (isPrivate = false) => {
   let response;
   try {
-    response = await fetch(`${API}/streams`, {
+    response = await fetch(signalingUrl('/streams'), {
       method: 'post',
       credentials: 'include',
       body: JSON.stringify({ isPrivate }),
@@ -32,7 +32,7 @@ export const createStream = async (isPrivate = false) => {
 export const uploadThumbnail = async (streamId: string, image: Blob) => {
   let response;
   try {
-    response = await fetch(`${API}/streams/${streamId}/thumbnail`, {
+    response = await fetch(signalingUrl(`/streams/${streamId}/thumbnail`), {
       method: 'post',
       credentials: 'include',
       body: image,

@@ -1,8 +1,8 @@
+import { signalingUrl } from '@/lib/signaling';
 import { User } from '@stream-share/db';
-import { API } from '../constants';
 
 export const getUser = async (userId: string) => {
-  const response = await fetch(`${API}/users/${userId}`);
+  const response = await fetch(signalingUrl(`/users/${userId}`));
 
   if (!response.ok) {
     if (response.status === 404) return { data: null };

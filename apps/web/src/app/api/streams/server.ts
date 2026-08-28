@@ -1,10 +1,10 @@
 import { Stream, StreamWithRelations } from '@stream-share/db';
 import { ListParams } from '@stream-share/shared';
 import { cookies } from 'next/headers';
-import { API } from '../constants';
+import { signalingUrl } from '@/lib/signaling';
 
 export const getStream = async (streamId: string) => {
-  const response = await fetch(`${API}/streams/${streamId}`);
+  const response = await fetch(signalingUrl(`/streams/${streamId}`));
 
   if (!response.ok) {
     if (response.status === 404) return { data: null };
@@ -20,7 +20,7 @@ export const getStreams = async (params?: Partial<ListParams<Stream>>) => {
   const cookieStore = await cookies();
   let response;
   try {
-    response = await fetch(`${API}/streams/search`, {
+    response = await fetch(signalingUrl('/streams/search'), {
       method: 'post',
       headers: {
         'content-type': 'application/json',
