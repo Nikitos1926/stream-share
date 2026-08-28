@@ -5,10 +5,9 @@ import { Producer, ProducerOptions, Transport } from 'mediasoup-client/types';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
-import { createStream } from '@/app/api/streams/client';
+import { createStream, getActiveStream } from '@/app/api/streams/client';
 import toast from 'react-hot-toast';
 import { useThumbnailCapture } from './useThumbnailCapture';
-import { getActiveStream } from '@/app/api/streams/server';
 import { signalingWsUrl } from '../signaling';
 
 export function useStreamer() {
@@ -226,9 +225,7 @@ export function useStreamer() {
         mediaStreamRef.current.getTracks().map((t) => [t.kind, false]),
       );
 
-      wsClientRef.current = new WsClient(
-        signalingWsUrl(`/ws/streams/${stream.id}/broadcast`),
-      );
+      wsClientRef.current = new WsClient(signalingWsUrl(`/ws/streams/${stream.id}/broadcast`));
       wsClientRef.current.ws.addEventListener('close', handleSocketClose);
 
       const { result: rtpCapabilities } = await wsClientRef.current.request({
