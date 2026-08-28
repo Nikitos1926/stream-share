@@ -29,12 +29,7 @@ COPY tsconfig.base.json ./
 COPY packages packages
 COPY apps/web apps/web
 
-# NEXT_PUBLIC_* is inlined at build time — it cannot be injected at run time
-ARG NEXT_PUBLIC_SIGNALING_URL
-ARG NEXT_PUBLIC_SIGNALING_WS_URL
-ENV NEXT_PUBLIC_SIGNALING_URL=$NEXT_PUBLIC_SIGNALING_URL \
-    NEXT_PUBLIC_SIGNALING_WS_URL=$NEXT_PUBLIC_SIGNALING_WS_URL \
-    NODE_ENV=production \
+ENV NODE_ENV=production \
     # placeholder: lib/db creates a pg Pool at import time (it does not connect)
     DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build
 

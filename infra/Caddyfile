@@ -1,17 +1,18 @@
 {
-    email {$ACME_EMAIL}
+  email {$ACME_EMAIL}
 }
 
 {$PUBLIC_HOST} {
-    encode zstd gzip
+  encode zstd gzip
 
-    # signaling owns these paths; everything else is Next
-    @signaling path /streams /streams/* /ws/streams/*
-    handle @signaling {
-        reverse_proxy signaling:4000
-    }
+  # Everything under /sfu goes to signaling. handle_path strips the prefix,
+  # so /sfu/streams arrives at Fastify as /streams — no route changes needed,
+  # and new signaling routes never require a Caddyfile edit.
+  handle_path /sfu/* {
+    reverse_proxy signaling:4000
+  }
 
-    handle {
-        reverse_proxy web:3000
-    }
+  handle {
+    reverse_proxy web:3000
+  }
 }

@@ -50,7 +50,7 @@ ENV NODE_ENV=production \
     PORT=4000 \
     THUMBNAILS_DIR=/data/thumbnails \
     ASSETS_DIR=/app/apps/signaling/assets \
-    MEDIASOUP_RTC_MIN_PORT=10100 \
+    MEDIASOUP_RTC_MIN_PORT=10000 \
     MEDIASOUP_RTC_MAX_PORT=10100
 WORKDIR /app
 

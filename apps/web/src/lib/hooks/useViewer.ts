@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from 'react';
 import { WsClient } from '../media/WsClient';
 import { StreamStatus } from './useStreamer';
 import toast from 'react-hot-toast';
+import { signalingWsUrl } from '../signaling';
 
 export function useViewer() {
   const [status, setStatus] = useState<StreamStatus | null>(null);
@@ -126,7 +127,7 @@ export function useViewer() {
   const watch = useCallback(
     async (streamId: string) => {
       setStatus(StreamStatus.Connecting);
-      wsClientRef.current = new WsClient(`ws://localhost:4000/ws/streams/${streamId}/watch`);
+      wsClientRef.current = new WsClient(signalingWsUrl(`/ws/streams/${streamId}/watch`));
       wsClientRef.current.ws.addEventListener('close', handleSocketClose);
       streamerReconnectedDisposerRef.current = wsClientRef.current.on(
         'streamerReconnected',

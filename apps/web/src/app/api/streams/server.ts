@@ -4,11 +4,26 @@ import { cookies } from 'next/headers';
 import { signalingUrl } from '@/lib/signaling';
 
 export const getStream = async (streamId: string) => {
-  const response = await fetch(signalingUrl(`/streams/${streamId}`));
+  const response = await fetch(`/streams/${streamId}`);
 
   if (!response.ok) {
     if (response.status === 404) return { data: null };
     throw new Error(`Failed to fetch stream by id "${streamId}": ${response.status}`);
+  }
+
+  return response.json() as Promise<{
+    data: StreamWithRelations;
+  }>;
+};
+
+export const getActiveStream = async (userId: string) => {
+  const response = await fetch(signalingUrl(`/streams/${userId}/active`), {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) return { data: null };
+    throw new Error(`Failed to fetch stream by user id "${userId}": ${response.status}`);
   }
 
   return response.json() as Promise<{

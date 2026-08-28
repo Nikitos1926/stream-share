@@ -8,6 +8,8 @@ import { WsClient } from '../media/WsClient';
 import { createStream } from '@/app/api/streams/client';
 import toast from 'react-hot-toast';
 import { useThumbnailCapture } from './useThumbnailCapture';
+import { getActiveStream } from '@/app/api/streams/server';
+import { signalingWsUrl } from '../signaling';
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -39,29 +41,14 @@ export function useStreamer() {
 
   const checkActiveStream = useCallback(async () => {
     if (!userId) return;
-    let response;
     try {
-      response = await fetch(`http://localhost:4000/streams/${userId}/active`, {
-        credentials: 'include',
-      });
+      const response = await getActiveStream(userId);
+      setHasActiveStream(response.data ? true : false);
+      setCurrentStream(response.data);
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong');
       return;
-    }
-    if (!response.ok) {
-      setHasActiveStream(false);
-      setCurrentStream(null);
-      return;
-    }
-
-    try {
-      const { data } = (await response.json()) as { data: Stream };
-      setHasActiveStream(data ? true : false);
-      setCurrentStream(data ?? null);
-    } catch (error) {
-      console.log(error);
-      toast.error('Something went wrong');
     }
   }, [userId]);
 
@@ -239,7 +226,9 @@ export function useStreamer() {
         mediaStreamRef.current.getTracks().map((t) => [t.kind, false]),
       );
 
-      wsClientRef.current = new WsClient(`ws://localhost:4000/ws/streams/${stream.id}/broadcast`);
+      wsClientRef.current = new WsClient(
+        signalingWsUrl(`/ws/streams/${stream.id}/broadcast`),
+      );
       wsClientRef.current.ws.addEventListener('close', handleSocketClose);
 
       const { result: rtpCapabilities } = await wsClientRef.current.request({

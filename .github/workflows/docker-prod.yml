@@ -26,9 +26,7 @@ jobs:
         include:
           - name: web
             dockerfile: apps/web/Dockerfile
-            build_args: |
-              NEXT_PUBLIC_SIGNALING_URL=${{ vars.NEXT_PUBLIC_SIGNALING_URL }}
-              NEXT_PUBLIC_SIGNALING_WS_URL=${{ vars.NEXT_PUBLIC_SIGNALING_WS_URL }}
+            build_args: ''
           - name: signaling
             dockerfile: apps/signaling/Dockerfile
             build_args: ''

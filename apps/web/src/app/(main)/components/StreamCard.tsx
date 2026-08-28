@@ -2,6 +2,7 @@ import { StreamWithRelations } from '@stream-share/db';
 import { Play } from 'lucide-react';
 import { Typography } from '@/app/components/ui/Typography';
 import { Link } from '@/app/components/ui/Link';
+import { signalingUrl } from '@/lib/signaling';
 
 export async function StreamCard(props: { stream: StreamWithRelations }) {
   const { stream } = props;
@@ -12,7 +13,7 @@ export async function StreamCard(props: { stream: StreamWithRelations }) {
         <Link href={`${stream.id}/watch`} variant="unstyled" className="absolute inset-0 block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`http://localhost:4000/streams/${stream.id}/thumbnail?t=${stream.thumbnailUpdatedAt}`}
+            src={signalingUrl(`/streams/${stream.id}/thumbnail?t=${stream.thumbnailUpdatedAt}`)}
             alt={stream.streamer!.name!}
             className="size-full object-contain"
           />

@@ -23,12 +23,12 @@ const startServer = async () => {
     done(null, body),
   );
 
-  await app.register(cookie);
-  await app.register(cors, {
-    origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
-    credentials: true,
-  });
+  const corsOrigin = process.env.CORS_ORIGIN;
+  if (corsOrigin) {
+    await app.register(cors, { origin: corsOrigin, credentials: true });
+  }
 
+  await app.register(cookie);
   await app.register(websocketPlugin);
   await app.register(schedulePlugin);
   await app.register(dbPlugin);
