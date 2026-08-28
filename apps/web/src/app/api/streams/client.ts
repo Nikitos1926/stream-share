@@ -1,4 +1,4 @@
-import { Stream } from '@stream-share/db';
+import { Stream, StreamWithRelations } from '@stream-share/db';
 import toast from 'react-hot-toast';
 import { signalingUrl } from '@/lib/signaling';
 
@@ -54,4 +54,19 @@ export const uploadThumbnail = async (streamId: string, image: Blob) => {
     console.log(error);
     toast.error('Something went wrong');
   }
+};
+
+export const getActiveStream = async (userId: string) => {
+  const response = await fetch(signalingUrl(`/streams/${userId}/active`), {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) return { data: null };
+    throw new Error(`Failed to fetch stream by user id "${userId}": ${response.status}`);
+  }
+
+  return response.json() as Promise<{
+    data: StreamWithRelations;
+  }>;
 };
