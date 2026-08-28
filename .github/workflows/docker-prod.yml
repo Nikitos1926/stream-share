@@ -19,7 +19,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       matrix:
@@ -63,7 +63,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           # mediasoup prebuilt workers exist for arm64 too, but emulated builds
           # are slow — add linux/arm64 only if you deploy on arm.
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
           provenance: false
           build-args: ${{ matrix.build_args }}
