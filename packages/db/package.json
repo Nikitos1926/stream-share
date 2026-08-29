@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio --port 7000",
+    "db:studio": "dotenvx run -f ../../.env.development -- drizzle-kit studio --port 7000",
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "pg": "^8.21.0"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^2.22.0",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "1.0.0-beta.22",
     "typescript": "^7.0.2"

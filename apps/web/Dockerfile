@@ -29,9 +29,7 @@ COPY tsconfig.base.json ./
 COPY packages packages
 COPY apps/web apps/web
 
-ENV NODE_ENV=production \
-    # placeholder: lib/db creates a pg Pool at import time (it does not connect)
-    DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build
+ENV NODE_ENV=production
 
 RUN pnpm --filter @stream-share/db build \
  && pnpm --filter @stream-share/shared build \
@@ -40,9 +38,7 @@ RUN pnpm --filter @stream-share/db build \
 # ---------- runner ----------
 FROM node:${NODE_VERSION} AS runner
 ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000 \
-    HOSTNAME=0.0.0.0
+    NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
 COPY --from=build --chown=node:node /app/apps/web/.next/standalone ./
@@ -52,3 +48,4 @@ COPY --from=build --chown=node:node /app/apps/web/public ./apps/web/public
 USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]
+

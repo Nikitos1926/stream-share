@@ -1,4 +1,4 @@
-import { NewUser, users } from '@stream-share/db';
+import { NewUser } from '@stream-share/db';
 import NextAuth, { type NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../db';

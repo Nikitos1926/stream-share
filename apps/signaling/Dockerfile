@@ -41,17 +41,11 @@ RUN pnpm --filter @stream-share/db build \
 FROM manifests AS prod-deps
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod --node-linker=hoisted \
-      --filter @stream-share/signaling...
+      --filter @stream-share/signaling
 
 # ---------- runner ----------
 FROM node:${NODE_VERSION} AS runner
-ENV NODE_ENV=production \
-    HOST=0.0.0.0 \
-    PORT=4000 \
-    THUMBNAILS_DIR=/data/thumbnails \
-    ASSETS_DIR=/app/apps/signaling/assets \
-    MEDIASOUP_RTC_MIN_PORT=10000 \
-    MEDIASOUP_RTC_MAX_PORT=10100
+ENV NODE_ENV=production
 WORKDIR /app
 
 COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules

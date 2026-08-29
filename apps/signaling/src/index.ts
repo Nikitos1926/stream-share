@@ -13,6 +13,19 @@ import staticPlugin from '@fastify/static';
 import { mkdir } from 'fs/promises';
 import { UsersService } from './services/users.service';
 import path from 'path';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+
+const isProduction = process.env.NODE_ENV === 'production';
+const rootEnvPath = path.join(import.meta.dirname, '../../../');
+const localEnvPath = path.join(import.meta.dirname, '../');
+const envFileName = isProduction ? '.env.production' : '.env.development';
+
+dotenvExpand.expand(
+  dotenv.config({
+    path: [path.join(rootEnvPath, envFileName), path.join(localEnvPath, envFileName)],
+  }),
+);
 
 const startServer = async () => {
   await mkdir(StreamsController.THUMBNAILS_DIR, { recursive: true });

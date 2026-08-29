@@ -1,13 +1,17 @@
 name: stream-share
 
+env:
+  ACME_EMAIL: nikita.kabakov.mail@gmail.com
+  IMAGE_TAG: latest
+  PUBLIC_HOST: streamshare.space
+  REGISTRY: ghcr.io/nikitos1926/stream-share
+
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    env:
+      env_file: ../.env.production
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -19,8 +23,8 @@ services:
   migrate:
     image: ${REGISTRY}/migrate:${IMAGE_TAG:-latest}
     restart: 'no'
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    env:
+      env_file: ../.env.production
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,19 +33,13 @@ services:
     image: ${REGISTRY}/signaling:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose: ['4000']
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      AUTH_SECRET: ${AUTH_SECRET}
-      MEDIASOUP_ANNOUNCED_IP: ${MEDIASOUP_ANNOUNCED_IP}
-      MEDIASOUP_NUM_WORKERS: ${MEDIASOUP_NUM_WORKERS:-2}
-      # fixed infrastructure values — must match the published range below
-      MEDIASOUP_RTC_MIN_PORT: 10000
-      MEDIASOUP_RTC_MAX_PORT: 10100
     volumes:
+      - ../.env.production:/app/.env.production
+      - ../apps/signaling/.env.production:/app/apps/signaling/.env.production
       - thumbnails:/data/thumbnails
     ports:
-      - '40000-40100:40000-40100/udp'
-      - '40000-40100:40000-40100/tcp'
+      - '10000-10100:10000-10100/udp'
+      - '10000-10100:10000-10100/tcp'
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -50,27 +48,21 @@ services:
     image: ${REGISTRY}/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose: ['3000']
+    volumes:
+      - ../.env.production:/app/.env.production
+      - ../apps/web/.env.production:/app/apps/web/.env.production
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      AUTH_SECRET: ${AUTH_SECRET}
       AUTH_URL: 'https://${PUBLIC_HOST}'
       AUTH_TRUST_HOST: 'true'
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      # server-side calls go straight over the compose network
-      SIGNALING_INTERNAL_URL: http://signaling:4000
     depends_on:
       migrate:
         condition: service_completed_successfully
 
   caddy:
     image: caddy:2-alpine
-    restart: unless-stopped
-    environment:
-      PUBLIC_HOST: ${PUBLIC_HOST}
-      ACME_EMAIL: ${ACME_EMAIL}
+    command: ['caddy', 'run', '--config', '/etc/caddy/Caddyfile', '--watch']
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy:/etc/caddy:ro
       - caddy_data:/data
       - caddy_config:/config
     ports:
