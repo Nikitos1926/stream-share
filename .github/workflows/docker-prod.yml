@@ -94,6 +94,6 @@ jobs:
             git checkout -f "tags/${GITHUB_REF_NAME}"
             export IMAGE_TAG="${GITHUB_REF_NAME#v}"
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker compose -f infra/docker-compose.prod.yml --env-file infra/.env.production pull
-            docker compose -f infra/docker-compose.prod.yml --env-file infra/.env.production up -d --remove-orphans
+            docker compose -f infra/docker-compose.prod.yml pull
+            docker compose -f infra/docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
