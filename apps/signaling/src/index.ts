@@ -13,19 +13,7 @@ import staticPlugin from '@fastify/static';
 import { mkdir } from 'fs/promises';
 import { UsersService } from './services/users.service';
 import path from 'path';
-import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
-
-const isProduction = process.env.NODE_ENV === 'production';
-const rootEnvPath = path.join(import.meta.dirname, '../../../');
-const localEnvPath = path.join(import.meta.dirname, '../');
-const envFileName = isProduction ? '.env.production' : '.env.development';
-
-dotenvExpand.expand(
-  dotenv.config({
-    path: [path.join(rootEnvPath, envFileName), path.join(localEnvPath, envFileName)],
-  }),
-);
+import { env } from '@stream-share/env/signaling';
 
 const startServer = async () => {
   await mkdir(StreamsController.THUMBNAILS_DIR, { recursive: true });
@@ -36,9 +24,8 @@ const startServer = async () => {
     done(null, body),
   );
 
-  const corsOrigin = process.env.CORS_ORIGIN;
-  if (corsOrigin) {
-    await app.register(cors, { origin: corsOrigin, credentials: true });
+  if (env.CORS_ORIGIN) {
+    await app.register(cors, { origin: env.CORS_ORIGIN, credentials: true });
   }
 
   await app.register(cookie);
@@ -49,7 +36,7 @@ const startServer = async () => {
   await app.register(staticPlugin, {
     root: [
       StreamsController.THUMBNAILS_DIR,
-      process.env.ASSETS_DIR ?? path.join(import.meta.dirname, '../assets'),
+      env.ASSETS_DIR ?? path.join(import.meta.dirname, '../assets'),
     ],
   });
 
@@ -62,7 +49,7 @@ const startServer = async () => {
   app.di.resolve(StreamsController).initRoutes();
   app.di.resolve(UsersController).initRoutes();
 
-  await app.listen({ port: Number(process.env.PORT ?? 4000), host: process.env.HOST ?? '0.0.0.0' });
+  await app.listen({ port: env.PORT, host: env.HOST });
 };
 
 startServer().catch(console.error);

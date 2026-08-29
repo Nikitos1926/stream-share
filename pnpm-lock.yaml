@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: ^2.22.0
+        version: 2.22.0
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.0(jiti@2.7.0))
@@ -17,12 +20,6 @@ importers:
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
-      dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
-      dotenv-expand:
-        specifier: ^1000.0.0
-        version: 1000.0.0
       eslint:
         specifier: ^10.4.0
         version: 10.4.0(jiti@2.7.0)
@@ -86,6 +83,9 @@ importers:
       '@stream-share/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@stream-share/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@stream-share/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -105,6 +105,9 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: ^2.22.0
+        version: 2.22.0
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
@@ -129,6 +132,9 @@ importers:
       '@stream-share/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@stream-share/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@stream-share/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -174,6 +180,9 @@ importers:
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -218,6 +227,16 @@ importers:
       drizzle-kit:
         specifier: 1.0.0-beta.22
         version: 1.0.0-beta.22
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/env:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -2341,20 +2360,12 @@ packages:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
 
-  dotenv-expand@1000.0.0:
-    resolution: {integrity: sha512-3T4TtUjXm5iGKFEirqKjcDJ0EheFJbv9peb5xytC+HNu3l5Ygnu4dYE8yeqkppHMsh1If9C/A//EJu7IPtNu+A==}
-    engines: {node: '>=16'}
-
   dotenv-expand@11.0.7:
     resolution: {integrity: sha512-zIHwmZPRshsCdpMDyVsqGmgyP0yT8GAgXUnkdAoJisxvf33k7yO6OuoKmcTGuXPWSsm8Oh88nZicRLA9Y0rUeA==}
     engines: {node: '>=12'}
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
-    engines: {node: '>=12'}
-
-  dotenv@17.4.2:
-    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
     engines: {node: '>=12'}
 
   drizzle-kit@1.0.0-beta.22:
@@ -6609,15 +6620,11 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  dotenv-expand@1000.0.0: {}
-
   dotenv-expand@11.0.7:
     dependencies:
       dotenv: 16.6.1
 
   dotenv@16.6.1: {}
-
-  dotenv@17.4.2: {}
 
   drizzle-kit@1.0.0-beta.22:
     dependencies:

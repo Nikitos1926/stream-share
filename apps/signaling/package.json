@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "dotenvx run -q -f .env.development -- tsx watch src/index.ts",
     "build": "tsup",
     "start": "node dist/index.js",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^2.22.0",
     "@types/ws": "^8.18.1",
     "tsx": "^4.19.2",
     "typescript": "^7.0.2"
@@ -23,6 +24,7 @@
     "@fastify/static": "^10.1.3",
     "@fastify/websocket": "^11.2.0",
     "@stream-share/db": "workspace:*",
+    "@stream-share/env": "workspace:*",
     "@stream-share/shared": "workspace:*",
     "drizzle-orm": "1.0.0-beta.22",
     "fastify": "^5.8.5",

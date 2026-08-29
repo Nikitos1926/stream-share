@@ -1,58 +1,70 @@
 name: stream-share
 
-env:
-  ACME_EMAIL: nikita.kabakov.mail@gmail.com
-  IMAGE_TAG: latest
-  PUBLIC_HOST: streamshare.space
-  REGISTRY: ghcr.io/nikitos1926/stream-share
+# Configuration comes from the repository root .env.production, which serves both
+# roles below. Run via `pnpm prod:up` / `pnpm prod:down` from the repository root,
+# which supply the required `--env-file` flag:
+#
+#   docker compose --env-file .env.production -f infra/docker-compose.prod.yml up -d
+#
+#   * `--env-file`  resolves the ${VAR} references in this file.
+#   * `env_file:`   injects variables into a service's own environment.
+#
+# `env_file:` paths are relative to this file, so `../` is the repository root.
+# `${VAR:?}` fails immediately when VAR is unset or empty, rather than silently
+# interpolating a blank string.
 
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
-    env:
-      env_file: ../.env.production
+    env_file:
+      - ../.env.production
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      # Interpolated by Compose, not read from env_file — env_file values are not
+      # available for ${} substitution.
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:?} -d ${POSTGRES_DB:?}']
       interval: 5s
       timeout: 5s
       retries: 10
 
   migrate:
-    image: ${REGISTRY}/migrate:${IMAGE_TAG:-latest}
+    image: ${REGISTRY:?}/migrate:${IMAGE_TAG:-latest}
     restart: 'no'
-    env:
-      env_file: ../.env.production
+    env_file:
+      - ../.env.production
     depends_on:
       postgres:
         condition: service_healthy
 
   signaling:
-    image: ${REGISTRY}/signaling:${IMAGE_TAG:-latest}
+    image: ${REGISTRY:?}/signaling:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose: ['4000']
+    env_file:
+      - ../.env.production
+      - ../apps/signaling/.env.production
     volumes:
-      - ../.env.production:/app/.env.production
-      - ../apps/signaling/.env.production:/app/apps/signaling/.env.production
       - thumbnails:/data/thumbnails
     ports:
-      - '10000-10100:10000-10100/udp'
-      - '10000-10100:10000-10100/tcp'
+      # Same range signaling allocates transports from — one definition, in the
+      # root .env.production, rather than two that have to be kept in step.
+      - '${MEDIASOUP_RTC_MIN_PORT:?}-${MEDIASOUP_RTC_MAX_PORT:?}:${MEDIASOUP_RTC_MIN_PORT:?}-${MEDIASOUP_RTC_MAX_PORT:?}/udp'
+      - '${MEDIASOUP_RTC_MIN_PORT:?}-${MEDIASOUP_RTC_MAX_PORT:?}:${MEDIASOUP_RTC_MIN_PORT:?}-${MEDIASOUP_RTC_MAX_PORT:?}/tcp'
     depends_on:
       migrate:
         condition: service_completed_successfully
 
   web:
-    image: ${REGISTRY}/web:${IMAGE_TAG:-latest}
+    image: ${REGISTRY:?}/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose: ['3000']
-    volumes:
-      - ../.env.production:/app/.env.production
-      - ../apps/web/.env.production:/app/apps/web/.env.production
+    env_file:
+      - ../.env.production
+      - ../apps/web/.env.production
     environment:
-      AUTH_URL: 'https://${PUBLIC_HOST}'
+      AUTH_URL: 'https://${PUBLIC_HOST:?}'
       AUTH_TRUST_HOST: 'true'
     depends_on:
       migrate:
@@ -61,6 +73,11 @@ services:
   caddy:
     image: caddy:2-alpine
     command: ['caddy', 'run', '--config', '/etc/caddy/Caddyfile', '--watch']
+    # Caddy resolves the {$VAR} placeholders in the Caddyfile from its own
+    # environment, so they have to be passed in explicitly.
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?}
+      PUBLIC_HOST: ${PUBLIC_HOST:?}
     volumes:
       - ./caddy:/etc/caddy:ro
       - caddy_data:/data

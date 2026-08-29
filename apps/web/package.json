@@ -13,6 +13,7 @@
     "@dicebear/core": "^10.4.0",
     "@dicebear/styles": "^10.3.0",
     "@stream-share/db": "workspace:*",
+    "@stream-share/env": "workspace:*",
     "@stream-share/shared": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -27,7 +28,8 @@
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
     "screenfull": "^6.0.2",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

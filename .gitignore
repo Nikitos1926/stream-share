@@ -11,11 +11,15 @@ out/
 *.tsbuildinfo
 
 # Env files
+# Real secrets are never tracked; templates and non-secret defaults are.
 .env
 .env.local
 .env.*.local
 .env.production
-!.env.production.example
+!.env.example
+!.env.*.example
+# Public, non-secret NEXT_PUBLIC_* defaults — see the header in that file.
+!apps/web/.env
 
 # Editor
 .vscode/*

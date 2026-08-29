@@ -22,6 +22,7 @@ COPY apps/web/package.json apps/web/
 COPY apps/signaling/package.json apps/signaling/
 COPY apps/desktop/package.json apps/desktop/
 COPY packages/db/package.json packages/db/
+COPY packages/env/package.json packages/env/
 COPY packages/shared/package.json packages/shared/
 
 # ---------- build ----------
@@ -33,6 +34,7 @@ COPY packages packages
 COPY apps/signaling apps/signaling
 RUN pnpm --filter @stream-share/db build \
  && pnpm --filter @stream-share/shared build \
+ && pnpm --filter @stream-share/env build \
  && pnpm --filter @stream-share/signaling build
 
 # ---------- production dependency tree ----------

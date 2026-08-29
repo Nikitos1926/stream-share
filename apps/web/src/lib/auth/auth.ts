@@ -3,6 +3,7 @@ import NextAuth, { type NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../db';
 import { DrizzleAdapter } from '../db/adapter';
+import { env } from '../env/server';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Style, Avatar } from '@dicebear/core';
 import identicon from '@dicebear/styles/identicon.json' with { type: 'json' };
@@ -45,8 +46,8 @@ const config: NextAuthConfig = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   callbacks: {
@@ -69,7 +70,7 @@ const config: NextAuthConfig = {
     signIn: '/login',
     error: '/login',
   },
-  debug: true,
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const nextAuth = NextAuth(config);

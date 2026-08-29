@@ -1,4 +1,5 @@
 import { createDb } from '@stream-share/db';
+import { env } from '@stream-share/env/signaling';
 import fp from 'fastify-plugin';
 
 const dbName = 'db';
@@ -6,8 +7,7 @@ const dbName = 'db';
 export default fp(
   function (fastify) {
     if (dbName in fastify && fastify[dbName]) return;
-    // const db = createDb('postgresql://postgres:postgres@localhost:5432/streamshare');
-    const db = createDb(process.env.DATABASE_URL!);
+    const db = createDb(env.DATABASE_URL);
     fastify.decorate(dbName, db);
   },
   { name: 'fastify-db' },

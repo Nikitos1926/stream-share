@@ -28,20 +28,35 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # libs first: apps import @stream-share/{db,shared} from dist/
+      # libs first: apps import @stream-share/{db,env,shared} from dist/
       - name: Build workspace libraries
         run: |
           pnpm --filter @stream-share/db build
           pnpm --filter @stream-share/shared build
+          pnpm --filter @stream-share/env build
 
       - run: pnpm -r run lint
 
       - run: pnpm --filter @stream-share/signaling typecheck
 
-      # next build type-checks the web app as part of the build
+      # next build type-checks the web app as part of the build.
+      # Secrets are injected at run time, so the server schema has nothing to
+      # validate here. The client schema still runs — NEXT_PUBLIC_* values are
+      # inlined into the bundle and come from the tracked apps/web/.env.
       - name: Build web
         run: pnpm --filter @stream-share/web build
         env:
-          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+          SKIP_ENV_VALIDATION: 1
 
       - run: pnpm --filter @stream-share/signaling build
+
+      # Exercises the documented setup path end to end: the examples must be
+      # complete enough to produce a compose file that validates. Catches both an
+      # invalid schema and a ${VAR} that nothing supplies.
+      - name: Validate production compose
+        run: |
+          cp .env.example .env.production
+          cp apps/web/.env.production.example apps/web/.env.production
+          cp apps/signaling/.env.production.example apps/signaling/.env.production
+          docker compose --env-file .env.production \
+            -f infra/docker-compose.prod.yml config -q

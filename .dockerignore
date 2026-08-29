@@ -8,8 +8,18 @@
 .git
 .github
 .vscode
-**/.env
-**/.env.local
-**/.env.*.local
+docs
 **/*.log
 .pnpm-store
+
+# Env files never enter the build context — production config is injected at run
+# time via `env_file:` in infra/docker-compose.prod.yml. Without the .env.*
+# pattern, `COPY apps/web apps/web` would bake a developer's local
+# .env.production into a published image layer.
+**/.env
+**/.env.*
+
+# One deliberate exception: public, non-secret NEXT_PUBLIC_* defaults that
+# `next build` must inline into the client bundle. Keeping this as the single
+# source of truth beats duplicating the values as Dockerfile defaults.
+!apps/web/.env

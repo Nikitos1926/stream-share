@@ -1,20 +1,13 @@
+import { env } from '@stream-share/env/signaling';
 import mediasoup from 'mediasoup';
 import type { Router, WebRtcTransport, Worker } from 'mediasoup/types';
-import os from 'os';
 
 export type TransportRole = 'send' | 'recv';
 
-const RTC_MIN_PORT = Number(process.env.MEDIASOUP_RTC_MIN_PORT ?? 40000);
-const RTC_MAX_PORT = Number(process.env.MEDIASOUP_RTC_MAX_PORT ?? 49999);
-const NUM_WORKERS = Number(process.env.MEDIASOUP_NUM_WORKERS) || os.cpus().length;
-
-// Must be the public IPv4 of the host: it is what ends up in the ICE candidates
-// the browser dials back on. Wrong value => transports connect nowhere.
-const ANNOUNCED_IP = process.env.MEDIASOUP_ANNOUNCED_IP ?? '127.0.0.1';
-
-if (process.env.NODE_ENV === 'production' && !process.env.MEDIASOUP_ANNOUNCED_IP) {
-  throw new Error('MEDIASOUP_ANNOUNCED_IP is required in production');
-}
+const RTC_MIN_PORT = env.MEDIASOUP_RTC_MIN_PORT;
+const RTC_MAX_PORT = env.MEDIASOUP_RTC_MAX_PORT;
+const NUM_WORKERS = env.MEDIASOUP_NUM_WORKERS;
+const ANNOUNCED_IP = env.MEDIASOUP_ANNOUNCED_IP;
 
 export class MediasoupService {
   private readonly workers: Worker[] = [];
