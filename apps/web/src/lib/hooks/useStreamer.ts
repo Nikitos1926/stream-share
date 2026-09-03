@@ -9,12 +9,14 @@ import { createStream, getActiveStream } from '@/app/api/streams/client';
 import toast from 'react-hot-toast';
 import { useThumbnailCapture } from './useThumbnailCapture';
 import { signalingWsUrl } from '../signaling';
+import { useBeforeUnload } from './useBeforeUnload';
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isMuteToggleEnabled, setIsMuteToggleEnabled] = useState<boolean>(false);
   const [hasActiveStream, setHasActiveStream] = useState<boolean>(false);
+  const [isCheckingActiveStream, setIsCheckingActiveStream] = useState<boolean>(false);
   const [currentStream, setCurrentStream] = useState<Stream | null>(null);
   const [status, setStatus] = useState<StreamStatus | null>(null);
   const [quality, setQuality] = useState<StreamQuality>(StreamQuality.HD);
@@ -29,6 +31,7 @@ export function useStreamer() {
   const startCapturingThumbnail = useThumbnailCapture(videoRef);
 
   const toggleMute = useCallback(() => {
+    setIsCheckingActiveStream(true);
     setIsMuted((prevIsMuted) => {
       const audioProducer = producersRef.current.find((p) => p.kind === 'audio');
       if (!audioProducer) return !prevIsMuted;
@@ -47,6 +50,7 @@ export function useStreamer() {
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong');
+      setIsCheckingActiveStream(false);
       return;
     }
   }, [userId]);
@@ -201,20 +205,6 @@ export function useStreamer() {
     videoRef.current.srcObject = newStream;
   }, [captureStream, replaceStream, stopBroadcast]);
 
-  const pickSource = useCallback(async () => {
-    if (!videoRef.current) return;
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
-      stopMediaTracks();
-    }
-    const stream = await captureStream();
-
-    videoRef.current.srcObject = stream;
-    mediaStreamRef.current = stream;
-
-    setStatus(StreamStatus.Preview);
-  }, [captureStream, stopBroadcast, stopMediaTracks]);
-
   const connectToStream = useCallback(
     async (stream: Stream) => {
       if (!mediaStreamRef.current) {
@@ -288,6 +278,34 @@ export function useStreamer() {
     stopCapturingThumbnailRef.current = startCapturingThumbnail(stream.id);
   }, [connectToStream, isPrivate, startCapturingThumbnail]);
 
+  const pickSource = useCallback(async () => {
+    if (!videoRef.current) return;
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
+      stopMediaTracks();
+    }
+
+    let forcedTabSwitch = false;
+    const handleVisibilityChange = () => {
+      if (document.hidden) forcedTabSwitch = true;
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    const stream = await captureStream();
+
+    // Wait one event-loop tick so a visibilitychange dispatched
+    // asynchronously right after the promise resolves still gets caught
+    await new Promise((r) => setTimeout(r, 0));
+
+    videoRef.current.srcObject = stream;
+    mediaStreamRef.current = stream;
+    setStatus(StreamStatus.Preview);
+
+    if (forcedTabSwitch) {
+      broadcast();
+    }
+  }, [broadcast, captureStream, stopBroadcast, stopMediaTracks]);
+
   const reconnect = useCallback(async () => {
     if (!currentStream || !hasActiveStream || !videoRef.current) return;
     await pickSource();
@@ -303,12 +321,15 @@ export function useStreamer() {
     void checkActiveStream();
   }, [checkActiveStream]);
 
+  useBeforeUnload(status === StreamStatus.Live, stopBroadcast);
+
   return {
     videoRef,
     isPrivate,
     isMuted,
     isMuteToggleEnabled,
     hasActiveStream,
+    isCheckingActiveStream,
     currentStream,
     status,
     quality,

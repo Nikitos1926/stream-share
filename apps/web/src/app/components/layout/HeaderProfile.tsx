@@ -1,12 +1,12 @@
 'use client';
 
+import { Link } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Button } from './ui/Button';
-import { Typography } from './ui/Typography';
-import { Link } from './ui/Link';
+import { Button } from '../ui/Button';
+import { Typography } from '../ui/Typography';
 
 export function HeaderProfile({ name, image, email, role }: Session['user']) {
   const [isOpen, setIsOpen] = useState(false);

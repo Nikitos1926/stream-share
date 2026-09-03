@@ -1,11 +1,10 @@
+import { Link } from '../ui/Link';
+import { Typography } from '../ui/Typography';
 import { Logo } from './Logo';
-import { Link } from './ui/Link';
-import { Typography } from './ui/Typography';
 
 export function Footer() {
   return (
     <footer className="mt-(--footer-gap) h-(--footer-h) w-full border-t-2 border-line bg-surface">
-      {' '}
       <div className="container mx-auto flex h-full items-center justify-between">
         <Link href="/" variant="unstyled" className="flex items-center justify-around gap-2">
           <Logo className="h-6 w-6 text-stroke-muted" />

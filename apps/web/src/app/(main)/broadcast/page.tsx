@@ -3,6 +3,7 @@
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { Typography } from '@/app/components/ui/Typography';
+import { StreamControlsSkeleton } from '@/app/components/video/StreamControlsSkeleton';
 import { StreamQuality, StreamStatus, useStreamer } from '@/lib/hooks/useStreamer';
 import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useState } from 'react';
@@ -17,6 +18,8 @@ export default function Broadcast() {
     isPrivate,
     isMuted,
     isMuteToggleEnabled,
+    hasActiveStream,
+    isCheckingActiveStream,
     currentStream,
     status,
     quality,
@@ -27,13 +30,12 @@ export default function Broadcast() {
     changeSource,
     broadcast,
     stopBroadcast,
-    hasActiveStream,
     reconnect,
   } = useStreamer();
   const isLive = status === StreamStatus.Live;
 
   const constructInviteLink = () => {
-    return currentStream
+    return currentStream && isLive
       ? `${window.location.host}/${currentStream.id}/watch`
       : 'Stream is not live yet';
   };
@@ -55,7 +57,7 @@ export default function Broadcast() {
 
   return (
     <div className="container flex flex-col gap-4 py-4 landscape:h-[calc(100dvh-var(--header-h))]">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center rounded-md border-2 border-line bg-surface">
+      <div className="flex min-h-45 min-w-0 flex-1 flex-col items-center justify-center rounded-md border-2 border-line bg-surface">
         <div className="relative aspect-video max-h-full max-w-full portrait:h-auto portrait:w-full landscape:h-full landscape:w-auto">
           <video
             ref={videoRef}
@@ -74,7 +76,9 @@ export default function Broadcast() {
       </div>
 
       <div className="flex flex-col gap-4 rounded-md border-2 border-line bg-surface p-4">
-        {hasActiveStream ? (
+        {isCheckingActiveStream ? (
+          <StreamControlsSkeleton />
+        ) : hasActiveStream ? (
           <div className="flex flex-col items-center gap-3 py-4">
             <Typography>You have an unfinished stream</Typography>
             <Button appearance="solid" onClick={reconnect}>
@@ -167,9 +171,10 @@ export default function Broadcast() {
                 Stream link
               </Typography>
               <Input value={constructInviteLink()} readOnly />
+              <Input />
               <Button
                 size="sm"
-                disabled={!currentStream}
+                disabled={!isLive}
                 onClick={() => handleCopy(constructInviteLink())}
               >
                 {isCopied ? 'Copied' : 'Copy'}

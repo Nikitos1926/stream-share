@@ -78,3 +78,8 @@ Two values are easy to get wrong and worth checking:
 
 `SKIP_ENV_VALIDATION=1` bypasses validation for image builds and typechecks, where
 secrets are legitimately absent. Never set it on a running server.
+
+
+### Prod SSH connection 
+
+`ssh -i C:\Users\coort\.ssh\oracle-stream-share.key ubuntu@streamshare.space`

@@ -25,8 +25,8 @@ function internalBaseUrl(): string {
 }
 
 /** `path` is the route as Fastify defines it, e.g. '/streams'. */
-export function signalingUrl(path: string): string {
-  if (typeof window === 'undefined') {
+export function signalingUrl(path: string, forceExternal?: boolean): string {
+  if (typeof window === 'undefined' && !forceExternal) {
     // server-side: straight over the compose network, no proxy, no prefix
     return `${internalBaseUrl()}${path}`;
   }

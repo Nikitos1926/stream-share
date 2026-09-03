@@ -1,6 +1,9 @@
+import { getStream } from '@/app/api/streams/server';
+import { NotFoundState } from '@/app/components/common/NotFoundState';
+import { StreamEnded } from '@/app/components/video/StreamEnded';
 import { StreamStatus } from '@stream-share/db';
 import { Watch } from './Watch';
-import { getStream } from '@/app/api/streams/server';
+import { ErrorState } from '@/app/components/common/ErrorState';
 
 export default async function WatchPage({ params }: { params: Promise<{ streamId: string }> }) {
   const { streamId } = await params;
@@ -8,28 +11,15 @@ export default async function WatchPage({ params }: { params: Promise<{ streamId
   try {
     response = await getStream(streamId);
   } catch {
-    return (
-      <>
-        <div>Error</div>
-      </>
-    );
+    return <ErrorState />;
   }
 
   if (!response.data) {
-    return (
-      <>
-        <div>404</div>
-      </>
-    );
+    return <NotFoundState title="Stream not found" />;
   }
 
-  // TODO
   if (response.data.status === StreamStatus.Ended) {
-    return (
-      <>
-        <div>Ended</div>
-      </>
-    );
+    return <StreamEnded />;
   }
   return <Watch />;
 }

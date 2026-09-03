@@ -1,13 +1,13 @@
 'use client';
 
 import { getUser } from '@/app/api/users';
+import { StreamEnded } from '@/app/components/video/StreamEnded';
 import { Button } from '@/app/components/ui/Button';
-import { Link } from '@/app/components/ui/Link';
-import { Typography } from '@/app/components/ui/Typography';
-import { VideoPlayer } from '@/app/components/VideoPlayer';
+import { SkeletonBlock } from '@/app/components/common/SkeletonBlock';
+import { VideoPlayer } from '@/app/components/video/VideoPlayer';
 import { StreamStatus } from '@/lib/hooks/useStreamer';
 import { useViewer } from '@/lib/hooks/useViewer';
-import { MonitorX, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { signIn, useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -58,24 +58,18 @@ export function Watch() {
     watch(streamId);
   }, [sessionUser, status, streamId, verifiedUserId, watch]);
 
-  if (!status || status === StreamStatus.Unavailable) {
-    return (
-      <div className="container h-[calc(100dvh-var(--header-h)-var(--footer-h)-var(--footer-gap))] py-4">
-        <div className="flex h-full flex-col items-center justify-center gap-4 rounded-md bg-surface p-4">
-          <MonitorX className="mb-2" size="96" />
-          <Typography>The stream has ended</Typography>
-          <Button appearance="solid">
-            <Link href="/" variant="unstyled">
-              Back to stream list
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
+  if (!status) {
+    <div className="container h-[calc(100dvh-var(--header-h)-var(--footer-h)-var(--footer-gap))] py-4">
+      <SkeletonBlock className="h-full" />
+    </div>;
+  }
+
+  if (status === StreamStatus.Ended) {
+    return <StreamEnded />;
   }
 
   return (
-    <div className="container flex flex-col gap-2 py-4 landscape:h-[calc(100dvh-var(--header-h))]">
+    <div className="container flex min-h-93.25 flex-col gap-2 py-4 landscape:h-[calc(100dvh-var(--header-h))]">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center rounded-md border-2 border-line bg-surface">
         <div className="relative aspect-video max-h-full max-w-full portrait:h-auto portrait:w-full landscape:h-full landscape:w-auto">
           <VideoPlayer ref={videoRef} />

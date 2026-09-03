@@ -251,6 +251,7 @@ export class StreamsController {
     void this.streamsService.update({ id: streamId, status });
 
     socket.on('message', (message) => {
+      this.app.log.info(message.toString());
       void this.handleStreamerMessage({
         message: message.toString(),
         socket,
@@ -259,6 +260,7 @@ export class StreamsController {
     });
 
     socket.on('close', () => {
+      this.app.log.info(`Streamer socket of 'stream:${streamId}' closed`);
       void this.handleStreamerSocketClose(streamId);
     });
   };
@@ -272,6 +274,7 @@ export class StreamsController {
     const context = { viewerId: userId, streamId };
 
     socket.on('message', (message) => {
+      this.app.log.info(message.toString());
       void this.handleViewerMessage({
         message: message.toString(),
         socket,
@@ -280,6 +283,9 @@ export class StreamsController {
     });
 
     socket.on('close', () => {
+      this.app.log.info(
+        `Viewer 'user:${context.viewerId}' socket of 'stream:${context.streamId}' closed`,
+      );
       void this.handleViewerSocketClose(context);
     });
   };

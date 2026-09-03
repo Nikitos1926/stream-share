@@ -2,9 +2,9 @@
   "name": "stream-share",
   "private": true,
   "scripts": {
-    "dev": "dotenvx run -q -f .env.development -- pnpm -r --parallel run dev",
+    "dev": "concurrently \"pnpm dev:lib\" \"wait-on ./packages/db/dist/index.js ./packages/env/dist/index.js ./packages/shared/dist/index.js && dotenvx run -q -f .env.development -- pnpm --parallel --filter @stream-share/signaling --filter @stream-share/web dev\"",
     "dev:desktop": "concurrently \"pnpm --filter @stream-share/web dev\" \"wait-on http://localhost:3000 && pnpm --filter @stream-share/desktop dev\"",
-    "dev:lib": "concurrently \"pnpm --filter @stream-share/db dev\" \"wait-on ./packages/db/dist/index.js && pnpm --filter @stream-share/shared dev\"",
+    "dev:lib": "concurrently \"pnpm --filter @stream-share/env dev\" \"pnpm --filter @stream-share/db dev\" \"wait-on ./packages/db/dist/index.js  && pnpm --filter @stream-share/shared dev\"",
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",

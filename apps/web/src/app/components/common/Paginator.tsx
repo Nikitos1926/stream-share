@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils/cn.util';
-import { Link } from './ui/Link';
+import { Link } from '../ui/Link';
 
 const SIBLINGS = 2;
 const BOUNDARY_THRESHOLD = SIBLINGS + 3;
@@ -54,7 +54,7 @@ function buildPaginator(params: {
 }) {
   const { center, end, start, className } = params;
   return (
-    <div className={cn('flex items-center gap-1 justify-center', className)}>
+    <div className={cn('flex items-center justify-center gap-1', className)}>
       {start && <>{start}...</>}
       {center}
       {end && <>...{end}</>}

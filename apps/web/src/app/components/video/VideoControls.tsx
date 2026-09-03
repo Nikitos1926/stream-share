@@ -8,8 +8,8 @@ import {
   Expand,
   Shrink,
 } from 'lucide-react';
-import { Button } from './ui/Button';
-import { Slider } from './ui/Slider';
+import { Button } from '../ui/Button';
+import { Slider } from '../ui/Slider';
 
 export function VideoControls(props: MediaControlsApi) {
   const { isFullscreen, isPiP, volume, setVolume, toggleFullscreen, toggleMute, togglePiP } = props;
@@ -21,12 +21,12 @@ export function VideoControls(props: MediaControlsApi) {
   };
 
   return (
-    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-2">
+    <div className="absolute inset-x-0 bottom-0 m-2 flex items-center justify-between">
       <div className="flex gap-2">
         <Button variant="icon" onClick={toggleMute}>
           {renderVolumeIcon()}
         </Button>
-        <div className="w-37">
+        <div className="flex w-37 items-center">
           <Slider value={volume} onChange={(v) => setVolume(v as number)} />
         </div>
       </div>

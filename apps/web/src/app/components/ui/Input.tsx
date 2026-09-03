@@ -5,7 +5,7 @@ import { ComponentProps, FC, useCallback, ChangeEvent } from 'react';
 const inputVariants = cva('rounded-lg border border-line bg-canvas px-2 outline-none', {
   variants: {
     variant: {
-      default: '',
+      default: 'py-1',
     },
     size: {
       default: 'w-full',
@@ -33,14 +33,14 @@ export const Input: FC<InputProps> = ({
 }) => {
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      if (readOnly || !onChange) return;
+      if (readOnly) return;
 
       let value: string | number = event.target.value;
       if (props.type === 'number') {
         value = Number(value);
       }
 
-      onChange(value);
+      onChange?.(value);
     },
     [onChange, props.type, readOnly],
   );
@@ -49,7 +49,7 @@ export const Input: FC<InputProps> = ({
     <input
       {...props}
       readOnly={readOnly}
-      value={String(props.value ?? '')}
+      value={onChange ? String(props.value ?? '') : props.value}
       className={cn(inputVariants({ variant, size, className }))}
       onChange={handleChange}
     />

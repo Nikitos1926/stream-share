@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { StreamCard } from './StreamCard';
-import { Paginator } from '@/app/components/Paginator';
+import { Paginator } from '@/app/components/common/Paginator';
 import { ScreenShareOff } from 'lucide-react';
 import { Typography } from '@/app/components/ui/Typography';
 import { Button } from '@/app/components/ui/Button';

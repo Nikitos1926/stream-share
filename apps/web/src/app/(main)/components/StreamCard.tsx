@@ -13,7 +13,10 @@ export async function StreamCard(props: { stream: StreamWithRelations }) {
         <Link href={`${stream.id}/watch`} variant="unstyled" className="absolute inset-0 block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={signalingUrl(`/streams/${stream.id}/thumbnail?t=${stream.thumbnailUpdatedAt}`)}
+            src={signalingUrl(
+              `/streams/${stream.id}/thumbnail?t=${stream.thumbnailUpdatedAt}`,
+              true,
+            )}
             alt={stream.streamer!.name!}
             className="size-full object-contain"
           />

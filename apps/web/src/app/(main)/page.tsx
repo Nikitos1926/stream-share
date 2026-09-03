@@ -30,7 +30,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
   if (session && session.user.role !== 'guest') {
     return (
-      <div className="container h-[calc(100dvh-var(--header-h)-var(--footer-h)-var(--footer-gap))] py-4">
+      <div className="container h-[calc(100dvh-var(--header-h)-var(--footer-h)-var(--footer-gap))] min-h-93.25 py-4">
         <StreamList currentPage={currentPage} />
       </div>
     );
