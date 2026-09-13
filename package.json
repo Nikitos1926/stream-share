@@ -1,5 +1,6 @@
 {
   "name": "stream-share",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "concurrently \"pnpm dev:lib\" \"wait-on ./packages/db/dist/index.js ./packages/env/dist/index.js ./packages/shared/dist/index.js && dotenvx run -q -f .env.development -- pnpm --parallel --filter @stream-share/signaling --filter @stream-share/web dev\"",
