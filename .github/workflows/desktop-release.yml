@@ -64,12 +64,12 @@ jobs:
         run: pnpm --filter @stream-share/env build
 
       # Installer file names and the app's About dialog use package.json's
-      # version, so take it from the tag (v1.2.3 → 1.2.3) instead of shipping
-      # every release as 0.0.1.
+      # version, so take it from the tag (desktop-v1.2.3 → 1.2.3) instead of
+      # shipping every release as 0.0.1. Must match the tag pattern in `on:`.
       - name: Set version from tag
         if: github.ref_type == 'tag'
         working-directory: apps/desktop
-        run: npm pkg set version="${GITHUB_REF_NAME#v}"
+        run: npm pkg set version="${GITHUB_REF_NAME#desktop-v}"
 
       # WEB_URL is inlined into the main bundle at build time. Set the
       # DESKTOP_WEB_URL repository variable to override the example default.
