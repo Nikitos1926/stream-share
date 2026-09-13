@@ -25,7 +25,7 @@ export async function StreamList(props: { currentPage: number }) {
     <div className="flex h-full min-h-0 flex-col gap-1 rounded-md bg-surface p-4">
       {!!count ? (
         <>
-          <div className="min-h-0 grow overflow-x-hidden overflow-y-auto">
+          <div className="-mx-4 min-h-0 grow overflow-x-hidden overflow-y-auto px-4">
             <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
               {streams.map((stream) => (
                 <StreamCard key={stream.id} stream={stream} />

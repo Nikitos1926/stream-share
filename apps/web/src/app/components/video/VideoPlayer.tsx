@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, RefObject, useRef } from 'react';
 import { VideoControls } from './VideoControls';
 import { useMediaControls } from '@/lib/hooks/useMediaControls';
@@ -13,7 +15,7 @@ export const VideoPlayer = forwardRef<HTMLVideoElement>(function (_, videoRef) {
         playsInline
         className="h-full w-full bg-black object-contain"
       />
-      <VideoControls {...mediaControls} />
+      <VideoControls containerRef={containerRef} {...mediaControls} />
     </div>
   );
 });

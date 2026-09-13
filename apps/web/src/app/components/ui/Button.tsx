@@ -94,7 +94,6 @@ export function Button({
   return (
     <button
       type={type}
-      data-slot="button"
       className={cn(buttonVariants({ variant, size, className, appearance }))}
       {...props}
     >
