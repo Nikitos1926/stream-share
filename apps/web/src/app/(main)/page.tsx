@@ -4,6 +4,7 @@ import { Lock, Sparkles, Zap, type LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Link } from '../components/ui/Link';
 import { StreamList } from './components/StreamList';
+import { DownloadButton } from './components/DownloadButton';
 
 const features: { icon: LucideIcon; title: string; description: string }[] = [
   {
@@ -46,6 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           No downloads required. Viewers don&apos;t need an account — just send the link and go.
         </p>
         <div className="flex items-center justify-center gap-3">
+          <DownloadButton />
           <Button variant="primary" appearance="solid" size="lg">
             <Link href="/login" variant="unstyled">
               Get started

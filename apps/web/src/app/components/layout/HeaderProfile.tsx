@@ -28,7 +28,7 @@ export function HeaderProfile({ name, image, email, role }: Session['user']) {
           <Typography className="select-none">{name}</Typography>
         </div>
         {isOpen && (
-          <div className="absolute top-full left-1/2 mt-3.5 flex -translate-x-1/2 flex-col gap-2 rounded-sm bg-surface p-3 shadow-lg shadow-black">
+          <div className="absolute top-full left-1/2 z-10 mt-3.5 flex -translate-x-1/2 flex-col gap-2 rounded-sm bg-surface p-3 shadow-lg shadow-black">
             {role === 'guest' ? (
               <Button>
                 <Link href="/login">Sign up</Link>
@@ -36,7 +36,6 @@ export function HeaderProfile({ name, image, email, role }: Session['user']) {
             ) : (
               <>
                 <Typography tone="muted">{email}</Typography>
-                <Button>Settings</Button>
                 <Button onClick={() => signOut({ redirectTo: '/' })}>Log out</Button>
               </>
             )}
