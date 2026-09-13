@@ -16,6 +16,12 @@ files:
   - out/**/*
   - package.json
   - '!**/*.map'
+  # @electron/rebuild copies every binary it builds into bin/<platform>-<arch>-<abi>/
+  # as a cache; the module itself only loads build/Release/*.node. Shipping the
+  # cache breaks the macOS universal build: the postinstall rebuild on an arm64
+  # runner leaves an arm64 binary that ends up byte-identical in both the x64
+  # and arm64 halves, which @electron/universal rejects.
+  - '!node_modules/electron-native-screenshare/bin{,/**/*}'
 
 # The native screen-share module is rebuilt by electron-builder; its .node
 # binaries are unpacked from the asar automatically.
