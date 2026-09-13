@@ -10,6 +10,8 @@ import toast from 'react-hot-toast';
 import { useThumbnailCapture } from './useThumbnailCapture';
 import { signalingWsUrl } from '../signaling';
 import { useBeforeUnload } from './useBeforeUnload';
+import { ensureAudioCapture, teardownAudioCapture } from '../media/audio.bridge';
+import { useIsDesktop } from './useIsDesktop';
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -29,9 +31,9 @@ export function useStreamer() {
   const { data: session } = useSession();
   const userId = session?.user.id;
   const startCapturingThumbnail = useThumbnailCapture(videoRef);
+  const isDesktop = useIsDesktop();
 
   const toggleMute = useCallback(() => {
-    setIsCheckingActiveStream(true);
     setIsMuted((prevIsMuted) => {
       const audioProducer = producersRef.current.find((p) => p.kind === 'audio');
       if (!audioProducer) return !prevIsMuted;
@@ -133,7 +135,8 @@ export function useStreamer() {
   const stopMediaTracks = useCallback(() => {
     mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
     mediaStreamRef.current = null;
-  }, []);
+    if (isDesktop) teardownAudioCapture();
+  }, [isDesktop]);
 
   const handleSocketClose = useCallback(() => {
     producersRef.current?.forEach((producer) => producer.close());
@@ -168,15 +171,30 @@ export function useStreamer() {
       controller = new CaptureController();
     }
 
-    const stream = await navigator.mediaDevices.getDisplayMedia({
-      video: {
-        width: { ideal: 2560 },
-        height: { ideal: 1440 },
-        frameRate: { ideal: 30, max: 60 },
-      },
-      audio: true,
-      controller,
-    });
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          width: { ideal: 2560 },
+          height: { ideal: 1440 },
+          frameRate: { ideal: 30, max: 60 },
+        },
+        audio: !isDesktop,
+        controller,
+      });
+    } catch (e) {
+      console.error('[captureStream] getDisplayMedia failed:', e);
+      throw e;
+    }
+
+    if (isDesktop) {
+      try {
+        stream.addTrack(await ensureAudioCapture());
+      } catch (e) {
+        console.error('[captureStream] desktop audio capture failed:', e);
+        toast.error('System audio is unavailable, streaming video only');
+      }
+    }
 
     const [videoTrack] = stream.getVideoTracks();
     const [audioTrack] = stream.getAudioTracks();
@@ -185,25 +203,25 @@ export function useStreamer() {
     videoTrack?.addEventListener('ended', stopBroadcast);
 
     const surface = videoTrack?.getSettings().displaySurface;
-    if (controller && surface !== 'monitor') {
+    if (controller && surface !== 'monitor' && !isDesktop) {
       controller?.setFocusBehavior('no-focus-change');
     }
 
     return stream;
-  }, [stopBroadcast]);
+  }, [isDesktop, stopBroadcast]);
 
   const changeSource = useCallback(async () => {
     if (!videoRef.current) return;
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
-      mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+      stopMediaTracks();
     }
     const newStream = await captureStream();
     mediaStreamRef.current = newStream;
     await replaceStream(newStream);
 
     videoRef.current.srcObject = newStream;
-  }, [captureStream, replaceStream, stopBroadcast]);
+  }, [captureStream, replaceStream, stopBroadcast, stopMediaTracks]);
 
   const connectToStream = useCallback(
     async (stream: Stream) => {
@@ -306,6 +324,14 @@ export function useStreamer() {
     }
   }, [broadcast, captureStream, stopBroadcast, stopMediaTracks]);
 
+  const selectSource = useCallback(async () => {
+    if (status === StreamStatus.Live) {
+      await changeSource();
+    } else {
+      await pickSource();
+    }
+  }, [status, changeSource, pickSource]);
+
   const reconnect = useCallback(async () => {
     if (!currentStream || !hasActiveStream || !videoRef.current) return;
     await pickSource();
@@ -336,8 +362,7 @@ export function useStreamer() {
     setIsPrivate,
     toggleMute,
     changeQuality,
-    pickSource,
-    changeSource,
+    selectSource,
     broadcast,
     stopBroadcast,
     reconnect,

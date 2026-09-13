@@ -4,10 +4,12 @@ import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { Typography } from '@/app/components/ui/Typography';
 import { StreamControlsSkeleton } from '@/app/components/video/StreamControlsSkeleton';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { StreamQuality, StreamStatus, useStreamer } from '@/lib/hooks/useStreamer';
 import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { MediaSourcePicker } from './components/electron/MediaSourcePicker';
 
 const qualities = Object.values(StreamQuality);
 
@@ -26,13 +28,14 @@ export default function Broadcast() {
     setIsPrivate,
     toggleMute,
     changeQuality,
-    pickSource,
-    changeSource,
+    selectSource,
     broadcast,
     stopBroadcast,
     reconnect,
   } = useStreamer();
   const isLive = status === StreamStatus.Live;
+  const isPreview = status === StreamStatus.Preview;
+  const isDesktop = useIsDesktop();
 
   const constructInviteLink = () => {
     return currentStream && isLive
@@ -53,6 +56,21 @@ export default function Broadcast() {
         id: 'clipboard',
       });
     }
+  };
+
+  const renderPickSourceButton = () => {
+    if (isDesktop) return <MediaSourcePicker status={status} selectSource={selectSource} />;
+
+    return (
+      <Button
+        className="w-full md:w-auto"
+        variant={isLive || isPreview ? 'secondary' : 'primary'}
+        onClick={selectSource}
+      >
+        <Monitor />
+        <Typography>{isLive || isPreview ? 'Change source' : 'Pick source'}</Typography>
+      </Button>
+    );
   };
 
   return (
@@ -89,17 +107,7 @@ export default function Broadcast() {
           <>
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
               <div className="flex flex-col items-center gap-4 md:flex-row">
-                {!isLive ? (
-                  <Button className="w-full md:w-auto" onClick={pickSource}>
-                    <Monitor />
-                    Pick source
-                  </Button>
-                ) : (
-                  <Button className="w-full md:w-auto" variant="secondary" onClick={changeSource}>
-                    Change source
-                  </Button>
-                )}
-
+                {renderPickSourceButton()}
                 <div className="flex flex-col gap-1.5">
                   <fieldset className="rounded-lg border border-line px-2.5 pb-2.5 md:-mt-3.25">
                     <legend className="mx-auto px-2">
@@ -122,7 +130,7 @@ export default function Broadcast() {
                   </fieldset>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  <label
+                  <span
                     title={
                       isMuteToggleEnabled
                         ? ''
@@ -136,8 +144,8 @@ export default function Broadcast() {
                     >
                       {!isMuteToggleEnabled || isMuted ? <VolumeX /> : <Volume2 />}
                     </Button>
-                  </label>
-                  <label title={isLive ? 'Restart stream to change privacy settings' : ''}>
+                  </span>
+                  <span title={isLive ? 'Restart stream to change privacy settings' : ''}>
                     <Button
                       variant={isPrivate ? 'primary' : 'ghost'}
                       size="md"
@@ -146,7 +154,7 @@ export default function Broadcast() {
                     >
                       {isPrivate ? <Lock /> : <LockOpen />}
                     </Button>
-                  </label>
+                  </span>
                 </div>
               </div>
 
@@ -155,7 +163,7 @@ export default function Broadcast() {
                   className="w-full md:w-auto"
                   variant="destructive"
                   appearance="solid"
-                  disabled={status !== StreamStatus.Preview}
+                  disabled={!isPreview}
                   onClick={() => broadcast()}
                 >
                   Start stream
@@ -171,7 +179,6 @@ export default function Broadcast() {
                 Stream link
               </Typography>
               <Input value={constructInviteLink()} readOnly />
-              <Input />
               <Button
                 size="sm"
                 disabled={!isLive}

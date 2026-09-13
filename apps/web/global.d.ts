@@ -1,4 +1,4 @@
-export {};
+import { Source } from '@/lib/types';
 
 /**
  * Not an installed package — Next's bundler aliases it to
@@ -20,4 +20,17 @@ declare global {
   interface DisplayMediaStreamOptions {
     controller?: CaptureController;
   }
+
+  interface Window {
+    conveyor?: {
+      stream: {
+        getSources(): Promise<Source[]>;
+        pickSource(sourceId: string): Promise<void>;
+        startAudioCapture(): Promise<void>;
+        stopAudioCapture(): Promise<void>;
+      };
+    };
+  }
 }
+
+export {};
