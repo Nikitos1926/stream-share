@@ -1,0 +1,138 @@
+name: Build & release desktop app
+
+# Builds the Electron app on every platform and, on a version tag, attaches the
+# installers to a GitHub Release so users can download them from the Releases
+# page. A manual run only uploads the installers as workflow artifacts.
+#
+# Builds are unsigned unless signing secrets are present (see the "Configure
+# code signing" step). Unsigned macOS builds require the user to right-click →
+# Open; unsigned Windows builds show a SmartScreen "unrecognized app" prompt.
+
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows
+            os: windows-latest
+          - name: macos
+            os: macos-latest
+          - name: linux
+            os: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      # Without this electron-builder searches the runner keychain for a
+      # signing identity and fails on macOS when it finds none.
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      # electron-native-screenshare compiles against PipeWire, PulseAudio and X11
+      # headers on Linux; the Windows and macOS runners already ship their SDKs.
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpipewire-0.3-dev libpulse-dev libx11-dev
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # `...` pulls in the desktop app's workspace dependencies (@stream-share/env)
+      # without installing the server apps and their native mediasoup build.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --filter @stream-share/desktop...
+
+      - name: Build workspace packages
+        run: pnpm --filter @stream-share/env build
+
+      # Installer file names and the app's About dialog use package.json's
+      # version, so take it from the tag (v1.2.3 → 1.2.3) instead of shipping
+      # every release as 0.0.1.
+      - name: Set version from tag
+        if: github.ref_type == 'tag'
+        working-directory: apps/desktop
+        run: npm pkg set version="${GITHUB_REF_NAME#v}"
+
+      # WEB_URL is inlined into the main bundle at build time. Set the
+      # DESKTOP_WEB_URL repository variable to override the example default.
+      - name: Write build-time env
+        working-directory: apps/desktop
+        env:
+          WEB_URL: ${{ vars.DESKTOP_WEB_URL }}
+        run: |
+          if [ -n "$WEB_URL" ]; then
+            printf 'WEB_URL=%s\n' "$WEB_URL" > .env.production
+          else
+            cp .env.production.example .env.production
+          fi
+          cat .env.production
+
+      # Optional. electron-builder signs automatically when these are set:
+      #   CSC_LINK / CSC_KEY_PASSWORD  base64 .p12 (macOS Developer ID) or .pfx
+      #                                (Windows) certificate and its password.
+      # Only exported when non-empty so an unset secret does not turn into an
+      # empty CSC_LINK, which electron-builder would try to decode.
+      - name: Configure code signing (optional)
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+        run: |
+          if [ -n "$CSC_LINK" ]; then
+            echo "CSC_LINK=$CSC_LINK" >> "$GITHUB_ENV"
+            echo "CSC_KEY_PASSWORD=$CSC_KEY_PASSWORD" >> "$GITHUB_ENV"
+            echo "Code signing enabled"
+          else
+            echo "No signing certificate configured; building unsigned"
+          fi
+
+      # pnpm appends the extra args to the end of the package script, i.e. to the
+      # electron-builder call (no `--`: pnpm 12 would forward it literally and
+      # electron-builder would then treat `--publish never` as positional). The
+      # release job below attaches the files, so electron-builder must not try
+      # to create a release of its own.
+      - name: Build and package
+        working-directory: apps/desktop
+        run: pnpm build --publish never
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.name }}
+          if-no-files-found: error
+          path: |
+            apps/desktop/dist/*.exe
+            apps/desktop/dist/*.dmg
+            apps/desktop/dist/*.AppImage
+
+  release:
+    name: Publish GitHub Release
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: installers/*
+          generate_release_notes: true
