@@ -2,18 +2,29 @@
   "name": "@stream-share/desktop",
   "version": "0.0.1",
   "private": true,
-  "main": "dist/main/index.js",
+  "main": "out/main/main.js",
   "scripts": {
-    "dev": "electron-vite dev",
-    "build": "electron-vite build && electron-builder",
+    "dev": "dotenvx run -q -f .env.development -- electron-vite dev -w",
+    "build": "dotenvx run -q -f .env.production -- electron-vite build && electron-builder",
     "preview": "electron-vite preview",
+    "postinstall": "electron-rebuild -f -w electron-native-screenshare",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@electron/rebuild": "^4.2.0",
+    "electron-native-screenshare": "^1.2.0",
+    "zod": "^4.4.3"
+  },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^2.22.0",
+    "@stream-share/env": "workspace:*",
     "electron": "^35.0.0",
     "electron-builder": "^26.0.0",
     "electron-vite": "^5.0.0",
+    "rollup-plugin-copy": "^3.5.0",
     "typescript": "^7.0.2",
     "vite": "^6.0.0"
   }

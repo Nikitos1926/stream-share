@@ -10,9 +10,10 @@
 - [x] stream thumbnails
 - [x] prune unused guest sessions
 - [x] env using dotenv
-- [ ] deploy to hosting
+- [x] deploy to hosting
 - [ ] desktop app
 - [ ] replace client fetches with react-query
+
 
 ## Configuration
 

@@ -2,7 +2,14 @@ packages:
   - 'apps/*'
   - 'packages/*'
 
-onlyBuiltDependencies:
-  - sharp
-  - unrs-resolver
-  - mediasoup
+allowBuilds:
+  electron: true
+  electron-native-screenshare: false
+  electron-winstaller: true
+  esbuild: true
+  mediasoup: true
+  sharp: true
+  unrs-resolver: true
+
+overrides:
+  '@types/node': '^22.10.0'

@@ -13,6 +13,10 @@
     "./signaling": {
       "types": "./src/signaling.ts",
       "import": "./dist/signaling.js"
+    },
+    "./desktop": {
+      "types": "./src/desktop.ts",
+      "import": "./dist/desktop.js"
     }
   },
   "scripts": {
