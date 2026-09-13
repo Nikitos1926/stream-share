@@ -2,6 +2,12 @@
   "name": "@stream-share/desktop",
   "version": "0.0.1",
   "private": true,
+  "description": "Stream Share desktop app for broadcasting your screen and desktop audio",
+  "author": {
+    "name": "Nikita Kabakov",
+    "email": "nikita.kabakov.work@gmail.com"
+  },
+  "homepage": "https://streamshare.space",
   "main": "out/main/main.js",
   "scripts": {
     "dev": "dotenvx run -q -f .env.development -- electron-vite dev -w",
@@ -14,12 +20,12 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "@electron/rebuild": "^4.2.0",
     "electron-native-screenshare": "^1.2.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^2.22.0",
+    "@electron/rebuild": "^4.2.0",
     "@stream-share/env": "workspace:*",
     "electron": "^35.0.0",
     "electron-builder": "^26.0.0",

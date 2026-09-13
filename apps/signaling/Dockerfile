@@ -26,9 +26,14 @@ COPY packages/env/package.json packages/env/
 COPY packages/shared/package.json packages/shared/
 
 # ---------- build ----------
+# A workspace-root install pulls in every project, including apps/desktop, whose
+# postinstall runs electron-rebuild on a native module that needs PipeWire
+# headers this image lacks. --ignore-scripts skips that: this stage only runs
+# tsup, and the runtime node_modules (with mediasoup's worker) come from the
+# prod-deps stage below, which keeps scripts enabled.
 FROM manifests AS build
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --ignore-scripts
 COPY tsconfig.base.json ./
 COPY packages packages
 COPY apps/signaling apps/signaling

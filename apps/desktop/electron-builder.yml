@@ -1,0 +1,50 @@
+# electron-builder configuration. Docs: https://www.electron.build/configuration
+# Icons live in `resources/` (electron-builder derives the platform-specific
+# formats from `resources/icon.png`). Output goes to `dist/`.
+
+appId: streamshare.desktop
+productName: Stream Share
+copyright: Copyright © 2026 Stream Share
+
+directories:
+  buildResources: resources
+  output: dist
+
+# Only ship the compiled bundles; `out/main/assets` is populated by the
+# electron-vite copy plugin, so `assets/` and `src/` are not needed at runtime.
+files:
+  - out/**/*
+  - package.json
+  - '!**/*.map'
+
+# The native screen-share module is rebuilt by electron-builder; its .node
+# binaries are unpacked from the asar automatically.
+npmRebuild: true
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: ${productName}-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+
+mac:
+  category: public.app-category.video
+  target:
+    - target: dmg
+      arch:
+        - universal
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+linux:
+  category: AudioVideo
+  target:
+    - AppImage
+  artifactName: ${productName}-${version}-${arch}.${ext}

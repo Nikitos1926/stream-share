@@ -13,8 +13,8 @@ app.commandLine.appendSwitch('disable-features', 'AllowWgcScreenCapturer,AllowWg
 //   '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/7.0.1_0',
 // );
 void app.whenReady().then(async () => {
-  // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron');
+  // Set app user model id for windows; must match `appId` in electron-builder.yml
+  electronApp.setAppUserModelId('streamshare.desktop');
   // Create app window
   const mainWindow = createAppWindow();
   createAppTray(mainWindow);

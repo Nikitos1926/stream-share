@@ -3,14 +3,11 @@ import { join } from 'path';
 import { registerAppHandlers } from '../conveyor/handlers/app.handler';
 import { registerStreamHandlers } from '../conveyor/handlers/stream.handler';
 import { registerWindowHandlers } from '../conveyor/handlers/window.handler';
-import { registerResourcesProtocol } from './protocols';
 import { resolveIcon } from '../utils';
 
 const isDev = !app.isPackaged;
 
 export function createAppWindow(): BrowserWindow {
-  registerResourcesProtocol();
-
   Menu.setApplicationMenu(null);
 
   const mainWindow = new BrowserWindow({

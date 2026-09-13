@@ -157,9 +157,6 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^4.0.0
         version: 4.0.0(electron@35.7.5(supports-color@10.2.2))
-      '@electron/rebuild':
-        specifier: ^4.2.0
-        version: 4.2.0(supports-color@10.2.2)
       electron-native-screenshare:
         specifier: ^1.2.0
         version: 1.2.0
@@ -170,6 +167,9 @@ importers:
       '@dotenvx/dotenvx':
         specifier: ^2.22.0
         version: 2.22.0
+      '@electron/rebuild':
+        specifier: ^4.2.0
+        version: 4.2.0(supports-color@10.2.2)
       '@stream-share/env':
         specifier: workspace:*
         version: link:../../packages/env
