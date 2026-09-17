@@ -27,12 +27,30 @@ files:
 # binaries are unpacked from the asar automatically.
 npmRebuild: true
 
+# In-app updates (electron-updater). The presence of this block makes
+# electron-builder emit latest.yml / latest-linux.yml and *.blockmap next to the
+# installers; the release workflow attaches them to the GitHub Release and the
+# app polls `releases/latest/download/` for them. The generic provider is used
+# instead of `github` because our tags are prefixed `desktop-v`, which the
+# GitHub provider cannot map to a version. `--publish never` in CI keeps
+# electron-builder from uploading anything itself.
+#
+# Artifact names must not contain spaces: GitHub replaces them with dots when
+# an asset is uploaded, so the file names in latest.yml would no longer match.
+#
+# macOS is intentionally left out. electron-updater refuses to install unsigned
+# apps on macOS and we do not have an Apple Developer ID, so Mac users keep
+# downloading the DMG by hand (see src/main/updater.ts).
+publish:
+  provider: generic
+  url: https://github.com/Nikitos1926/stream-share/releases/latest/download/
+
 win:
   target:
     - target: nsis
       arch:
         - x64
-  artifactName: ${productName}-Setup-${version}.${ext}
+  artifactName: StreamShare-Setup-${version}.${ext}
 
 nsis:
   oneClick: false
@@ -47,10 +65,10 @@ mac:
     - target: dmg
       arch:
         - universal
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: StreamShare-${version}-${arch}.${ext}
 
 linux:
   category: AudioVideo
   target:
     - AppImage
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: StreamShare-${version}-${arch}.${ext}

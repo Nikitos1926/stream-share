@@ -112,6 +112,9 @@ jobs:
         working-directory: apps/desktop
         run: pnpm build --publish never
 
+      # latest*.yml and *.blockmap are read by electron-updater in the app
+      # (see `publish` in electron-builder.yml); without them installed copies
+      # cannot discover or differentially download new versions.
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.name }}
@@ -120,6 +123,8 @@ jobs:
             apps/desktop/dist/*.exe
             apps/desktop/dist/*.dmg
             apps/desktop/dist/*.AppImage
+            apps/desktop/dist/*.blockmap
+            apps/desktop/dist/latest*.yml
 
   release:
     name: Publish GitHub Release

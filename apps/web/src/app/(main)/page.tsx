@@ -47,7 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           No downloads required. Viewers don&apos;t need an account — just send the link and go.
         </p>
         <div className="flex items-center justify-center gap-3">
-          <DownloadButton />
+          <DownloadButton size="lg" />
           <Button variant="primary" appearance="solid" size="lg">
             <Link href="/login" variant="unstyled">
               Get started

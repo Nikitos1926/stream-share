@@ -15,6 +15,13 @@
 - [ ] replace client fetches with react-query
 
 
+### Note
+- [x] add fps change
+- [x] add download button to the profile dropdown menu
+- [x] turn off preview when the window loses focus 
+- [ ] open the Google account selection in an external browser
+
+
 ## Configuration
 
 Every variable is validated once at startup by `@stream-share/env`. A missing or

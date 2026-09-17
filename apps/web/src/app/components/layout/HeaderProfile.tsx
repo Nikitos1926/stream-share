@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { Typography } from '../ui/Typography';
+import { DownloadButton } from '@/app/(main)/components/DownloadButton';
 
 export function HeaderProfile({ name, image, email, role }: Session['user']) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +29,7 @@ export function HeaderProfile({ name, image, email, role }: Session['user']) {
           <Typography className="select-none">{name}</Typography>
         </div>
         {isOpen && (
-          <div className="absolute top-full left-1/2 z-10 mt-3.5 flex -translate-x-1/2 flex-col gap-2 rounded-sm bg-surface p-3 shadow-lg shadow-black">
+          <div className="absolute top-full right-0 z-10 mt-3.5 flex flex-col gap-2 rounded-sm bg-surface p-3 shadow-lg shadow-black">
             {role === 'guest' ? (
               <Button>
                 <Link href="/login">Sign up</Link>
@@ -36,6 +37,7 @@ export function HeaderProfile({ name, image, email, role }: Session['user']) {
             ) : (
               <>
                 <Typography tone="muted">{email}</Typography>
+                <DownloadButton imageHeight={16} imageWidth={16} />
                 <Button onClick={() => signOut({ redirectTo: '/' })}>Log out</Button>
               </>
             )}

@@ -10,7 +10,7 @@ export function useThumbnailCapture(videoRef: RefObject<HTMLVideoElement | null>
       const video = videoRef.current;
       if (!video) return null;
       const createThumbnail = async () => {
-        if (video.videoWidth === 0) return;
+        if (video.videoWidth === 0 || video.paused) return;
 
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;

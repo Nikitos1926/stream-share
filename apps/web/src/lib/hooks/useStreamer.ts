@@ -12,6 +12,11 @@ import { signalingWsUrl } from '../signaling';
 import { useBeforeUnload } from './useBeforeUnload';
 import { ensureAudioCapture, teardownAudioCapture } from '../media/audio.bridge';
 import { useIsDesktop } from './useIsDesktop';
+import { deriveVideoEncoding, StreamFps, StreamQuality, VideoSettings } from '../media/encoding';
+
+export { StreamQuality, STREAM_FPS_OPTIONS, type StreamFps } from '../media/encoding';
+
+const DEFAULT_VIDEO_SETTINGS: VideoSettings = { quality: StreamQuality.HD, fps: 30 };
 
 export function useStreamer() {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -21,7 +26,9 @@ export function useStreamer() {
   const [isCheckingActiveStream, setIsCheckingActiveStream] = useState<boolean>(false);
   const [currentStream, setCurrentStream] = useState<Stream | null>(null);
   const [status, setStatus] = useState<StreamStatus | null>(null);
-  const [quality, setQuality] = useState<StreamQuality>(StreamQuality.HD);
+  const [videoSettings, setVideoSettings] = useState<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
+  // Mirrors videoSettings so callbacks that fire between renders see the latest pick.
+  const videoSettingsRef = useRef<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream>(null);
   const wsClientRef = useRef<WsClient>(null);
@@ -57,31 +64,30 @@ export function useStreamer() {
     }
   }, [userId]);
 
-  const getVideoEncodingByQuality = useCallback(
-    (quality: StreamQuality): RTCRtpEncodingParameters => {
-      const videoTrack = mediaStreamRef.current!.getVideoTracks()[0];
-      if (quality === StreamQuality.Source) {
-        return { scaleResolutionDownBy: 1, maxBitrate: QUALITY_BITRATES[quality] };
-      }
-      const scaleResolutionDownBy = Math.max(
-        videoTrack!.getSettings().height! / parseInt(quality),
-        1,
-      );
-      return { scaleResolutionDownBy, maxBitrate: QUALITY_BITRATES[quality] };
-    },
-    [],
-  );
+  const deriveEncodingForTrack = useCallback((track: MediaStreamTrack) => {
+    const { width, height } = track.getSettings();
+    return deriveVideoEncoding({ width: width!, height: height! }, videoSettingsRef.current);
+  }, []);
 
-  const applyRtpSenderParameters = useCallback(
-    (producer: Producer, quality: StreamQuality) => {
-      if (!producer.rtpSender) return;
-      const rtpSenderParameters = producer.rtpSender.getParameters();
-      producer.rtpSender.setParameters({
-        ...rtpSenderParameters,
-        encodings: [getVideoEncodingByQuality(quality)],
+  const applyVideoSettings = useCallback(
+    async (track: MediaStreamTrack, producer?: Producer) => {
+      const derived = deriveEncodingForTrack(track);
+      track.contentHint = derived.contentHint;
+      try {
+        await track.applyConstraints({ frameRate: derived.frameRate });
+      } catch (e) {
+        console.warn('[applyVideoSettings] applyConstraints failed:', e);
+      }
+
+      if (!producer?.rtpSender) return;
+      const parameters = producer.rtpSender.getParameters();
+      await producer.rtpSender.setParameters({
+        ...parameters,
+        degradationPreference: derived.degradationPreference,
+        encodings: [{ ...parameters.encodings[0], ...derived.encoding }],
       });
     },
-    [getVideoEncodingByQuality],
+    [deriveEncodingForTrack],
   );
 
   const createProducer = useCallback(
@@ -90,16 +96,18 @@ export function useStreamer() {
       if (track.kind === 'video') {
         producerOptions = {
           ...producerOptions,
-          encodings: [getVideoEncodingByQuality(quality)],
+          encodings: [deriveEncodingForTrack(track).encoding],
         };
       }
       const producer = await transportRef.current!.produce(producerOptions);
       if (track.kind === 'audio' && isMuted) {
         producer.pause();
       }
+      // produce() does not accept degradationPreference, so set it afterwards.
+      if (track.kind === 'video') await applyVideoSettings(track, producer);
       producersRef.current.push(producer);
     },
-    [getVideoEncodingByQuality, isMuted, quality],
+    [applyVideoSettings, deriveEncodingForTrack, isMuted],
   );
 
   const replaceStream = useCallback(
@@ -112,24 +120,38 @@ export function useStreamer() {
           if (!track) return producer.pause();
 
           await producer.replaceTrack({ track: track });
-          if (producer.kind === 'video') applyRtpSenderParameters(producer, quality);
+          if (producer.kind === 'video') await applyVideoSettings(track, producer);
           if (producer.kind !== 'audio' || !isMuted) {
             producer.resume();
           }
         }),
       );
     },
-    [applyRtpSenderParameters, createProducer, isMuted, quality],
+    [applyVideoSettings, createProducer, isMuted],
+  );
+
+  const changeVideoSettings = useCallback(
+    (patch: Partial<VideoSettings>) => {
+      const next = { ...videoSettingsRef.current, ...patch };
+      videoSettingsRef.current = next;
+      setVideoSettings(next);
+
+      const track = mediaStreamRef.current?.getVideoTracks()[0];
+      if (!track) return;
+      const producer = producersRef.current.find((p) => p.kind === 'video');
+      void applyVideoSettings(track, producer);
+    },
+    [applyVideoSettings],
   );
 
   const changeQuality = useCallback(
-    (newQuality: StreamQuality) => {
-      setQuality(newQuality);
-      const producer = producersRef.current.find((t) => t.kind === 'video');
-      if (!producer) return;
-      applyRtpSenderParameters(producer, newQuality);
-    },
-    [applyRtpSenderParameters],
+    (quality: StreamQuality) => changeVideoSettings({ quality }),
+    [changeVideoSettings],
+  );
+
+  const changeFps = useCallback(
+    (fps: StreamFps) => changeVideoSettings({ fps }),
+    [changeVideoSettings],
   );
 
   const stopMediaTracks = useCallback(() => {
@@ -171,13 +193,14 @@ export function useStreamer() {
       controller = new CaptureController();
     }
 
+    const { fps } = videoSettingsRef.current;
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           width: { ideal: 2560 },
           height: { ideal: 1440 },
-          frameRate: { ideal: 30, max: 60 },
+          frameRate: { ideal: fps, max: fps },
         },
         audio: !isDesktop,
         controller,
@@ -201,6 +224,8 @@ export function useStreamer() {
     setIsMuteToggleEnabled(!!audioTrack);
 
     videoTrack?.addEventListener('ended', stopBroadcast);
+    // Set the content hint before the first frame reaches the encoder.
+    if (videoTrack) videoTrack.contentHint = deriveEncodingForTrack(videoTrack).contentHint;
 
     const surface = videoTrack?.getSettings().displaySurface;
     if (controller && surface !== 'monitor' && !isDesktop) {
@@ -208,7 +233,7 @@ export function useStreamer() {
     }
 
     return stream;
-  }, [isDesktop, stopBroadcast]);
+  }, [deriveEncodingForTrack, isDesktop, stopBroadcast]);
 
   const changeSource = useCallback(async () => {
     if (!videoRef.current) return;
@@ -358,10 +383,12 @@ export function useStreamer() {
     isCheckingActiveStream,
     currentStream,
     status,
-    quality,
+    quality: videoSettings.quality,
+    fps: videoSettings.fps,
     setIsPrivate,
     toggleMute,
     changeQuality,
+    changeFps,
     selectSource,
     broadcast,
     stopBroadcast,
@@ -376,21 +403,3 @@ export enum StreamStatus {
   Ended = 'ended',
   Unavailable = 'unavailable',
 }
-
-export enum StreamQuality {
-  LD = '360',
-  SD = '480',
-  HD = '720',
-  FHD = '1080',
-  QHD = '1440',
-  Source = 'Source',
-}
-
-const QUALITY_BITRATES = {
-  [StreamQuality.LD]: 500_000,
-  [StreamQuality.SD]: 700_000,
-  [StreamQuality.HD]: 2_000_000,
-  [StreamQuality.FHD]: 4_000_000,
-  [StreamQuality.QHD]: 7_000_000,
-  [StreamQuality.Source]: 7_000_000,
-} as const;

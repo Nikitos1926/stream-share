@@ -5,9 +5,15 @@ import { Input } from '@/app/components/ui/Input';
 import { Typography } from '@/app/components/ui/Typography';
 import { StreamControlsSkeleton } from '@/app/components/video/StreamControlsSkeleton';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { StreamQuality, StreamStatus, useStreamer } from '@/lib/hooks/useStreamer';
+import { useIsWindowFocused } from '@/lib/hooks/useIsWindowFocused';
+import {
+  STREAM_FPS_OPTIONS,
+  StreamQuality,
+  StreamStatus,
+  useStreamer,
+} from '@/lib/hooks/useStreamer';
 import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { MediaSourcePicker } from './components/electron/MediaSourcePicker';
 
@@ -25,9 +31,11 @@ export default function Broadcast() {
     currentStream,
     status,
     quality,
+    fps,
     setIsPrivate,
     toggleMute,
     changeQuality,
+    changeFps,
     selectSource,
     broadcast,
     stopBroadcast,
@@ -36,6 +44,18 @@ export default function Broadcast() {
   const isLive = status === StreamStatus.Live;
   const isPreview = status === StreamStatus.Preview;
   const isDesktop = useIsDesktop();
+  const isWindowFocused = useIsWindowFocused();
+  const isPreviewPaused = !isWindowFocused && (isPreview || isLive);
+
+  useEffect(() => {
+    if (!videoRef.current || !(isPreview || isLive)) return;
+
+    const video = videoRef.current;
+
+    if (isWindowFocused) {
+      if (video.paused) video.play();
+    } else if (video.played) video.pause();
+  }, [isLive, isPreview, isWindowFocused, videoRef]);
 
   const constructInviteLink = () => {
     return currentStream && isLive
@@ -84,6 +104,13 @@ export default function Broadcast() {
             muted
             className="h-full w-full rounded-md bg-black object-contain"
           />
+          {isPreviewPaused && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md">
+              <Typography className="rounded-md bg-canvas px-4 py-2">
+                Stream is still going, but preview is paused
+              </Typography>
+            </div>
+          )}
           <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-sm border-2 border-line bg-surface px-2 py-1">
             <span className={`h-2 w-2 rounded-full ${isLive ? 'bg-red-500' : 'bg-stroke-muted'}`} />
             <Typography size="sm" className="tracking-wide uppercase">
@@ -108,27 +135,44 @@ export default function Broadcast() {
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
               <div className="flex flex-col items-center gap-4 md:flex-row">
                 {renderPickSourceButton()}
-                <div className="flex flex-col gap-1.5">
-                  <fieldset className="rounded-lg border border-line px-2.5 pb-2.5 md:-mt-3.25">
-                    <legend className="mx-auto px-2">
-                      <Typography tone="muted" size="sm">
-                        Quality
-                      </Typography>
-                    </legend>
-                    <div className="flex flex-wrap gap-1.5">
-                      {qualities.map((q) => (
-                        <Button
-                          key={q}
-                          size="sm"
-                          variant={quality === q ? 'primary' : 'ghost'}
-                          onClick={() => changeQuality(q)}
-                        >
-                          {q === StreamQuality.Source ? q : `${q}p`}
-                        </Button>
-                      ))}
-                    </div>
-                  </fieldset>
-                </div>
+                <fieldset className="rounded-lg border border-line px-2.5 pb-2.5 md:-mt-3.25">
+                  <legend className="mx-auto px-2">
+                    <Typography tone="muted" size="sm">
+                      Quality
+                    </Typography>
+                  </legend>
+                  <div className="flex flex-wrap gap-1.5">
+                    {qualities.map((q) => (
+                      <Button
+                        key={q}
+                        size="sm"
+                        variant={quality === q ? 'primary' : 'ghost'}
+                        onClick={() => changeQuality(q)}
+                      >
+                        {q === StreamQuality.Source ? q : `${q}p`}
+                      </Button>
+                    ))}
+                  </div>
+                </fieldset>
+                <fieldset className="rounded-lg border border-line px-2.5 pb-2.5 md:-mt-3.25">
+                  <legend className="mx-auto px-2">
+                    <Typography tone="muted" size="sm" className="whitespace-nowrap">
+                      Frame rate
+                    </Typography>
+                  </legend>
+                  <div className="flex flex-wrap gap-1.5">
+                    {STREAM_FPS_OPTIONS.map((f) => (
+                      <Button
+                        key={f}
+                        size="sm"
+                        variant={fps === f ? 'primary' : 'ghost'}
+                        onClick={() => changeFps(f)}
+                      >
+                        {f}
+                      </Button>
+                    ))}
+                  </div>
+                </fieldset>
                 <div className="flex flex-wrap gap-1.5">
                   <span
                     title={

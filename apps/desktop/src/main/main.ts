@@ -2,8 +2,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { app, BrowserWindow } from 'electron';
 import { createAppWindow } from './app';
 import { createAppTray } from './tray';
-
-app.commandLine.appendSwitch('disable-features', 'AllowWgcScreenCapturer,AllowWgcWindowCapturer');
+import { setupAutoUpdater } from './updater';
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -18,6 +17,7 @@ void app.whenReady().then(async () => {
   // Create app window
   const mainWindow = createAppWindow();
   createAppTray(mainWindow);
+  setupAutoUpdater();
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

@@ -16,15 +16,14 @@ export async function getLatestRelease(
   }
 
   const data = (await response.json()) as {
-    assets: { content_type: string; browser_download_url: string }[];
+    assets: { name: string; browser_download_url: string }[];
   };
+  const urlFor = (ext: string) =>
+    data.assets.find((a) => a.name.toLowerCase().endsWith(ext))?.browser_download_url;
   return {
-    [Os.Windows]: data.assets.find((a) => a.content_type === 'application/x-msdos-program')
-      ?.browser_download_url,
-    [Os.Linux]: data.assets.find((a) => a.content_type === 'application/octet-stream')
-      ?.browser_download_url,
-    [Os.Mac]: data.assets.find((a) => a.content_type === 'application/x-apple-diskimage')
-      ?.browser_download_url,
+    [Os.Windows]: urlFor('.exe'),
+    [Os.Linux]: urlFor('.appimage'),
+    [Os.Mac]: urlFor('.dmg'),
     [Os.Android]: undefined,
     [Os.I]: undefined,
     [Os.Unknown]: undefined,

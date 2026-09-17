@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu, nativeTheme, Tray } from 'electron';
 import { resolveIcon } from '../utils';
+import { checkForUpdatesInteractively } from './updater';
 
 let tray: Tray | undefined;
 export function createAppTray(mainWindow: BrowserWindow): Tray {
@@ -7,6 +8,8 @@ export function createAppTray(mainWindow: BrowserWindow): Tray {
 
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Open', click: () => mainWindow.show() },
+    { label: 'Check for updates…', click: () => void checkForUpdatesInteractively() },
+    { type: 'separator' },
     {
       label: 'Quit',
       click: () => {
