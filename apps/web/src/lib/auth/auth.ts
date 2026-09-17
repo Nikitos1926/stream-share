@@ -8,6 +8,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { Style, Avatar } from '@dicebear/core';
 import identicon from '@dicebear/styles/identicon.json' with { type: 'json' };
 import { generateSlug } from 'random-word-slugs';
+import { redeemHandoffCode } from './desktopHandoff';
 
 const adapter = DrizzleAdapter(db);
 const style = new Style(identicon);
@@ -42,6 +43,36 @@ const config: NextAuthConfig = {
           name: guest.name,
           image: guest.image,
           role: guest.role,
+        };
+      },
+    }),
+    /**
+     * Redeems the code the desktop app received on its loopback listener after
+     * the user picked an account in the system browser (see
+     * ./desktopHandoff.ts). It is called from the Electron window itself, so the
+     * session cookie Auth.js sets lands in the Electron cookie jar — which is
+     * the whole point of the round trip, because signaling authenticates that
+     * cookie.
+     */
+    CredentialsProvider({
+      id: 'desktop',
+      name: 'Desktop browser sign-in',
+      credentials: { code: { type: 'text' }, verifier: { type: 'text' } },
+      async authorize({ code, verifier }) {
+        if (typeof code !== 'string' || typeof verifier !== 'string') return null;
+
+        const userId = await redeemHandoffCode(code, verifier);
+        if (!userId) return null;
+
+        const user = await adapter.getUser!(userId);
+        // A guest never goes through the browser flow; refuse to mint one here.
+        if (!user || user.role === 'guest') return null;
+
+        return {
+          id: user.id,
+          name: user.name,
+          image: user.image,
+          role: user.role,
         };
       },
     }),
