@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { appIpcSchema } from './app.schema';
+import { authIpcInvokeSchema } from './auth.schema';
 import { streamIpcInvokeSchema } from './stream.schema';
 import { windowIpcSchema } from './window.schema';
 
@@ -8,6 +9,7 @@ export const ipcInvokeSchemas = {
   ...windowIpcSchema,
   ...appIpcSchema,
   ...streamIpcInvokeSchema,
+  ...authIpcInvokeSchema,
 } as const;
 
 // Extract types from Zod schemas

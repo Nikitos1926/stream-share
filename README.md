@@ -14,13 +14,47 @@
 - [ ] desktop app
 - [ ] replace client fetches with react-query
 
-
 ### Note
+
 - [x] add fps change
 - [x] add download button to the profile dropdown menu
-- [x] turn off preview when the window loses focus 
-- [ ] open the Google account selection in an external browser
+- [x] turn off preview when the window loses focus
+- [x] open the Google account selection in an external browser
 
+## Sign-in
+
+In a browser, "Continue with Google" is a top-level redirect to Google and back
+to `/api/auth/callback/google` — the ordinary Auth.js flow, unchanged.
+
+In the **desktop app** the same button opens the account chooser in the user's
+default browser instead, because Google rejects OAuth in embedded user agents
+(`disallowed_useragent`) and because signing in inside the app window is not what
+people expect of it. The round trip is:
+
+1. the Electron main process starts a listener on `127.0.0.1:0` (an ephemeral
+   port), generates a PKCE verifier and a `state`, and `shell.openExternal`s
+   `<WEB_URL>/api/desktop-auth/start?port=…&state=…&challenge=…`;
+2. that route parks the request in a signed, short-lived cookie and starts the
+   **normal Auth.js Google flow** in that browser, `prompt=select_account`;
+3. `/api/desktop-auth/complete` picks the cookie back up, issues a one-time code
+   bound to the PKCE challenge and redirects the browser to
+   `http://127.0.0.1:<port>/callback`, which shows "you can close this tab";
+4. the app redeems the code through the `desktop` credentials provider **from
+   inside the Electron window**, so Auth.js writes its session cookie into the
+   app's cookie jar — which is what the signaling server authenticates.
+
+Consequences worth knowing:
+
+- **No new Google Cloud configuration.** The only authorized redirect URI is
+  still `<origin>/api/auth/callback/google` (plus `http://localhost:3000/api/auth/callback/google`
+  for development). The desktop app never talks to Google directly, so there is
+  no second OAuth client, no loopback URI to register, and the client secret
+  never leaves the web server.
+- The desktop app must point at a web deployment that has these routes —
+  `WEB_URL` is inlined at build time (see below).
+- While the browser is open the app shows a "waiting for browser sign-in…" state
+  with a Cancel button; cancelling, closing the tab or five minutes of silence
+  all return the login screen to a retryable state.
 
 ## Configuration
 
@@ -87,7 +121,6 @@ Two values are easy to get wrong and worth checking:
 `SKIP_ENV_VALIDATION=1` bypasses validation for image builds and typechecks, where
 secrets are legitimately absent. Never set it on a running server.
 
-
-### Prod SSH connection 
+### Prod SSH connection
 
 `ssh -i C:\Users\coort\.ssh\oracle-stream-share.key ubuntu@streamshare.space`
