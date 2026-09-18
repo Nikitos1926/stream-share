@@ -76,9 +76,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 const cardVariants = cva(['rounded-xl border bg-surface'], {
   variants: {
     variant: {
-      default: 'border-border',
+      default: 'border-line',
       interactive:
-        'border-border hover:border-text-muted cursor-pointer transition-colors duration-100',
+        'cursor-pointer border-line transition-colors duration-100 hover:border-stroke-muted',
     },
     padding: {
       none: 'p-0',

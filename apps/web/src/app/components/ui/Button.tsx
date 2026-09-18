@@ -36,32 +36,35 @@ const buttonVariants = cva(
         variant: 'primary',
         appearance: 'outline',
         class:
-          'border-accent bg-transparent text-accent hover:bg-accent/10 active:bg-accent/80 active:text-black',
+          'border-accent bg-transparent text-accent hover:bg-accent/10 active:bg-accent active:text-canvas',
       },
       {
         variant: 'primary',
         appearance: 'solid',
-        class: 'border-accent bg-accent text-surface hover:bg-accent/90 active:bg-accent/80',
+        // `text-canvas`, not `text-surface`: canvas is the token that inverts
+        // with `--accent`, so the label stays legible in both themes.
+        class: 'border-accent bg-accent text-canvas hover:bg-accent/90 active:bg-accent/80',
       },
       {
         variant: 'secondary',
         appearance: 'outline',
-        class: 'text-fg border-line-strong bg-transparent hover:bg-surface/50',
+        class: 'border-line bg-transparent text-stroke hover:bg-surface/50',
       },
       {
         variant: 'secondary',
         appearance: 'solid',
-        class: 'text-fg border-line bg-surface hover:bg-surface/70 active:bg-surface/50',
+        class: 'border-line bg-surface text-stroke hover:bg-surface/70 active:bg-surface/50',
       },
       {
         variant: 'ghost',
         appearance: 'outline',
-        class: 'text-fg-muted hover:text-fg border-line bg-transparent hover:bg-surface/50',
+        class: 'border-line bg-transparent text-stroke-muted hover:bg-surface/50 hover:text-stroke',
       },
       {
         variant: 'ghost',
         appearance: 'solid',
-        class: 'text-fg-muted hover:text-fg border-transparent bg-surface/50 hover:bg-surface/70',
+        class:
+          'border-transparent bg-surface/50 text-stroke-muted hover:bg-surface/70 hover:text-stroke',
       },
       {
         variant: 'destructive',
@@ -71,7 +74,7 @@ const buttonVariants = cva(
       {
         variant: 'destructive',
         appearance: 'solid',
-        class: 'border-danger bg-danger text-stroke hover:bg-danger/90 active:bg-danger/80',
+        class: 'border-danger bg-danger text-canvas hover:bg-danger/90 active:bg-danger/80',
       },
     ],
     defaultVariants: {

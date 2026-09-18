@@ -1,15 +1,31 @@
 @import 'tailwindcss';
 
+/**
+ * Every colour in the app comes from the tokens below, and each one flips with
+ * the theme — including `--surface` and `--line`, which used to hold their dark
+ * values in both modes and left black text sitting on a dark card in light mode.
+ *
+ * Two invariants keep the pairings readable (all ratios WCAG AA or better):
+ *
+ * 1. `--canvas` / `--surface` / `--line` go light in light mode and dark in dark
+ *    mode; `--stroke` / `--stroke-muted` go the other way. Anything written with
+ *    `text-stroke` or `text-stroke-muted` on `bg-canvas` or `bg-surface` is then
+ *    readable in both modes, with no `dark:` variant.
+ * 2. `--accent` and `--danger` are dark in light mode and light in dark mode, so
+ *    they read as text on a canvas/surface background *and* work as a fill whose
+ *    label is `text-canvas`. That is why solid buttons use `text-canvas`: it is
+ *    the only foreground that inverts with the fill.
+ */
 :root {
   --canvas: #ffffff;
-  --surface: #15181d;
-  --line: #262b32;
-  --stroke: #000000;
-  --stroke-muted: #7c8591;
-  --accent: #2fd9c4;
-  --danger: #c4453d;
-  --signal-live: #ff3b30;
-  --signal-warn: #ffb020;
+  --surface: #f3f5f7;
+  --line: #d7dde4;
+  --stroke: #11151a;
+  --stroke-muted: #5a636f;
+  --accent: #0b6b60;
+  --danger: #b3261e;
+  --signal-live: #d32f2f;
+  --signal-warn: #9a6200;
   --signal-idle: #5b6572;
 
   --footer-gap: 3rem;
@@ -25,7 +41,8 @@
   --stroke: #ffffff;
   --stroke-muted: #7c8591;
   --accent: #2fd9c4;
-  --danger: #c4453d;
+  /* #c4453d was only 3.6:1 on `--surface`; this is the same hue, AA as text. */
+  --danger: #f2675d;
   --signal-live: #ff3b30;
   --signal-warn: #ffb020;
   --signal-idle: #5b6572;
@@ -54,7 +71,9 @@
 
 body {
   background: var(--canvas);
-  color: var(--foreground);
+  /* `--foreground` never existed, so anything that inherited its colour (the
+     legal pages' headings, modal copy) fell back to the UA's black. */
+  color: var(--stroke);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -67,7 +86,12 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(90deg, transparent, rgba(10, 48, 43, 0.315), transparent);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent
+  );
   animation: shimmer-sweep 1.8s ease-in-out infinite;
 }
 
