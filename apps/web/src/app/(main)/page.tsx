@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { Link } from '../components/ui/Link';
 import { StreamList } from './components/StreamList';
 import { DownloadButton } from './components/DownloadButton';
+import { getRequestOperatingSystem } from '@/lib/utils/os.server';
 
 const features: { icon: LucideIcon; title: string; description: string }[] = [
   {
@@ -37,6 +38,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     );
   }
 
+  const os = await getRequestOperatingSystem();
+
   return (
     <div className="text-stroke">
       <section className="container px-6 py-24 text-center">
@@ -47,7 +50,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           No downloads required. Viewers don&apos;t need an account — just send the link and go.
         </p>
         <div className="flex items-center justify-center gap-3">
-          <DownloadButton size="lg" />
+          <DownloadButton size="lg" os={os} />
           <Button variant="primary" appearance="solid" size="lg">
             <Link href="/login" variant="unstyled">
               Get started
