@@ -42,8 +42,12 @@ const buttonVariants = cva(
         variant: 'primary',
         appearance: 'solid',
         // `text-canvas`, not `text-surface`: canvas is the token that inverts
-        // with `--accent`, so the label stays legible in both themes.
-        class: 'border-accent bg-accent text-canvas hover:bg-accent/90 active:bg-accent/80',
+        // with `--accent`, so the label stays legible in both themes. Hover and
+        // press use the `-hover` / `-active` shades rather than `bg-accent/90`:
+        // an alpha fill mixes towards the canvas, i.e. towards the colour of
+        // its own label.
+        class:
+          'border-accent bg-accent text-canvas hover:border-accent-hover hover:bg-accent-hover active:border-accent-active active:bg-accent-active',
       },
       {
         variant: 'secondary',
@@ -69,12 +73,16 @@ const buttonVariants = cva(
       {
         variant: 'destructive',
         appearance: 'outline',
-        class: 'border-danger bg-transparent text-danger hover:bg-danger/10 active:bg-danger/80',
+        // Pressed the label sits on the danger fill, so it has to flip to
+        // `text-canvas` like the primary outline pair does.
+        class:
+          'border-danger bg-transparent text-danger hover:bg-danger/10 active:bg-danger active:text-canvas',
       },
       {
         variant: 'destructive',
         appearance: 'solid',
-        class: 'border-danger bg-danger text-canvas hover:bg-danger/90 active:bg-danger/80',
+        class:
+          'border-danger bg-danger text-canvas hover:border-danger-hover hover:bg-danger-hover active:border-danger-active active:bg-danger-active',
       },
     ],
     defaultVariants: {

@@ -5,7 +5,9 @@ import NextLink from 'next/link';
 export const linkVariants = cva(['rounded-sm transition-colors duration-100'], {
   variants: {
     variant: {
-      default: 'text-accent hover:text-accent/80',
+      // `hover:text-accent-hover`, not `text-accent/80`: the alpha fades the
+      // label towards the page background and drops it under AA on hover.
+      default: 'text-accent hover:text-accent-hover',
       muted: 'text-stroke-muted',
       active: 'pointer-events-none font-semibold text-stroke',
       unstyled: 'focus:outline-none focus-visible:ring-0 focus-visible:outline-none',

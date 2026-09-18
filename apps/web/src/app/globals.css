@@ -15,6 +15,14 @@
  *    they read as text on a canvas/surface background *and* work as a fill whose
  *    label is `text-canvas`. That is why solid buttons use `text-canvas`: it is
  *    the only foreground that inverts with the fill.
+ *
+ * The `-hover` / `-active` shades exist because an alpha fill (`bg-accent/80`)
+ * mixes towards the background, which is exactly the colour a `text-canvas`
+ * label is — pressing the button used to wash its own label out. Each shade
+ * moves *away* from the canvas instead (darker in light mode, lighter in dark),
+ * so hover and press only ever raise contrast. Use them for the hover/press
+ * state of an accent/danger fill, and for accent text on hover; alpha is fine
+ * for a tint that sits *under* text of a different colour (`bg-accent/10`).
  */
 :root {
   --canvas: #ffffff;
@@ -23,7 +31,11 @@
   --stroke: #11151a;
   --stroke-muted: #5a636f;
   --accent: #0b6b60;
+  --accent-hover: #095a51;
+  --accent-active: #07463f;
   --danger: #b3261e;
+  --danger-hover: #991f18;
+  --danger-active: #7f1a14;
   --signal-live: #d32f2f;
   --signal-warn: #9a6200;
   --signal-idle: #5b6572;
@@ -41,8 +53,12 @@
   --stroke: #ffffff;
   --stroke-muted: #7c8591;
   --accent: #2fd9c4;
+  --accent-hover: #57e2d1;
+  --accent-active: #7feade;
   /* #c4453d was only 3.6:1 on `--surface`; this is the same hue, AA as text. */
   --danger: #f2675d;
+  --danger-hover: #f68a82;
+  --danger-active: #f9aaa4;
   --signal-live: #ff3b30;
   --signal-warn: #ffb020;
   --signal-idle: #5b6572;
@@ -55,7 +71,11 @@
   --color-stroke: var(--stroke);
   --color-stroke-muted: var(--stroke-muted);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
   --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-active: var(--danger-active);
   --color-signal-live: var(--signal-live);
   --color-signal-warn: var(--signal-warn);
   --color-signal-idle: var(--signal-idle);
