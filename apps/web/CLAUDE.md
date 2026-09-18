@@ -37,6 +37,18 @@ drops below WCAG AA. It also fails on a colour class naming a token that does no
 any `hover:`/`active:`/`focus:` `bg-*`/`text-*` class in `src` that no pair accounts for — so a
 new state forces you to say, in `scripts/check-contrast.mjs`, what text sits on it.
 
+**Never read a browser global while rendering.** `navigator`, `document`, `window`, `localStorage`
+and `matchMedia` are for effects and event handlers. Read during render they either crash the
+server (`document is not defined` on `/broadcast`) or, worse, quietly return something else there
+— Node's `navigator.userAgent` is `Node.js/24`, which is why the landing page rendered no
+"Download" button on the server and one in the browser, i.e. a hydration mismatch. Two ways out:
+`useSyncExternalStore` with a server snapshot the first client render can reproduce
+(`useIsDesktop`, `useIsWindowFocused`), or — when the UI must be right on first paint — take the
+value off the request in a Server Component and pass it down as a prop, the way
+`getRequestOperatingSystem()` (`lib/utils/os.server.ts`) feeds `DownloadButton`. See
+`docs/decisions/0002-*`. `suppressHydrationWarning` belongs on `<html>` for the `next-themes`
+class and nowhere else.
+
 **Auth pages** (`src/app/(auth)`) share `(auth)/layout.tsx`: mark, one `max-w-md` surface card,
 footer links. They deliberately do not use the `(main)` header/footer — a page you are not
 signed in on should not offer app navigation. Pages under it render card content only.

@@ -7,8 +7,9 @@ import { Button } from '../ui/Button';
 import { Typography } from '../ui/Typography';
 import { HeaderProfile } from './HeaderProfile';
 import { Logo } from './Logo';
+import { Os } from '@/lib/utils/os.util';
 
-export function Header(props: { user: Session['user'] | undefined }) {
+export function Header(props: { user: Session['user'] | undefined; os: Os }) {
   const session = useSession();
   const user = session.data?.user || props.user;
 
@@ -31,7 +32,7 @@ export function Header(props: { user: Session['user'] | undefined }) {
                   </Button>
                 </nav>
               )}
-              <HeaderProfile {...user} />
+              <HeaderProfile {...user} os={props.os} />
             </>
           ) : (
             <Button>
