@@ -1,7 +1,10 @@
 'use client';
 
+import { Button } from '@/app/components/ui/Button';
+import { Typography } from '@/app/components/ui/Typography';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { PROVIDERS_CONFIG } from '@/lib/enums/providersConfig';
+import { Loader2, TriangleAlert } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -126,22 +129,23 @@ export function LoginProviders({ signInWithProvider }: Props) {
 
   if (phase !== 'idle') {
     return (
-      <div className="mb-3 flex w-full max-w-sm flex-col items-center gap-3 rounded-xl bg-[#2a2a2a] p-5 text-center">
-        <p className="text-sm font-medium">
+      <div
+        className="flex flex-col items-center gap-3 rounded-lg border border-line bg-canvas p-5 text-center"
+        aria-live="polite"
+      >
+        <Loader2 className="size-6 animate-spin text-accent" aria-hidden />
+        <Typography size="sm" className="font-medium">
           {phase === 'waiting' ? 'Waiting for browser sign-in…' : 'Finishing sign-in…'}
-        </p>
+        </Typography>
         {phase === 'waiting' && (
           <>
-            <p className="text-muted-foreground text-xs font-light">
+            <Typography tag="p" tone="muted" size="xs">
               Finish choosing your Google account in the browser window that just opened, then come
               back.
-            </p>
-            <button
-              onClick={cancel}
-              className="cursor-pointer rounded-lg border border-[#65645F] px-4 py-2 text-sm font-medium hover:bg-[#534AB7]"
-            >
+            </Typography>
+            <Button onClick={cancel} variant="ghost" appearance="outline" size="lg">
               Cancel
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -149,19 +153,30 @@ export function LoginProviders({ signInWithProvider }: Props) {
   }
 
   return (
-    <div className="mb-3 flex w-full max-w-sm flex-col gap-3 rounded-xl bg-[#2a2a2a] p-5">
+    <div className="flex flex-col gap-3">
       {providers.map(({ name, icon }) => (
-        <button
+        <Button
           key={name}
           onClick={() => void onProviderClick(name)}
           disabled={busy}
-          className="text-foreground flex w-full cursor-pointer items-center gap-3 rounded-lg border border-[#65645F] bg-inherit px-4 py-3 text-sm font-medium hover:bg-[#534AB7] disabled:cursor-not-allowed disabled:opacity-60"
+          size="lg"
+          className="w-full"
         >
-          <Image src={icon} alt="" width={25} height={15} />
+          <Image src={icon} alt="" width={18} height={18} aria-hidden />
           <span>Continue with {name.charAt(0).toUpperCase() + name.slice(1)}</span>
-        </button>
+        </Button>
       ))}
-      {error && <p className="text-center text-xs text-red-400">{error}</p>}
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-2 rounded-md border border-danger/50 bg-danger/10 px-3 py-2"
+        >
+          <TriangleAlert className="mt-0.5 size-4 shrink-0 text-danger" aria-hidden />
+          <Typography tag="p" tone="danger" size="xs">
+            {error}
+          </Typography>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,6 @@
+import { MonitorCheck } from 'lucide-react';
+import { Typography } from '../../components/ui/Typography';
+
 /**
  * The dead end of a desktop sign-in that this browser can no longer hand back to
  * the app (api/desktop-auth/complete sends it here when the hand-off cookie is
@@ -8,21 +11,23 @@
  */
 export default function DesktopAuthReturnPage() {
   return (
-    <div className="mx-auto flex min-h-screen flex-col items-center p-4">
-      <div className="m-8 flex w-full max-w-lg flex-col items-center rounded-xl bg-[#0a0a0a]">
-        <div className="flex flex-col items-center p-4 text-center">
-          <h1 className="mb-4 text-2xl font-bold">Stream Share</h1>
-          <h2 className="text-xl font-bold">Go back to the app</h2>
-          <p className="text-muted-foreground mt-2 text-sm font-light">
-            This browser is done with the sign-in, but it could not hand the result back to Stream
-            Share — the link had already been used or it expired.
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm font-light">
-            Switch to the Stream Share app and sign in again; it takes a few seconds now that the
-            browser knows your account. You can close this tab.
-          </p>
-        </div>
-      </div>
+    <div className="flex flex-col items-center gap-3 text-center">
+      <span className="mb-1 flex size-12 items-center justify-center rounded-lg bg-accent/15">
+        <MonitorCheck className="size-6 text-accent" aria-hidden />
+      </span>
+
+      <Typography tag="h1" className="text-2xl font-semibold">
+        Go back to the app
+      </Typography>
+
+      <Typography tag="p" tone="muted" size="sm">
+        This browser is done with the sign-in, but it could not hand the result back to stream-share
+        — the link had already been used or it expired.
+      </Typography>
+      <Typography tag="p" tone="muted" size="sm">
+        Switch to the stream-share app and sign in again; it takes a few seconds now that the
+        browser knows your account. You can close this tab.
+      </Typography>
     </div>
   );
 }
