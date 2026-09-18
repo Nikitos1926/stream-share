@@ -1,4 +1,5 @@
 import { NewUser } from '@stream-share/db';
+import { SESSION_COOKIE_NAME, useSecureAuthCookies } from '@stream-share/shared';
 import NextAuth, { type NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../db';
@@ -17,6 +18,32 @@ const config: NextAuthConfig = {
   adapter,
   session: {
     strategy: 'jwt',
+  },
+  /**
+   * The session cookie must never travel over plain http in production. Left to
+   * @auth/core this follows `url.protocol === 'https:'`, which behind Caddy means
+   * "is AUTH_URL set" rather than "is the user on https" — so the policy is
+   * stated explicitly, from the same module the signaling server reads the name
+   * from (@stream-share/shared/auth). `useSecureCookies` covers the csrf,
+   * callback-url, pkce and state cookies too.
+   */
+  useSecureCookies: useSecureAuthCookies,
+  cookies: {
+    sessionToken: {
+      // Pinned rather than derived, because signaling verifies this exact name
+      // and uses it as the JWT salt (apps/signaling/src/auth/jwt.ts).
+      name: SESSION_COOKIE_NAME,
+      options: {
+        httpOnly: true,
+        // `lax` is the ceiling here, not a default: the Google callback and the
+        // desktop flow's return from the external browser are both top-level
+        // cross-site navigations back to this origin, and `strict` would keep
+        // the browser from sending the cookie on them.
+        sameSite: 'lax',
+        path: '/',
+        secure: useSecureAuthCookies,
+      },
+    },
   },
   providers: [
     CredentialsProvider({

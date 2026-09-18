@@ -58,6 +58,16 @@ value off the request in a Server Component and pass it down as a prop, the way
 `docs/decisions/0002-*`. `suppressHydrationWarning` belongs on `<html>` for the `next-themes`
 class and nowhere else.
 
+**The session cookie's name and `Secure` flag are not the web app's to choose alone.** Both
+come from `@stream-share/shared` (`sessionCookie.ts`), because the signaling server reads that
+cookie without running Auth.js and uses its **name as the JWT salt** — a name the two sides
+disagree on 401s every request instead of erroring. `src/lib/auth/auth.ts` therefore passes
+`useSecureCookies` and pins `cookies.sessionToken` from those constants rather than letting
+`@auth/core` infer them from the request protocol (behind Caddy that is `http:`), and
+`sameSite` stays `lax` so the Google callback and the desktop hand-off still carry it. See
+`docs/decisions/0004-*`; `pnpm --filter @stream-share/web check:session-cookie` asserts the
+emitted `Set-Cookie` in both modes.
+
 **Auth pages** (`src/app/(auth)`) share `(auth)/layout.tsx`: mark, one `max-w-md` surface card,
 footer links. They deliberately do not use the `(main)` header/footer — a page you are not
 signed in on should not offer app navigation. Pages under it render card content only.
