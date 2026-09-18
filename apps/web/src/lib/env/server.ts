@@ -23,4 +23,11 @@ const schema = z.object({
   AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
 });
 
-export const env = createEnv('web/server', schema);
+/**
+ * The type is spelled out rather than inferred. `createEnv` derives its return
+ * type through the zod schema, and an incomplete workspace install makes that
+ * inference collapse to `unknown` (see the root CLAUDE.md) — which used to show
+ * up as a dozen `'env' is of type 'unknown'` errors in unrelated modules. With
+ * the annotation the same breakage is a single error, here, next to its cause.
+ */
+export const env: z.infer<typeof schema> = createEnv('web/server', schema);

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm --filter @stream-share/web^... build && next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check:desktop-auth": "node scripts/desktop-auth-flow-check.mjs",
