@@ -10,10 +10,11 @@ the `...` suffix — `pnpm install --filter @stream-share/web...`, the way
 their own dependencies too. Without the suffix pnpm links `packages/env` into the app but never
 installs `packages/env/node_modules`, and because every package publishes **`src` as its public
 types** (`"types": "./src/index.ts"`), the app then type-checks library _source_ whose `zod`
-import resolves to nothing. The generic in `createEnv` silently degrades, and you get
-`error TS18046: 'env' is of type 'unknown'` in a dozen files that have nothing wrong with them.
-`pnpm install` at the root is the fix; `apps/web/src/lib/env/*.ts` annotates its exports so the
-same breakage reports itself once, at the definition, instead.
+import resolves to nothing. `pnpm install` at the root is the fix. Read the errors from the
+bottom: a `TS2307: Cannot find module 'zod'` under `packages/` is the cause, and anything it
+reports in an app is a symptom — which is why `apps/web/src/lib/env/*.ts` annotates its `env`
+exports (`z.infer<typeof schema>`) instead of inferring them through `createEnv`, so a collapsed
+inference no longer sprays `'env' is of type 'unknown'` across unrelated modules.
 
 **Build the libraries before running or bundling an app.** `packages/*` publish `src` for types
 but `dist/` for runtime, and `dist/` is gitignored — so on a fresh checkout `next build` and
