@@ -15,7 +15,8 @@
     "preview": "electron-vite preview",
     "postinstall": "node scripts/rebuild-native.mjs",
     "lint": "eslint src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:sign-in-guard": "node scripts/sign-in-guard-check.mjs"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",

@@ -31,6 +31,8 @@ export type GoogleSignInResult =
 type Pending = {
   server: Server;
   settle: (result: GoogleSignInResult) => void;
+  /** Handed to any later caller that arrives while this attempt is running. */
+  result: Promise<GoogleSignInResult>;
 };
 
 let pending: Pending | null = null;
@@ -91,11 +93,18 @@ const listen = (server: Server) =>
 
 /**
  * Opens the account chooser in the default browser and resolves once the browser
- * has handed the result back. Only one attempt runs at a time: starting a new
- * one cancels the previous, so a stuck flow can always be retried.
+ * has handed the result back.
+ *
+ * Only one attempt runs at a time, and a request that arrives while one is
+ * running **joins it** instead of starting another: this is the last line of
+ * defence behind the renderer's own guard, and `shell.openExternal` is the part
+ * that must not run twice — superseding the attempt here still opened a second
+ * browser tab, which is precisely what a double click must not do. Ending an
+ * attempt early is `cancelGoogleSignIn`'s job (the Cancel button in the waiting
+ * panel calls it), so a stuck flow is still retryable.
  */
-export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSignInResult> {
-  cancelGoogleSignIn();
+export function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSignInResult> {
+  if (pending) return pending.result;
 
   const verifier = base64url(randomBytes(32));
   const challenge = createHash('sha256').update(verifier).digest('base64url');
@@ -103,7 +112,12 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
 
   const server = createServer();
 
-  return new Promise<GoogleSignInResult>((resolve) => {
+  // Captured out of the executor so `pending` can carry the promise itself: it
+  // is what a second caller is handed, and it cannot be referenced from inside
+  // its own constructor.
+  let settleAttempt: (result: GoogleSignInResult) => void = () => {};
+
+  const attempt = new Promise<GoogleSignInResult>((resolve) => {
     let done = false;
     const settle = (result: GoogleSignInResult) => {
       if (done) return;
@@ -169,13 +183,13 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
       );
     });
 
-    pending = { server, settle };
+    settleAttempt = settle;
 
     void (async () => {
       try {
         const port = await listen(server);
 
-        // Cancelled (or superseded) while the socket was still coming up: the
+        // Cancelled while the socket was still coming up: the
         // settle() above found nothing to close, so close it here and do not
         // open a browser for an attempt nobody is waiting on any more.
         if (done) {
@@ -197,9 +211,16 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
       }
     })();
   });
+
+  // Nothing above can settle before this line — the executor only registers
+  // listeners and suspends on `await listen` — so the attempt is always
+  // published before anyone can join or cancel it.
+  pending = { server, settle: settleAttempt, result: attempt };
+
+  return attempt;
 }
 
-/** Abandons a flow in progress (the user pressed cancel, or a new one started). */
+/** Abandons a flow in progress (the user pressed cancel). */
 export function cancelGoogleSignIn(): void {
   pending?.settle({ status: 'cancelled' });
   pending = null;

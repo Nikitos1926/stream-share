@@ -8,7 +8,7 @@ import { Loader2, TriangleAlert } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   /** The browser path: a server action that redirects this tab to Google. */
@@ -44,15 +44,35 @@ export function LoginProviders({ signInWithProvider }: Props) {
   const isDesktop = useIsDesktop();
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>('idle');
-  const [busy, setBusy] = useState(false);
+  const [pendingProvider, setPendingProvider] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   /**
-   * Starting a second attempt cancels the first one in the main process, so two
-   * clicks landing before this component re-rendered left the window waiting on
-   * an attempt that had already been superseded. `busy` disables the buttons;
-   * the ref is what makes the guard hold inside a single tick.
+   * One flow at a time. `pendingProvider` disables the buttons and shows the
+   * spinner; the ref is what makes the guard hold inside a single tick, because
+   * a double click (or Enter held down) delivers both events before React has
+   * re-rendered with the disabled attribute on.
    */
   const inFlight = useRef(false);
+
+  const release = () => {
+    inFlight.current = false;
+    setPendingProvider(null);
+  };
+
+  /**
+   * The browser path leaves the guard closed on purpose, because the tab is on
+   * its way to Google while it still shows this page. A tab that comes *back*
+   * from the back/forward cache is restored with exactly that state — disabled
+   * button, no navigation left to wait for — so the guard has to open again.
+   */
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) release();
+    };
+
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, []);
 
   const providers = Object.values(PROVIDERS_CONFIG);
 
@@ -113,17 +133,29 @@ export function LoginProviders({ signInWithProvider }: Props) {
   const onProviderClick = async (provider: string) => {
     if (inFlight.current) return;
     inFlight.current = true;
-    setBusy(true);
-    try {
-      if (isDesktop && provider === PROVIDERS_CONFIG.google.name) {
+    setPendingProvider(provider);
+    setError(null);
+
+    if (isDesktop && provider === PROVIDERS_CONFIG.google.name) {
+      try {
+        // Ends in a signed-in window, an error, or a cancellation — all three
+        // put the buttons back, so the guard is released either way.
         await signInThroughBrowser();
-        return;
+      } finally {
+        release();
       }
+      return;
+    }
+
+    try {
       // Redirects this tab to the provider, so it normally never comes back.
+      // When it resolves the navigation is merely *under way* and the page is
+      // still on screen: releasing the guard here is what let a second click
+      // start a second OAuth flow, so only a failure re-enables the button.
       await signInWithProvider(provider);
-    } finally {
-      inFlight.current = false;
-      setBusy(false);
+    } catch {
+      setError(GENERIC_ERROR);
+      release();
     }
   };
 
@@ -158,11 +190,16 @@ export function LoginProviders({ signInWithProvider }: Props) {
         <Button
           key={name}
           onClick={() => void onProviderClick(name)}
-          disabled={busy}
+          disabled={pendingProvider !== null}
+          aria-busy={pendingProvider === name}
           size="lg"
           className="w-full"
         >
-          <Image src={icon} alt="" width={18} height={18} aria-hidden />
+          {pendingProvider === name ? (
+            <Loader2 className="animate-spin" aria-hidden />
+          ) : (
+            <Image src={icon} alt="" width={18} height={18} aria-hidden />
+          )}
           <span>Continue with {name.charAt(0).toUpperCase() + name.slice(1)}</span>
         </Button>
       ))}
