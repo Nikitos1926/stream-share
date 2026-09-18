@@ -12,7 +12,16 @@ the rest of the app.
 `ErrorState`, `NotFoundState`, `SkeletonBlock`, `Paginator`) already carry the app's type scale,
 focus rings and disabled states. `Button` is the only button — it owns the
 `focus-visible:ring-accent` treatment, so hand-rolled `<button>`s silently lose keyboard focus
-styling. Icons are `lucide-react`; the product mark is `components/layout/Logo`.
+styling. Icons are `lucide-react`; the product mark is `components/layout/Logo`. A user picture is
+`components/ui/Avatar` — it owns the missing/broken-picture fallback, so nothing else needs a
+placeholder for a user without one.
+
+**An image the app does not ship is a plain `<img>`, not `next/image`.** Avatars and stream
+thumbnails come from someone else's origin, already sized, so the optimizer buys nothing and
+fails closed: a URL whose host is not in `images.remotePatterns` throws while rendering in dev and
+answers 400 in production, which is how a user with no Google picture ended up with a broken
+header. `next/image` is for assets under `public/` (the OS and provider logos), and there is no
+placeholder asset — a fallback is drawn from the tokens so it follows the theme.
 
 **Every token flips with the theme.** `--canvas` / `--surface` / `--line` are light in light mode
 and dark in dark mode; `--stroke` / `--stroke-muted` do the opposite; `--accent` and `--danger`
