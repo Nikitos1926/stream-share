@@ -32,5 +32,13 @@ PipeWire/PulseAudio/X11 headers, which most machines and sandboxes lack, so
 A warning there means the Electron app will fail when it captures desktop audio; nothing else
 is affected.
 
-**Verification is manual: `pnpm lint && pnpm typecheck && pnpm build`.** There is no test suite
+**Verification is manual: `pnpm lint && pnpm typecheck && pnpm build`.** There is no test runner
 and CI builds artifacts only, so run those three before handing work over.
+
+**What is covered instead are `check:*` scripts — plain `node` harnesses next to the code they
+guard.** Each one drives the real library or module behind a stub of whatever it cannot have
+(Google, Electron) and fails on the regression it was written for; run the ones near what you
+touched, and add one when a bug is only visible in a sequence of steps rather than in a type.
+`pnpm --filter @stream-share/web check:desktop-auth | check:session-cookie | check:contrast`,
+`pnpm --filter @stream-share/desktop check:sign-in-guard` (one sign-in flow at a time: the
+button being disabled is UI, the guard that counts is in the main process).
