@@ -5,7 +5,7 @@ import { PROVIDERS_CONFIG } from '@/lib/enums/providersConfig';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 type Props = {
   /** The browser path: a server action that redirects this tab to Google. */
@@ -15,6 +15,16 @@ type Props = {
 const GENERIC_ERROR = 'Sign-in failed. Please try again.';
 
 /**
+ * Last resort against a spinner that never ends. The main process gives up on
+ * its own after five minutes (apps/desktop/src/main/googleAuth.ts); this only
+ * fires when that answer never arrives at all — a reloaded or crashed main
+ * process, a dropped IPC reply — and turns it into an error the user can retry.
+ */
+const WATCHDOG_MS = 6 * 60 * 1000;
+
+type Phase = 'idle' | 'waiting' | 'finishing';
+
+/**
  * In a browser this is the plain provider list; nothing about that flow changed.
  *
  * Inside the Electron shell the Google button hands off to the main process,
@@ -22,20 +32,42 @@ const GENERIC_ERROR = 'Sign-in failed. Please try again.';
  * listener (apps/desktop/src/main/googleAuth.ts). The code it returns is
  * redeemed here, from the Electron window, so Auth.js writes the session cookie
  * into the app's own cookie jar.
+ *
+ * Every path out of the hand-off ends in one of three states: signed in, or the
+ * buttons back with an error, or the buttons back because the user cancelled.
+ * None of them leaves the waiting panel up.
  */
 export function LoginProviders({ signInWithProvider }: Props) {
   const isDesktop = useIsDesktop();
   const router = useRouter();
-  const [waiting, setWaiting] = useState(false);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /**
+   * Starting a second attempt cancels the first one in the main process, so two
+   * clicks landing before this component re-rendered left the window waiting on
+   * an attempt that had already been superseded. `busy` disables the buttons;
+   * the ref is what makes the guard hold inside a single tick.
+   */
+  const inFlight = useRef(false);
 
   const providers = Object.values(PROVIDERS_CONFIG);
 
   const signInThroughBrowser = async () => {
     setError(null);
-    setWaiting(true);
+    setPhase('waiting');
+
+    let watchdog: ReturnType<typeof setTimeout> | undefined;
     try {
-      const result = await window.conveyor!.auth.signInWithGoogle();
+      const result = await Promise.race([
+        window.conveyor!.auth.signInWithGoogle(),
+        new Promise<DesktopSignInResult>((resolve) => {
+          watchdog = setTimeout(() => {
+            void window.conveyor?.auth.cancelSignIn();
+            resolve({ status: 'error', message: 'Browser sign-in did not come back in time.' });
+          }, WATCHDOG_MS);
+        }),
+      ]);
 
       if (result.status === 'cancelled') return;
       if (result.status === 'timeout') {
@@ -47,6 +79,7 @@ export function LoginProviders({ signInWithProvider }: Props) {
         return;
       }
 
+      setPhase('finishing');
       const outcome = await signIn('desktop', {
         code: result.code,
         verifier: result.verifier,
@@ -65,7 +98,8 @@ export function LoginProviders({ signInWithProvider }: Props) {
     } catch {
       setError(GENERIC_ERROR);
     } finally {
-      setWaiting(false);
+      clearTimeout(watchdog);
+      setPhase('idle');
     }
   };
 
@@ -74,27 +108,42 @@ export function LoginProviders({ signInWithProvider }: Props) {
   };
 
   const onProviderClick = async (provider: string) => {
-    if (isDesktop && provider === PROVIDERS_CONFIG.google.name) {
-      await signInThroughBrowser();
-      return;
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setBusy(true);
+    try {
+      if (isDesktop && provider === PROVIDERS_CONFIG.google.name) {
+        await signInThroughBrowser();
+        return;
+      }
+      // Redirects this tab to the provider, so it normally never comes back.
+      await signInWithProvider(provider);
+    } finally {
+      inFlight.current = false;
+      setBusy(false);
     }
-    await signInWithProvider(provider);
   };
 
-  if (waiting) {
+  if (phase !== 'idle') {
     return (
       <div className="mb-3 flex w-full max-w-sm flex-col items-center gap-3 rounded-xl bg-[#2a2a2a] p-5 text-center">
-        <p className="text-sm font-medium">Waiting for browser sign-in…</p>
-        <p className="text-muted-foreground text-xs font-light">
-          Finish choosing your Google account in the browser window that just opened, then come
-          back.
+        <p className="text-sm font-medium">
+          {phase === 'waiting' ? 'Waiting for browser sign-in…' : 'Finishing sign-in…'}
         </p>
-        <button
-          onClick={cancel}
-          className="cursor-pointer rounded-lg border border-[#65645F] px-4 py-2 text-sm font-medium hover:bg-[#534AB7]"
-        >
-          Cancel
-        </button>
+        {phase === 'waiting' && (
+          <>
+            <p className="text-muted-foreground text-xs font-light">
+              Finish choosing your Google account in the browser window that just opened, then come
+              back.
+            </p>
+            <button
+              onClick={cancel}
+              className="cursor-pointer rounded-lg border border-[#65645F] px-4 py-2 text-sm font-medium hover:bg-[#534AB7]"
+            >
+              Cancel
+            </button>
+          </>
+        )}
       </div>
     );
   }
@@ -105,7 +154,8 @@ export function LoginProviders({ signInWithProvider }: Props) {
         <button
           key={name}
           onClick={() => void onProviderClick(name)}
-          className="text-foreground flex w-full cursor-pointer items-center gap-3 rounded-lg border border-[#65645F] bg-inherit px-4 py-3 text-sm font-medium hover:bg-[#534AB7]"
+          disabled={busy}
+          className="text-foreground flex w-full cursor-pointer items-center gap-3 rounded-lg border border-[#65645F] bg-inherit px-4 py-3 text-sm font-medium hover:bg-[#534AB7] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Image src={icon} alt="" width={25} height={15} />
           <span>Continue with {name.charAt(0).toUpperCase() + name.slice(1)}</span>
