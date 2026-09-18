@@ -55,8 +55,11 @@ server (`document is not defined` on `/broadcast`) or, worse, quietly return som
 (`useIsDesktop`, `useIsWindowFocused`), or — when the UI must be right on first paint — take the
 value off the request in a Server Component and pass it down as a prop, the way
 `getRequestOperatingSystem()` (`lib/utils/os.server.ts`) feeds `DownloadButton`. See
-`docs/decisions/0002-*`. `suppressHydrationWarning` belongs on `<html>` for the `next-themes`
-class and nowhere else.
+`docs/decisions/0002-*`. `suppressHydrationWarning` is allowed **only on `<html>` and `<body>` in
+the root layout** — for the `next-themes` class and for attributes browser extensions inject there
+(`cz-shortcut-listen`, `data-gr-*`) — and nowhere else. It covers only the element it is set on, so
+it never hides a mismatch inside the app; on a component that renders app content it would, and a
+mismatch there is our bug to fix.
 
 **The session cookie's name and `Secure` flag are not the web app's to choose alone.** Both
 come from `@stream-share/shared` (`sessionCookie.ts`), because the signaling server reads that
