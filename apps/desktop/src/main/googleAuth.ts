@@ -74,10 +74,14 @@ function respond(
 
 const listen = (server: Server) =>
   new Promise<number>((resolve, reject) => {
+    // Guards the bind only, and is removed once the socket is up: from then on
+    // the persistent listener that startGoogleSignIn attaches owns 'error', and
+    // nothing here competes with it.
     server.once('error', reject);
     // Port 0 = an ephemeral port picked by the OS; bound to loopback only, so
     // nothing outside this machine can reach the callback.
     server.listen(0, '127.0.0.1', () => {
+      server.removeListener('error', reject);
       const address = server.address() as AddressInfo | null;
       if (address) resolve(address.port);
       else reject(new Error('Loopback listener reported no address'));
@@ -112,6 +116,15 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
 
     const timer = setTimeout(() => settle({ status: 'timeout' }), SIGN_IN_TIMEOUT_MS);
 
+    // `listen` only guards the startup error. This listener has to stay for as
+    // long as the server does: an 'error' with nothing listening for it is an
+    // uncaught exception in the main process, and this server sits there for
+    // minutes waiting for a browser. Any failure of it is a failure of the
+    // attempt, so it settles instead of stranding the renderer.
+    server.on('error', (error) =>
+      settle({ status: 'error', message: error.message || 'The sign-in listener failed' }),
+    );
+
     server.on('request', (req, res) => {
       const url = new URL(req.url ?? '/', 'http://127.0.0.1');
       if (url.pathname !== '/callback') {
@@ -133,10 +146,20 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
         window.focus();
       }
 
+      // The web app reports a refused sign-in (no session, or a guest one) by
+      // sending the attempt back with an error instead of a code, so the app can
+      // say so rather than time out.
+      const error = url.searchParams.get('error');
       const code = url.searchParams.get('code');
-      if (!code) {
+      if (error || !code) {
         respond(res, 200, 'Sign-in was not completed. You can close this tab and try again.', () =>
-          settle({ status: 'cancelled' }),
+          settle({
+            status: 'error',
+            message:
+              error === 'access_denied'
+                ? 'The browser did not finish signing in to a Stream Share account.'
+                : 'The browser could not complete the sign-in.',
+          }),
         );
         return;
       }
@@ -151,6 +174,14 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
     void (async () => {
       try {
         const port = await listen(server);
+
+        // Cancelled (or superseded) while the socket was still coming up: the
+        // settle() above found nothing to close, so close it here and do not
+        // open a browser for an attempt nobody is waiting on any more.
+        if (done) {
+          server.close();
+          return;
+        }
 
         const url = new URL('/api/desktop-auth/start', __WEB_URL__);
         url.searchParams.set('port', String(port));

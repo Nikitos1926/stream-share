@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:desktop-auth": "node scripts/desktop-auth-flow-check.mjs"
   },
   "dependencies": {
     "@auth/core": "0.41.2",

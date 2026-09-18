@@ -4,6 +4,8 @@ import {
   handoffRequestSchema,
   HANDOFF_COMPLETE_PATH,
   HANDOFF_COOKIE,
+  HANDOFF_COOKIE_PATH,
+  isSecureOrigin,
   REQUEST_TTL_SECONDS,
 } from '@/lib/auth/desktopHandoff';
 import { cookies } from 'next/headers';
@@ -28,14 +30,32 @@ export async function GET(req: NextRequest): Promise<Response> {
   // clean slate and the chooser is not skipped — same reason the web login
   // action does it (src/app/(auth)/login/actions.ts). Must run before the
   // hand-off cookie is written: signOut() rewrites the cookie jar.
-  await signOut({ redirect: false });
+  //
+  // `redirectTo` is not cosmetic here, it is what makes the flow work on *every*
+  // attempt. Where the browser goes after Google is decided by the
+  // `authjs.callback-url` cookie, and @auth/core only re-sets that cookie when
+  // the new value differs from the one on the *incoming request* — next-auth's
+  // server-side signIn/signOut both build their internal request from the
+  // request headers, not from the response jar they are writing to
+  // (next-auth/lib/actions.js). Left at its default, signOut() writes
+  // `<origin>/` here; on every second attempt — the one whose browser still
+  // carries the completion URL from the attempt before — signIn() then finds
+  // the incoming cookie already equal to its own callback URL, writes nothing,
+  // and signOut's `<origin>/` survives. Google's callback then lands the browser
+  // on the home page, signed in, while the desktop app waits for a callback that
+  // never comes. Pointing both calls at the same URL makes the result identical
+  // whichever of them ends up writing the cookie.
+  await signOut({ redirect: false, redirectTo: HANDOFF_COMPLETE_PATH });
 
   const cookieStore = await cookies();
   cookieStore.set(HANDOFF_COOKIE, await encodeHandoffRequest(parsed.data), {
     httpOnly: true,
     sameSite: 'lax',
-    secure: req.nextUrl.protocol === 'https:',
-    path: '/api/desktop-auth',
+    // Not `req.nextUrl.protocol`: in production Caddy terminates TLS and talks
+    // plain HTTP to this app (infra/caddy/Caddyfile), so the request protocol is
+    // `http:` on an https deployment and the flag would never be set.
+    secure: isSecureOrigin(req),
+    path: HANDOFF_COOKIE_PATH,
     maxAge: REQUEST_TTL_SECONDS,
   });
 

@@ -66,3 +66,33 @@ Supporting decisions:
   sign in on the desktop; there is no in-app fallback by design.
 - Sign-in also leaves the user signed in **in their browser**, as any OAuth flow
   in that browser would.
+
+### Amendment (2026-09-18): the return trip rides on Auth.js's callback-url cookie
+
+Reusing the web app's Google flow means the hand-off does not control where the
+browser goes after Google: the `authjs.callback-url` cookie does, and @auth/core
+only rewrites that cookie when its new value differs from the one on the
+**incoming request** — next-auth's server-side `signIn`/`signOut` both read the
+request headers, never the response jar they are writing into
+(`next-auth/lib/actions.js`).
+
+`/api/desktop-auth/start` calls both in one request, so whichever of them wins is
+the value the browser keeps. With `signOut()` left at its default the two
+disagreed (`<origin>/` vs the completion URL) and, because each only writes when
+it sees a change, the wrong one survived on every second attempt: the browser
+ended up signed in on the home page and the app waited for a callback that was
+never sent. Both calls now pass the same `redirectTo`, which makes the result
+independent of which one writes the cookie.
+
+Consequences of the amendment:
+
+- any future change to that route has to keep the two `redirectTo` values equal;
+  `pnpm --filter @stream-share/web check:desktop-auth` is a harness that drives
+  the browser leg repeatedly against a stubbed Google and fails when they drift
+  (`--legacy` reproduces the original bug);
+- a hand-off that can no longer be answered ends on `/desktop-auth`, a public
+  page telling the user to return to the app, so no dead end looks like success;
+- the desktop side never leaves the renderer waiting: the loopback server has a
+  persistent `error` listener, a refused sign-in comes back as an error rather
+  than as silence, and the login screen has its own watchdog behind the main
+  process's five-minute timeout.

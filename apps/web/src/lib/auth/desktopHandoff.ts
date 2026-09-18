@@ -1,6 +1,7 @@
 import 'server-only';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { decode, encode, type JWT } from '@auth/core/jwt';
+import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { env } from '../env/server';
 
@@ -34,6 +35,9 @@ const CODE_SALT = 'stream-share.desktop-auth.code';
 /** Name of the cookie carrying the request across the Google round trip. */
 export const HANDOFF_COOKIE = 'stream-share.desktop-auth';
 
+/** Scope of that cookie. Setting and clearing it must use the same path. */
+export const HANDOFF_COOKIE_PATH = '/api/desktop-auth';
+
 /** Long enough for a real person to pick an account (and sign in to Google first). */
 export const REQUEST_TTL_SECONDS = 15 * 60;
 
@@ -42,6 +46,13 @@ export const CODE_TTL_SECONDS = 120;
 
 /** Where Auth.js returns to once the browser has completed the Google flow. */
 export const HANDOFF_COMPLETE_PATH = '/api/desktop-auth/complete';
+
+/**
+ * Page shown to a browser that reached the end of a desktop flow it can no
+ * longer hand back — it tells the user to go to the app instead of leaving them
+ * on a signed-in page wondering why the app is still waiting.
+ */
+export const HANDOFF_RETURN_PATH = '/desktop-auth';
 
 const base64url = /^[A-Za-z0-9_-]+$/;
 
@@ -132,6 +143,23 @@ export async function redeemHandoffCode(token: string, verifier: string): Promis
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
 
   return claim(parsed.data.jti) ? parsed.data.sub : null;
+}
+
+/**
+ * Whether the browser is talking to this app over https, as opposed to whether
+ * *this process* was reached over https: in production Caddy terminates TLS and
+ * proxies plain HTTP (infra/caddy/Caddyfile), so the incoming protocol is always
+ * `http:` there. The configured public origin is the authority when there is one
+ * (compose sets `AUTH_URL`); the proxy's `x-forwarded-proto` is the fallback,
+ * and only a direct request decides for itself.
+ */
+export function isSecureOrigin(req: NextRequest): boolean {
+  if (env.AUTH_URL) return new URL(env.AUTH_URL).protocol === 'https:';
+
+  const forwarded = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
+  if (forwarded) return forwarded.toLowerCase() === 'https';
+
+  return req.nextUrl.protocol === 'https:';
 }
 
 /** The loopback URL the desktop app is listening on. Never taken from the request. */

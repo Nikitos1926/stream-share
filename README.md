@@ -54,7 +54,16 @@ Consequences worth knowing:
   `WEB_URL` is inlined at build time (see below).
 - While the browser is open the app shows a "waiting for browser sign-in…" state
   with a Cancel button; cancelling, closing the tab or five minutes of silence
-  all return the login screen to a retryable state.
+  all return the login screen to a retryable state. A browser that finishes a
+  flow nobody is listening for any more lands on `/desktop-auth`, which tells the
+  user to go back to the app.
+- **Step 3 hangs on the `authjs.callback-url` cookie.** It is the only thing that
+  sends the browser to `/api/desktop-auth/complete` after Google, and `/start`
+  has to make both its `signOut()` and its `signIn()` write the same value, or
+  every second attempt silently ends on the home page instead (see the comment
+  there). Any change to that route wants
+  `pnpm --filter @stream-share/web check:desktop-auth`, which drives the whole
+  browser leg repeatedly against a stubbed Google and fails on exactly that.
 
 ## Configuration
 
