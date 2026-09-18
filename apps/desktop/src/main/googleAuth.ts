@@ -2,6 +2,7 @@ import { shell, type BrowserWindow } from 'electron';
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { bringWindowToFront } from './windowFocus';
 
 /**
  * Desktop side of the system-browser sign-in.
@@ -139,13 +140,6 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
         return;
       }
 
-      // Bring the app forward before the browser tab is done, so the user sees
-      // where they ended up.
-      if (!window.isDestroyed()) {
-        if (window.isMinimized()) window.restore();
-        window.focus();
-      }
-
       // The web app reports a refused sign-in (no session, or a guest one) by
       // sending the attempt back with an error instead of a code, so the app can
       // say so rather than time out.
@@ -163,6 +157,12 @@ export async function startGoogleSignIn(window: BrowserWindow): Promise<GoogleSi
         );
         return;
       }
+
+      // The sign-in worked, so the user's next step is in the app: raise it
+      // before the browser tab has finished rendering, so they see where they
+      // ended up instead of being left in the browser. Only here — a refused,
+      // cancelled or timed-out attempt leaves the window where it is.
+      bringWindowToFront(window);
 
       respond(res, 200, 'Signed in. You can close this tab and return to Stream Share.', () =>
         settle({ status: 'success', code, verifier }),
