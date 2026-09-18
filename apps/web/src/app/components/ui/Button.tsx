@@ -36,42 +36,53 @@ const buttonVariants = cva(
         variant: 'primary',
         appearance: 'outline',
         class:
-          'border-accent bg-transparent text-accent hover:bg-accent/10 active:bg-accent/80 active:text-black',
+          'border-accent bg-transparent text-accent hover:bg-accent/10 active:bg-accent active:text-canvas',
       },
       {
         variant: 'primary',
         appearance: 'solid',
-        class: 'border-accent bg-accent text-surface hover:bg-accent/90 active:bg-accent/80',
+        // `text-canvas`, not `text-surface`: canvas is the token that inverts
+        // with `--accent`, so the label stays legible in both themes. Hover and
+        // press use the `-hover` / `-active` shades rather than `bg-accent/90`:
+        // an alpha fill mixes towards the canvas, i.e. towards the colour of
+        // its own label.
+        class:
+          'border-accent bg-accent text-canvas hover:border-accent-hover hover:bg-accent-hover active:border-accent-active active:bg-accent-active',
       },
       {
         variant: 'secondary',
         appearance: 'outline',
-        class: 'text-fg border-line-strong bg-transparent hover:bg-surface/50',
+        class: 'border-line bg-transparent text-stroke hover:bg-surface/50',
       },
       {
         variant: 'secondary',
         appearance: 'solid',
-        class: 'text-fg border-line bg-surface hover:bg-surface/70 active:bg-surface/50',
+        class: 'border-line bg-surface text-stroke hover:bg-surface/70 active:bg-surface/50',
       },
       {
         variant: 'ghost',
         appearance: 'outline',
-        class: 'text-fg-muted hover:text-fg border-line bg-transparent hover:bg-surface/50',
+        class: 'border-line bg-transparent text-stroke-muted hover:bg-surface/50 hover:text-stroke',
       },
       {
         variant: 'ghost',
         appearance: 'solid',
-        class: 'text-fg-muted hover:text-fg border-transparent bg-surface/50 hover:bg-surface/70',
+        class:
+          'border-transparent bg-surface/50 text-stroke-muted hover:bg-surface/70 hover:text-stroke',
       },
       {
         variant: 'destructive',
         appearance: 'outline',
-        class: 'border-danger bg-transparent text-danger hover:bg-danger/10 active:bg-danger/80',
+        // Pressed the label sits on the danger fill, so it has to flip to
+        // `text-canvas` like the primary outline pair does.
+        class:
+          'border-danger bg-transparent text-danger hover:bg-danger/10 active:bg-danger active:text-canvas',
       },
       {
         variant: 'destructive',
         appearance: 'solid',
-        class: 'border-danger bg-danger text-stroke hover:bg-danger/90 active:bg-danger/80',
+        class:
+          'border-danger bg-danger text-canvas hover:border-danger-hover hover:bg-danger-hover active:border-danger-active active:bg-danger-active',
       },
     ],
     defaultVariants: {
