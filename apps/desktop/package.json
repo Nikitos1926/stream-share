@@ -13,7 +13,7 @@
     "dev": "dotenvx run -q -f .env.development -- electron-vite dev -w",
     "build": "dotenvx run -q -f .env.production -- electron-vite build && electron-builder",
     "preview": "electron-vite preview",
-    "postinstall": "electron-rebuild -f -w electron-native-screenshare",
+    "postinstall": "node scripts/rebuild-native.mjs",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   },
