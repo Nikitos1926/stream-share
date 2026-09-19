@@ -94,9 +94,9 @@ export default function Broadcast() {
   };
 
   return (
-    <div className="container flex flex-col gap-4 py-4 landscape:h-[calc(100dvh-var(--header-h))]">
+    <div className="container flex flex-col gap-4 py-4 landscape:md:h-[calc(100dvh-var(--header-h))]">
       <div className="flex min-h-45 min-w-0 flex-1 flex-col items-center justify-center rounded-md border-2 border-line bg-surface">
-        <div className="relative aspect-video max-h-full max-w-full portrait:h-auto portrait:w-full landscape:h-full landscape:w-auto">
+        <div className="relative aspect-video h-auto max-h-full w-full max-w-full landscape:md:h-full landscape:md:w-auto">
           <video
             ref={videoRef}
             autoPlay
