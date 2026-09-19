@@ -8,6 +8,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { Style, Avatar } from '@dicebear/core';
 import identicon from '@dicebear/styles/identicon.json' with { type: 'json' };
 import { generateSlug } from 'random-word-slugs';
+import { redeemHandoffCode } from './desktopHandoff';
 
 const adapter = DrizzleAdapter(db);
 const style = new Style(identicon);
@@ -42,6 +43,27 @@ const config: NextAuthConfig = {
           name: guest.name,
           image: guest.image,
           role: guest.role,
+        };
+      },
+    }),
+    CredentialsProvider({
+      id: 'desktop',
+      name: 'Desktop browser sign-in',
+      credentials: { code: { type: 'text' }, verifier: { type: 'text' } },
+      async authorize({ code, verifier }) {
+        if (typeof code !== 'string' || typeof verifier !== 'string') return null;
+
+        const userId = await redeemHandoffCode(code, verifier);
+        if (!userId) return null;
+
+        const user = await adapter.getUser!(userId);
+        if (!user || user.role === 'guest') return null;
+
+        return {
+          id: user.id,
+          name: user.name,
+          image: user.image,
+          role: user.role,
         };
       },
     }),

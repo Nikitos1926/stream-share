@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth/auth';
+import { HANDOFF_RETURN_PATH } from '@/lib/auth/desktopHandoff';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -6,7 +7,9 @@ const proxy = auth((req) => {
   const isLoggedIn = !!req.auth && req.auth.user.role !== 'guest';
   const isAuthPage = req.nextUrl.pathname.startsWith('/login');
   const isHomePage = req.nextUrl.pathname === '/';
-  if (!isLoggedIn && !isAuthPage && !isHomePage) {
+  const isDesktopReturnPage = req.nextUrl.pathname === HANDOFF_RETURN_PATH;
+
+  if (!isLoggedIn && !isAuthPage && !isHomePage && !isDesktopReturnPage) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
   if (isLoggedIn && isAuthPage) {

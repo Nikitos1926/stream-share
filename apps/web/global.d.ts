@@ -21,8 +21,19 @@ declare global {
     controller?: CaptureController;
   }
 
+  /** Mirrors apps/desktop/src/conveyor/schemas/auth.schema.ts. */
+  type DesktopSignInResult =
+    | { status: 'success'; code: string; verifier: string }
+    | { status: 'cancelled' }
+    | { status: 'timeout' }
+    | { status: 'error'; message: string };
+
   interface Window {
     conveyor?: {
+      auth: {
+        signInWithGoogle(): Promise<DesktopSignInResult>;
+        cancelSignIn(): Promise<void>;
+      };
       stream: {
         getSources(): Promise<Source[]>;
         pickSource(sourceId: string): Promise<void>;

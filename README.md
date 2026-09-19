@@ -14,13 +14,12 @@
 - [ ] desktop app
 - [ ] replace client fetches with react-query
 
-
 ### Note
+
 - [x] add fps change
 - [x] add download button to the profile dropdown menu
-- [x] turn off preview when the window loses focus 
-- [ ] open the Google account selection in an external browser
-
+- [x] turn off preview when the window loses focus
+- [x] open the Google account selection in an external browser
 
 ## Configuration
 
@@ -87,7 +86,6 @@ Two values are easy to get wrong and worth checking:
 `SKIP_ENV_VALIDATION=1` bypasses validation for image builds and typechecks, where
 secrets are legitimately absent. Never set it on a running server.
 
-
-### Prod SSH connection 
+### Prod SSH connection
 
 `ssh -i C:\Users\coort\.ssh\oracle-stream-share.key ubuntu@streamshare.space`
