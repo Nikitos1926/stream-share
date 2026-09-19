@@ -23,6 +23,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Stream Share',
   description: 'Low-latency media streaming',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +39,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh">
+      <body className="min-h-dvh" suppressHydrationWarning>
         <Providers>{children}</Providers>
         <Toaster
           toastOptions={{

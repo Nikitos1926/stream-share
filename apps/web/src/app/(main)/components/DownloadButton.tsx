@@ -4,20 +4,24 @@ import { getLatestRelease } from '@/app/api/github/getLatestRelease';
 import { Button, ButtonProps } from '@/app/components/ui/Button';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { cn } from '@/lib/utils/cn.util';
-import { getOperatingSystem, Os } from '@/lib/utils/os.util';
+import { Os } from '@/lib/utils/os.util';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-type DownloadButtonProps = ButtonProps & { imageWidth?: number; imageHeight?: number };
+type DownloadButtonProps = ButtonProps & {
+  os: Os;
+  imageWidth?: number;
+  imageHeight?: number;
+};
 
 export function DownloadButton({
   className,
+  os,
   imageWidth = 20,
   imageHeight = 20,
   ...props
 }: DownloadButtonProps) {
   const [downloadUrl, setDownloadUrl] = useState<string | undefined>();
-  const os = getOperatingSystem();
   const isDesktop = useIsDesktop();
 
   const getOsLogoPath = () => {

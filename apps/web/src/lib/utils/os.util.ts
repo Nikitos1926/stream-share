@@ -1,6 +1,4 @@
-export function getOperatingSystem(): Os {
-  const userAgent = navigator.userAgent;
-
+export function getOperatingSystem(userAgent: string): Os {
   if (/Windows/i.test(userAgent)) return Os.Windows;
   if (/Android/i.test(userAgent)) return Os.Android;
   if (/iPhone|iPad|iPod/i.test(userAgent)) return Os.I;

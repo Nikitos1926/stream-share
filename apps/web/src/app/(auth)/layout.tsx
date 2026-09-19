@@ -2,11 +2,6 @@ import { Logo } from '../components/layout/Logo';
 import { Link } from '../components/ui/Link';
 import { Typography } from '../components/ui/Typography';
 
-/**
- * The frame every auth surface shares: the product mark, one centred card and
- * the same footer links as the rest of the app. Pages under `(auth)` render
- * inside the card and only bring their own content.
- */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10">

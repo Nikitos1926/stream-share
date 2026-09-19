@@ -8,8 +8,9 @@ import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { Typography } from '../ui/Typography';
 import { DownloadButton } from '@/app/(main)/components/DownloadButton';
+import { Os } from '@/lib/utils/os.util';
 
-export function HeaderProfile({ name, image, email, role }: Session['user']) {
+export function HeaderProfile({ name, image, email, role, os }: Session['user'] & { os: Os }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -37,7 +38,7 @@ export function HeaderProfile({ name, image, email, role }: Session['user']) {
             ) : (
               <>
                 <Typography tone="muted">{email}</Typography>
-                <DownloadButton imageHeight={16} imageWidth={16} />
+                <DownloadButton imageHeight={16} imageWidth={16} os={os} />
                 <Button onClick={() => signOut({ redirectTo: '/' })}>Log out</Button>
               </>
             )}
