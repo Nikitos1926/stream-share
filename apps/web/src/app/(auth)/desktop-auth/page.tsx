@@ -1,14 +1,6 @@
 import { MonitorCheck } from 'lucide-react';
 import { Typography } from '../../components/ui/Typography';
 
-/**
- * The dead end of a desktop sign-in that this browser can no longer hand back to
- * the app (api/desktop-auth/complete sends it here when the hand-off cookie is
- * gone: an expired link, a second tab of the same flow, or an app that already
- * gave up). The browser is usually signed in at this point, so without this page
- * the tab would simply sit on a signed-in home page while the user waits for an
- * app that is waiting for them.
- */
 export default function DesktopAuthReturnPage() {
   return (
     <div className="flex flex-col items-center gap-3 text-center">
