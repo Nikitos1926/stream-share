@@ -23,4 +23,4 @@ const schema = z.object({
   AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
 });
 
-export const env = createEnv('web/server', schema);
+export const env: z.infer<typeof schema> = createEnv('web/server', schema);

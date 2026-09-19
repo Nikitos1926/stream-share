@@ -29,7 +29,7 @@ const schema = z.object({
  * missing one is exactly the defect that shipped `undefined/streams` to the
  * browser. It should fail the build, not the request.
  */
-export const env = createEnv('web/client', schema, {
+export const env: z.infer<typeof schema> = createEnv('web/client', schema, {
   NEXT_PUBLIC_PROXY_PREFIX: process.env.NEXT_PUBLIC_PROXY_PREFIX,
   NEXT_PUBLIC_SIGNALING_URL: process.env.NEXT_PUBLIC_SIGNALING_URL,
   NEXT_PUBLIC_SIGNALING_WS_URL: process.env.NEXT_PUBLIC_SIGNALING_WS_URL,
