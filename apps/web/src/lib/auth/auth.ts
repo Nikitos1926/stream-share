@@ -1,4 +1,5 @@
 import { NewUser } from '@stream-share/db';
+import { SESSION_COOKIE_NAME, useSecureAuthCookies } from '@stream-share/shared';
 import NextAuth, { type NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../db';
@@ -17,6 +18,19 @@ const config: NextAuthConfig = {
   adapter,
   session: {
     strategy: 'jwt',
+  },
+  useSecureCookies: useSecureAuthCookies,
+  cookies: {
+    sessionToken: {
+      name: SESSION_COOKIE_NAME,
+      options: {
+        httpOnly: true,
+
+        sameSite: 'lax',
+        path: '/',
+        secure: useSecureAuthCookies,
+      },
+    },
   },
   providers: [
     CredentialsProvider({

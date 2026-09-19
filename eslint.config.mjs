@@ -48,4 +48,8 @@ export default defineConfig(
       ],
     },
   },
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
 );
