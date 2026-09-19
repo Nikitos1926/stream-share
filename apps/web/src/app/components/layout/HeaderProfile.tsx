@@ -1,14 +1,14 @@
 'use client';
 
-import { Link } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import Image from 'next/image';
 import { useState } from 'react';
+import { Avatar } from '../ui/Avatar';
 import { Button } from '../ui/Button';
 import { Typography } from '../ui/Typography';
 import { DownloadButton } from '@/app/(main)/components/DownloadButton';
 import { Os } from '@/lib/utils/os.util';
+import { Link } from '../ui/Link';
 
 export function HeaderProfile({ name, image, email, role, os }: Session['user'] & { os: Os }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,14 +19,7 @@ export function HeaderProfile({ name, image, email, role, os }: Session['user'] 
           className="flex cursor-pointer items-center gap-2"
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          <Image
-            src={image || '/default-avatar.png'}
-            alt="User Avatar"
-            width={32}
-            height={32}
-            priority
-            className="size-8 rounded-full select-none"
-          />
+          <Avatar src={image} name={name} size={32} />
           <Typography className="select-none">{name}</Typography>
         </div>
         {isOpen && (
