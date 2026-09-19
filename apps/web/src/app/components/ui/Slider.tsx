@@ -143,7 +143,7 @@ export const Slider: FC<SliderProps> = ({
   const renderTooltip = (val: number, active: boolean) => (
     <div
       role="tooltip"
-      className={`bg--surface pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-sm border border-line px-1.5 py-0.5 font-mono text-[11px] text-accent tabular-nums transition-opacity duration-100 ${
+      className={`pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-sm border border-line bg-surface px-1.5 py-0.5 font-mono text-[11px] text-accent tabular-nums transition-opacity duration-100 ${
         showTooltips ? 'opacity-100' : 'opacity-0'
       } ${active ? 'border-accent' : ''}`}
     >

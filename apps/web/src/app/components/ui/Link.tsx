@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 export const linkVariants = cva(['rounded-sm transition-colors duration-100'], {
   variants: {
     variant: {
-      default: 'text-accent hover:text-accent/80',
+      default: 'text-accent hover:text-accent-hover',
       muted: 'text-stroke-muted',
       active: 'pointer-events-none font-semibold text-stroke',
       unstyled: 'focus:outline-none focus-visible:ring-0 focus-visible:outline-none',
