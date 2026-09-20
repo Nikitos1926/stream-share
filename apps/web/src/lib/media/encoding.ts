@@ -1,3 +1,5 @@
+import { startBitrateFor, videoBitrateBudget } from '@stream-share/shared';
+
 export enum StreamQuality {
   LD = '360',
   SD = '480',
@@ -20,13 +22,11 @@ export type DerivedVideoEncoding = {
   degradationPreference: RTCDegradationPreference;
   contentHint: 'detail' | 'motion';
   frameRate: ConstrainDouble;
+  /** kbit/s — `x-google-start-bitrate`'s unit, for mediasoup `codecOptions`. */
+  startBitrateKbps: number;
 };
 
-const BITS_PER_PIXEL_PER_FRAME = 0.07;
-const BASE_FPS = 30;
-const FPS_BITRATE_EXPONENT = Math.log2(1.5);
-const MIN_BITRATE = 300_000;
-const MAX_BITRATE = 17_000_000;
+const HIGH_FPS_THRESHOLD = 30;
 
 export function deriveVideoEncoding(
   track: { width: number; height: number },
@@ -36,24 +36,19 @@ export function deriveVideoEncoding(
   const scaleResolutionDownBy = getScaleResolutionDownBy(track.height, quality);
   const targetWidth = track.width / scaleResolutionDownBy;
   const targetHeight = track.height / scaleResolutionDownBy;
-  const maxBitrate = getMaxBitrate(targetWidth * targetHeight, fps);
-  const isHighFps = fps > BASE_FPS;
+  const maxBitrate = videoBitrateBudget(targetWidth * targetHeight, fps);
+  const isHighFps = fps > HIGH_FPS_THRESHOLD;
 
   return {
     encoding: { scaleResolutionDownBy, maxFramerate: fps, maxBitrate },
     degradationPreference: isHighFps ? 'maintain-framerate' : 'maintain-resolution',
     contentHint: isHighFps ? 'motion' : 'detail',
     frameRate: { ideal: fps, max: fps },
+    startBitrateKbps: Math.round(startBitrateFor(maxBitrate) / 1000),
   };
 }
 
 function getScaleResolutionDownBy(trackHeight: number, quality: StreamQuality): number {
   if (quality === StreamQuality.Source) return 1;
   return Math.max(trackHeight / parseInt(quality), 1);
-}
-
-function getMaxBitrate(pixels: number, fps: StreamFps): number {
-  const baseBitrate = pixels * BASE_FPS * BITS_PER_PIXEL_PER_FRAME;
-  const multiplier = Math.pow(fps / BASE_FPS, FPS_BITRATE_EXPONENT);
-  return Math.round(Math.min(Math.max(baseBitrate * multiplier, MIN_BITRATE), MAX_BITRATE));
 }

@@ -10,6 +10,8 @@ export const nonEmpty = z.string().min(1);
 
 export const port = z.coerce.number().int().min(1).max(65535);
 
+export const bitsPerSecond = z.coerce.number().int().positive();
+
 export const httpUrl = nonEmpty.refine(
   (value) => /^https?:\/\/.+/.test(value),
   'must be an http(s) URL',

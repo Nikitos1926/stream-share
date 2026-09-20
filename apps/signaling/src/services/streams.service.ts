@@ -130,5 +130,6 @@ export type StreamContext = {
   router: Router;
   transport?: WebRtcTransport;
   producers?: Producer[];
+  videoMaxBitrate?: number;
   viewers: Record<string, StreamViewerContext>;
 };

@@ -43,6 +43,7 @@ export class StreamersService {
   ): Promise<void> {
     try {
       await streamContext.transport!.connect({ dtlsParameters });
+      await this.mediasoupService.limitIncomingBitrate(streamContext.transport!);
     } catch (error) {
       throw new Error(TransportErrors.CONNECT_ERROR, { cause: error });
     }
@@ -51,14 +52,19 @@ export class StreamersService {
   async produce(
     streamId: string,
     streamContext: StreamContext,
-    params: { kind: MediaKind; rtpParameters: RtpParameters },
+    params: { kind: MediaKind; rtpParameters: RtpParameters; maxBitrate?: number },
   ): Promise<Producer> {
+    const { maxBitrate, ...producerOptions } = params;
     try {
-      const producer = await streamContext.transport!.produce(params);
+      const producer = await streamContext.transport!.produce(producerOptions);
       const producers = streamContext.producers?.slice() ?? [];
       producers.push(producer);
 
-      this.streamsService.setContext(streamId, { ...streamContext, producers });
+      this.streamsService.setContext(streamId, {
+        ...streamContext,
+        producers,
+        videoMaxBitrate: maxBitrate ?? streamContext.videoMaxBitrate,
+      });
       return producer;
     } catch (error) {
       throw new Error(ProducerErrors.CREATION_ERROR, { cause: error });

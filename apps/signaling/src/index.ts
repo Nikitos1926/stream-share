@@ -46,6 +46,9 @@ const startServer = async () => {
   await app.di.resolve(StreamsService).stopUnfinishedStreams();
   await app.di.resolve(MediasoupService).createWorkers();
 
+  const bitrateWarning = MediasoupService.bitrateConfigWarning();
+  if (bitrateWarning) app.log.warn(bitrateWarning);
+
   app.di.resolve(StreamsController).initRoutes();
   app.di.resolve(UsersController).initRoutes();
 

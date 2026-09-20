@@ -68,6 +68,7 @@ export class ViewersService {
       const transport = await this.mediasoupService.createTransport(
         streamContext.router,
         direction,
+        streamContext.videoMaxBitrate,
       );
       this.streamsService.setContext(streamId, {
         ...streamContext,

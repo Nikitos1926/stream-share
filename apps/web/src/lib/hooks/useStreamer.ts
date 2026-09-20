@@ -94,9 +94,11 @@ export function useStreamer() {
     async (track: MediaStreamTrack) => {
       let producerOptions: ProducerOptions = { track };
       if (track.kind === 'video') {
+        const derived = deriveEncodingForTrack(track);
         producerOptions = {
           ...producerOptions,
-          encodings: [deriveEncodingForTrack(track).encoding],
+          encodings: [derived.encoding],
+          codecOptions: { videoGoogleStartBitrate: derived.startBitrateKbps },
         };
       }
       const producer = await transportRef.current!.produce(producerOptions);
@@ -291,6 +293,7 @@ export function useStreamer() {
 
       transportRef.current.on('produce', ({ kind, rtpParameters }, callback, errorCallback) => {
         isTrackByKindSent[kind] = true;
+        const videoTrack = kind === 'video' ? mediaStreamRef.current?.getVideoTracks()[0] : null;
         wsClientRef
           .current!.request({
             type: 'req',
@@ -299,6 +302,9 @@ export function useStreamer() {
               rtpParameters,
               kind,
               last: Object.values(isTrackByKindSent).every((e) => e === true),
+              maxBitrate: videoTrack
+                ? deriveEncodingForTrack(videoTrack).encoding.maxBitrate
+                : undefined,
             },
           })
           .then((res) => callback({ id: res.result.producerId }))
@@ -310,7 +316,7 @@ export function useStreamer() {
 
       return stream;
     },
-    [createProducer, handleSocketClose],
+    [createProducer, deriveEncodingForTrack, handleSocketClose],
   );
 
   const broadcast = useCallback(async () => {

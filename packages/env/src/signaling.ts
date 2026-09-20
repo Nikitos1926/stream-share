@@ -1,7 +1,16 @@
 import os from 'node:os';
 import { z } from 'zod';
 import { createEnv } from './createEnv';
-import { absolutePath, authSecret, httpUrl, ipv4, nonEmpty, port, postgresUrl } from './fields';
+import {
+  absolutePath,
+  authSecret,
+  bitsPerSecond,
+  httpUrl,
+  ipv4,
+  nonEmpty,
+  port,
+  postgresUrl,
+} from './fields';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -16,16 +25,14 @@ const schema = z
     DATABASE_URL: postgresUrl,
     AUTH_SECRET: authSecret,
 
-    /**
-     * Must be the public IPv4 of the host — it is what ends up in the ICE
-     * candidates the browser dials back on. A wrong value means transports
-     * connect nowhere, so production requires it explicitly.
-     */
     MEDIASOUP_ANNOUNCED_IP: isProduction ? ipv4 : ipv4.default('127.0.0.1'),
 
     MEDIASOUP_RTC_MIN_PORT: port.default(40000),
     MEDIASOUP_RTC_MAX_PORT: port.default(49999),
     MEDIASOUP_NUM_WORKERS: z.coerce.number().int().positive().default(os.cpus().length),
+
+    MEDIASOUP_INITIAL_OUTGOING_BITRATE: bitsPerSecond.default(4_000_000),
+    MEDIASOUP_MAX_INCOMING_BITRATE: bitsPerSecond.default(18_000_000),
 
     THUMBNAILS_DIR: absolutePath.default('/data/thumbnails'),
     ASSETS_DIR: absolutePath.optional(),

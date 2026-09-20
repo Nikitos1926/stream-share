@@ -1,4 +1,9 @@
 import { env } from '@stream-share/env/signaling';
+import {
+  MAX_VIDEO_BITRATE,
+  MIN_SERVER_INCOMING_BITRATE,
+  startBitrateFor,
+} from '@stream-share/shared';
 import mediasoup from 'mediasoup';
 import type { Router, WebRtcTransport, Worker } from 'mediasoup/types';
 
@@ -8,6 +13,10 @@ const RTC_MIN_PORT = env.MEDIASOUP_RTC_MIN_PORT;
 const RTC_MAX_PORT = env.MEDIASOUP_RTC_MAX_PORT;
 const NUM_WORKERS = env.MEDIASOUP_NUM_WORKERS;
 const ANNOUNCED_IP = env.MEDIASOUP_ANNOUNCED_IP;
+const INITIAL_OUTGOING_BITRATE = env.MEDIASOUP_INITIAL_OUTGOING_BITRATE;
+const MAX_INCOMING_BITRATE = env.MEDIASOUP_MAX_INCOMING_BITRATE;
+/** `x-google-start-bitrate` is kbit/s, so the same start as BWE expressed in its unit. */
+const START_BITRATE_KBPS = Math.round(INITIAL_OUTGOING_BITRATE / 1000);
 
 export class MediasoupService {
   private readonly workers: Worker[] = [];
@@ -58,7 +67,7 @@ export class MediasoupService {
           mimeType: 'video/VP8',
           clockRate: 90000,
           parameters: {
-            'x-google-start-bitrate': 1000,
+            'x-google-start-bitrate': START_BITRATE_KBPS,
           },
         },
       ],
@@ -67,16 +76,58 @@ export class MediasoupService {
     return router;
   }
 
-  async createTransport(router: Router, direction: TransportRole): Promise<WebRtcTransport> {
+  async createTransport(
+    router: Router,
+    direction: TransportRole,
+    videoMaxBitrate?: number,
+  ): Promise<WebRtcTransport> {
     const transport = await router.createWebRtcTransport({
       listenIps: [{ ip: '0.0.0.0', announcedIp: ANNOUNCED_IP }],
       enableUdp: true,
       enableTcp: true,
       preferUdp: true,
-      initialAvailableOutgoingBitrate: 1000000,
+      initialAvailableOutgoingBitrate: this.initialOutgoingBitrate(videoMaxBitrate),
       appData: { direction },
     });
 
     return transport;
+  }
+
+  /**
+   * Where bandwidth estimation starts on a transport (bit/s). When the stream's
+   * video budget is known — viewer transports, created after the broadcaster
+   * produced — it is the same fraction of that budget the sender's encoder opens
+   * at, so a 4K stream does not start a viewer at a 1080p estimate. Never below
+   * the configured floor, never above what we accept from the broadcaster.
+   */
+  private initialOutgoingBitrate(videoMaxBitrate?: number): number {
+    if (!videoMaxBitrate || !Number.isFinite(videoMaxBitrate) || videoMaxBitrate <= 0) {
+      return INITIAL_OUTGOING_BITRATE;
+    }
+    const proportional = startBitrateFor(Math.min(videoMaxBitrate, MAX_VIDEO_BITRATE));
+    return Math.max(proportional, INITIAL_OUTGOING_BITRATE);
+  }
+
+  /**
+   * Caps what the remote endpoint is told it may send us (REMB / transport-cc).
+   * Only meaningful once the transport is connected, so callers apply it there.
+   */
+  async limitIncomingBitrate(transport: WebRtcTransport): Promise<void> {
+    await transport.setMaxIncomingBitrate(MAX_INCOMING_BITRATE);
+  }
+
+  /**
+   * The invariant of ADR 0001: the cap we advertise to the broadcaster must stay
+   * at or above the sender's own ceiling plus overhead, or we silently clamp a
+   * mode the app lets people pick. Lowering it is a legitimate operator choice on
+   * a thin uplink, so this warns instead of refusing to start.
+   */
+  static bitrateConfigWarning(): string | null {
+    if (MAX_INCOMING_BITRATE >= MIN_SERVER_INCOMING_BITRATE) return null;
+    return (
+      `MEDIASOUP_MAX_INCOMING_BITRATE=${MAX_INCOMING_BITRATE} is below ` +
+      `${MIN_SERVER_INCOMING_BITRATE} (the ${MAX_VIDEO_BITRATE} bit/s sender ceiling plus ` +
+      'overhead): the SFU will clamp broadcasters in the highest quality modes.'
+    );
   }
 }

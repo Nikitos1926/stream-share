@@ -36,7 +36,7 @@ export type SignalingApi = {
   };
 
   [StreamerActions.Produce]: {
-    params: { rtpParameters: RtpParameters; kind: MediaKind; last: boolean };
+    params: { rtpParameters: RtpParameters; kind: MediaKind; last: boolean; maxBitrate?: number };
     result: { producerId: string };
   };
 
