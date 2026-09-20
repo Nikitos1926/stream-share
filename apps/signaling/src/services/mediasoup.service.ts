@@ -62,6 +62,46 @@ export class MediasoupService {
           clockRate: 48000,
           channels: 2,
         },
+        /**
+         * H.264 first: it is the only codec every browser and Electron encode
+         * in hardware, and hardware encoding is what makes 1080p60, 1440p60
+         * and 4K source streams sustainable. Chrome's software VP8 (libvpx)
+         * cannot hold those modes and silently degrades them.
+         *
+         * Baseline (42001f) before Constrained Baseline (42e01f), deliberately:
+         * Chromium's hardware encoder factory only advertises Baseline, Main
+         * and High, while Constrained Baseline comes solely from its OpenH264
+         * software encoder. Offering 42e01f first therefore forces software
+         * encoding in Chrome, Edge and Electron (verified against Chrome 152
+         * with NVENC). Baseline is still decodable by the Chromium family and
+         * Firefox; 42e01f stays as the fallback for endpoints without it.
+         *
+         * `level-asymmetry-allowed` lets endpoints encode above level 3.1
+         * (1440p60 is level 5.1) without renegotiation.
+         */
+        {
+          kind: 'video',
+          mimeType: 'video/H264',
+          clockRate: 90000,
+          parameters: {
+            'packetization-mode': 1,
+            'profile-level-id': '42001f',
+            'level-asymmetry-allowed': 1,
+            'x-google-start-bitrate': START_BITRATE_KBPS,
+          },
+        },
+        {
+          kind: 'video',
+          mimeType: 'video/H264',
+          clockRate: 90000,
+          parameters: {
+            'packetization-mode': 1,
+            'profile-level-id': '42e01f',
+            'level-asymmetry-allowed': 1,
+            'x-google-start-bitrate': START_BITRATE_KBPS,
+          },
+        },
+        /** Software fallback for endpoints without H.264. */
         {
           kind: 'video',
           mimeType: 'video/VP8',

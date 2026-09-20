@@ -32,7 +32,12 @@ const schema = z
     MEDIASOUP_NUM_WORKERS: z.coerce.number().int().positive().default(os.cpus().length),
 
     MEDIASOUP_INITIAL_OUTGOING_BITRATE: bitsPerSecond.default(4_000_000),
-    MEDIASOUP_MAX_INCOMING_BITRATE: bitsPerSecond.default(18_000_000),
+    /**
+     * Must stay at or above `MIN_SERVER_INCOMING_BITRATE` from @stream-share/shared
+     * (the 18 Mbit/s sender ceiling plus 20% for Opus, RTX and headers), or the
+     * SFU clamps 4K source streams. Signaling warns at startup if lowered below it.
+     */
+    MEDIASOUP_MAX_INCOMING_BITRATE: bitsPerSecond.default(21_600_000),
 
     THUMBNAILS_DIR: absolutePath.default('/data/thumbnails'),
     ASSETS_DIR: absolutePath.optional(),

@@ -12,7 +12,16 @@ import { signalingWsUrl } from '../signaling';
 import { useBeforeUnload } from './useBeforeUnload';
 import { ensureAudioCapture, teardownAudioCapture } from '../media/audio.bridge';
 import { useIsDesktop } from './useIsDesktop';
-import { deriveVideoEncoding, StreamFps, StreamQuality, VideoSettings } from '../media/encoding';
+import {
+  clampVideoSettings,
+  deriveVideoEncoding,
+  MAX_CAPTURE_HEIGHT,
+  MAX_CAPTURE_WIDTH,
+  pickVideoCodec,
+  StreamFps,
+  StreamQuality,
+  VideoSettings,
+} from '../media/encoding';
 
 export { StreamQuality, STREAM_FPS_OPTIONS, type StreamFps } from '../media/encoding';
 
@@ -24,14 +33,17 @@ export function useStreamer() {
   const [isMuteToggleEnabled, setIsMuteToggleEnabled] = useState<boolean>(false);
   const [hasActiveStream, setHasActiveStream] = useState<boolean>(false);
   const [isCheckingActiveStream, setIsCheckingActiveStream] = useState<boolean>(false);
+  const [sourceHeight, setSourceHeight] = useState<number>(0);
   const [currentStream, setCurrentStream] = useState<Stream | null>(null);
   const [status, setStatus] = useState<StreamStatus | null>(null);
   const [videoSettings, setVideoSettings] = useState<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
   // Mirrors videoSettings so callbacks that fire between renders see the latest pick.
+  const sourceHeightRef = useRef<number>(0);
   const videoSettingsRef = useRef<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream>(null);
   const wsClientRef = useRef<WsClient>(null);
+  const deviceRef = useRef<Device>(null);
   const transportRef = useRef<Transport>(null);
   const producersRef = useRef<Producer[]>([]);
   const stopCapturingThumbnailRef = useRef<() => void>(null);
@@ -97,6 +109,7 @@ export function useStreamer() {
         const derived = deriveEncodingForTrack(track);
         producerOptions = {
           ...producerOptions,
+          codec: pickVideoCodec(deviceRef.current?.rtpCapabilities.codecs),
           encodings: [derived.encoding],
           codecOptions: { videoGoogleStartBitrate: derived.startBitrateKbps },
         };
@@ -134,7 +147,10 @@ export function useStreamer() {
 
   const changeVideoSettings = useCallback(
     (patch: Partial<VideoSettings>) => {
-      const next = { ...videoSettingsRef.current, ...patch };
+      const next = clampVideoSettings(
+        { ...videoSettingsRef.current, ...patch },
+        sourceHeightRef.current,
+      );
       videoSettingsRef.current = next;
       setVideoSettings(next);
 
@@ -156,9 +172,18 @@ export function useStreamer() {
     [changeVideoSettings],
   );
 
+  const clearPreview = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.pause();
+    video.srcObject = null;
+  }, []);
+
   const stopMediaTracks = useCallback(() => {
     mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
     mediaStreamRef.current = null;
+    sourceHeightRef.current = 0;
+    setSourceHeight(0);
     if (isDesktop) teardownAudioCapture();
   }, [isDesktop]);
 
@@ -167,12 +192,14 @@ export function useStreamer() {
     transportRef.current?.close();
     producersRef.current = [];
     transportRef.current = null;
+    deviceRef.current = null;
     wsClientRef.current = null;
     stopCapturingThumbnailRef.current?.();
 
     stopMediaTracks();
+    clearPreview();
     setStatus(null);
-  }, [stopMediaTracks]);
+  }, [clearPreview, stopMediaTracks]);
 
   const stopBroadcast = useCallback(async () => {
     if (wsClientRef.current) {
@@ -186,8 +213,9 @@ export function useStreamer() {
 
     stopCapturingThumbnailRef.current?.();
     stopMediaTracks();
+    clearPreview();
     setStatus(null);
-  }, [stopMediaTracks]);
+  }, [clearPreview, stopMediaTracks]);
 
   const captureStream = useCallback(async () => {
     let controller;
@@ -200,8 +228,8 @@ export function useStreamer() {
     try {
       stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
-          width: { ideal: 2560 },
-          height: { ideal: 1440 },
+          width: { ideal: MAX_CAPTURE_WIDTH },
+          height: { ideal: MAX_CAPTURE_HEIGHT },
           frameRate: { ideal: fps, max: fps },
         },
         audio: !isDesktop,
@@ -222,6 +250,14 @@ export function useStreamer() {
     }
 
     const [videoTrack] = stream.getVideoTracks();
+    const height = videoTrack?.getSettings().height ?? 0;
+    sourceHeightRef.current = height;
+    setSourceHeight(height);
+
+    const clamped = clampVideoSettings(videoSettingsRef.current, height);
+    videoSettingsRef.current = clamped;
+    setVideoSettings(clamped);
+
     const [audioTrack] = stream.getAudioTracks();
     setIsMuteToggleEnabled(!!audioTrack);
 
@@ -271,6 +307,7 @@ export function useStreamer() {
 
       const device = new Device();
       await device.load({ routerRtpCapabilities: rtpCapabilities });
+      deviceRef.current = device;
 
       const { result: transport } = await wsClientRef.current.request({
         type: 'req',
@@ -391,6 +428,7 @@ export function useStreamer() {
     status,
     quality: videoSettings.quality,
     fps: videoSettings.fps,
+    sourceHeight,
     setIsPrivate,
     toggleMute,
     changeQuality,

@@ -25,8 +25,8 @@ export const SERVER_BITRATE_HEADROOM = 1.2;
 /**
  * Invariant: the server's cap on what the broadcaster may send us must never
  * be below the sender's own ceiling plus overhead, or the SFU silently clamps
- * a mode the sender is allowed to produce. This is the floor for
- * `MEDIASOUP_MAX_INCOMING_BITRATE` (42 Mbit/s).
+ * a mode the sender is allowed to produce. This is the floor for, and the
+ * default of, `MEDIASOUP_MAX_INCOMING_BITRATE` (21.6 Mbit/s).
  */
 export const MIN_SERVER_INCOMING_BITRATE = Math.round(MAX_VIDEO_BITRATE * SERVER_BITRATE_HEADROOM);
 

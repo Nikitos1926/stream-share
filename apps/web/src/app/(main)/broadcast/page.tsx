@@ -16,6 +16,7 @@ import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { MediaSourcePicker } from './components/electron/MediaSourcePicker';
+import { isFpsAllowed } from '@/lib/media/encoding';
 
 const qualities = Object.values(StreamQuality);
 
@@ -32,6 +33,7 @@ export default function Broadcast() {
     status,
     quality,
     fps,
+    sourceHeight,
     setIsPrivate,
     toggleMute,
     changeQuality,
@@ -59,7 +61,7 @@ export default function Broadcast() {
 
   const constructInviteLink = () => {
     return currentStream && isLive
-      ? `${window.location.host}/${currentStream.id}/watch`
+      ? `${window.location.origin}/${currentStream.id}/watch`
       : 'Stream is not live yet';
   };
 
@@ -161,16 +163,22 @@ export default function Broadcast() {
                     </Typography>
                   </legend>
                   <div className="flex flex-wrap gap-1.5">
-                    {STREAM_FPS_OPTIONS.map((f) => (
-                      <Button
-                        key={f}
-                        size="sm"
-                        variant={fps === f ? 'primary' : 'ghost'}
-                        onClick={() => changeFps(f)}
-                      >
-                        {f}
-                      </Button>
-                    ))}
+                    {STREAM_FPS_OPTIONS.map((f) => {
+                      const isDisabled = !isFpsAllowed(f, quality, sourceHeight);
+
+                      return (
+                        <Button
+                          key={f}
+                          size="sm"
+                          variant={fps === f ? 'primary' : 'ghost'}
+                          disabled={isDisabled}
+                          title={isDisabled ? 'Not available for resolutions above 2K' : ''}
+                          onClick={() => changeFps(f)}
+                        >
+                          {f}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </fieldset>
                 <div className="flex flex-wrap gap-1.5">
