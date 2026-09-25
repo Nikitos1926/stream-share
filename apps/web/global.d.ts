@@ -28,6 +28,19 @@ declare global {
     | { status: 'timeout' }
     | { status: 'error'; message: string };
 
+  type DesktopSourceChanged =
+    | { reason: 'follow' | 'return'; sourceId: string; name: string }
+    | { reason: 'lost' }
+    | { reason: 'noop' }
+    | { reason: 'error'; message: string };
+
+  type DesktopFollowState = {
+    enabled: boolean;
+    following: boolean;
+    activeName: string | null;
+    lastError: string | null;
+  };
+
   interface Window {
     conveyor?: {
       auth: {
@@ -39,6 +52,11 @@ declare global {
         pickSource(sourceId: string): Promise<void>;
         startAudioCapture(): Promise<void>;
         stopAudioCapture(): Promise<void>;
+        setFollowApp(enabled: boolean): Promise<void>;
+        getFollowState(): Promise<DesktopFollowState>;
+        resolveEndedSource(): Promise<DesktopSourceChanged>;
+        releaseSource(): Promise<void>;
+        onSourceChanged(listener: (payload: DesktopSourceChanged) => void): () => void;
       };
     };
   }

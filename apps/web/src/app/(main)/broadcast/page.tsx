@@ -3,6 +3,7 @@
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { Typography } from '@/app/components/ui/Typography';
+import { Tooltip } from '@/app/components/ui/Tooltip';
 import { StreamControlsSkeleton } from '@/app/components/video/StreamControlsSkeleton';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { useIsWindowFocused } from '@/lib/hooks/useIsWindowFocused';
@@ -16,6 +17,8 @@ import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { MediaSourcePicker } from './components/electron/MediaSourcePicker';
+import { FollowAppToggle } from './components/electron/FollowAppToggle';
+import { useSourceFollower } from '@/lib/hooks/useSourceFollower';
 import { isFpsAllowed } from '@/lib/media/encoding';
 
 const qualities = Object.values(StreamQuality);
@@ -39,10 +42,13 @@ export default function Broadcast() {
     changeQuality,
     changeFps,
     selectSource,
+    changeSource,
     broadcast,
     stopBroadcast,
     reconnect,
   } = useStreamer();
+  const [isScreenSource, setIsScreenSource] = useState(false);
+  const follow = useSourceFollower({ status, changeSource, stopBroadcast });
   const isLive = status === StreamStatus.Live;
   const isPreview = status === StreamStatus.Preview;
   const isDesktop = useIsDesktop();
@@ -81,7 +87,14 @@ export default function Broadcast() {
   };
 
   const renderPickSourceButton = () => {
-    if (isDesktop) return <MediaSourcePicker status={status} selectSource={selectSource} />;
+    if (isDesktop)
+      return (
+        <MediaSourcePicker
+          status={status}
+          selectSource={selectSource}
+          onSourcePicked={(source) => setIsScreenSource(source.isScreen)}
+        />
+      );
 
     return (
       <Button
@@ -167,23 +180,26 @@ export default function Broadcast() {
                       const isDisabled = !isFpsAllowed(f, quality, sourceHeight);
 
                       return (
-                        <Button
+                        <Tooltip
                           key={f}
-                          size="sm"
-                          variant={fps === f ? 'primary' : 'ghost'}
-                          disabled={isDisabled}
-                          title={isDisabled ? 'Not available for resolutions above 2K' : ''}
-                          onClick={() => changeFps(f)}
+                          content={isDisabled ? 'Not available for resolutions above 2K' : ''}
                         >
-                          {f}
-                        </Button>
+                          <Button
+                            size="sm"
+                            variant={fps === f ? 'primary' : 'ghost'}
+                            disabled={isDisabled}
+                            onClick={() => changeFps(f)}
+                          >
+                            {f}
+                          </Button>
+                        </Tooltip>
                       );
                     })}
                   </div>
                 </fieldset>
                 <div className="flex flex-wrap gap-1.5">
-                  <span
-                    title={
+                  <Tooltip
+                    content={
                       isMuteToggleEnabled
                         ? ''
                         : 'Audio is disabled. Enable audio when picking source.'
@@ -196,8 +212,8 @@ export default function Broadcast() {
                     >
                       {!isMuteToggleEnabled || isMuted ? <VolumeX /> : <Volume2 />}
                     </Button>
-                  </span>
-                  <span title={isLive ? 'Restart stream to change privacy settings' : ''}>
+                  </Tooltip>
+                  <Tooltip content={isLive ? 'Restart stream to change privacy settings' : ''}>
                     <Button
                       variant={isPrivate ? 'primary' : 'ghost'}
                       size="md"
@@ -206,7 +222,14 @@ export default function Broadcast() {
                     >
                       {isPrivate ? <Lock /> : <LockOpen />}
                     </Button>
-                  </span>
+                  </Tooltip>
+                  {isDesktop && (
+                    <FollowAppToggle
+                      enabled={follow.enabled}
+                      disabled={isScreenSource}
+                      onChange={(enabled) => void follow.setEnabled(enabled)}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -226,6 +249,11 @@ export default function Broadcast() {
                 </Button>
               )}
             </div>
+            {isDesktop && follow.following && follow.activeName && (
+              <Typography size="sm" tone="muted">
+                Following: {follow.activeName}
+              </Typography>
+            )}
             <div className="flex items-center gap-2 border-t border-line pt-3">
               <Typography size="xs" tone="muted" className="whitespace-nowrap">
                 Stream link

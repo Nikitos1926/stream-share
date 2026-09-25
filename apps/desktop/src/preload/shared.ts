@@ -1,5 +1,7 @@
 import type { ElectronAPI, IpcRenderer, IpcRendererListener } from '@electron-toolkit/preload';
 import type {
+  EventChannelName,
+  EventPayload,
   InvokeChannelName,
   InvokeChannelArgs,
   InvokeChannelReturn,
@@ -18,8 +20,6 @@ export abstract class ConveyorApi {
     channel: T,
     ...args: InvokeChannelArgs<T>
   ): Promise<InvokeChannelReturn<T>> => {
-    // Call the IPC method without runtime validation in preload
-    // Validation happens on the main process side
     return this.renderer.invoke(channel, ...args) as Promise<InvokeChannelReturn<T>>;
   };
 
@@ -29,5 +29,16 @@ export abstract class ConveyorApi {
 
   on = <T extends SendChannelName>(channel: T, listener: IpcRendererListener): void => {
     this.renderer.on(channel, listener);
+  };
+
+  onEvent = <T extends EventChannelName>(
+    channel: T,
+    listener: (payload: EventPayload<T>) => void,
+  ): (() => void) => {
+    const wrapped: IpcRendererListener = (_event, payload) => listener(payload as EventPayload<T>);
+    this.renderer.on(channel, wrapped);
+    return () => {
+      this.renderer.removeListener(channel, wrapped);
+    };
   };
 }
