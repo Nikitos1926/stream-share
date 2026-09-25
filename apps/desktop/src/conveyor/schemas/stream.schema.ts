@@ -17,6 +17,8 @@ export const followStateSchema = z.strictObject({
   enabled: z.boolean(),
   following: z.boolean(),
   activeName: z.string().nullable(),
+  /** Why following switched itself off, until the toggle is turned on again. */
+  lastError: z.string().nullable(),
 });
 export type FollowState = z.infer<typeof followStateSchema>;
 

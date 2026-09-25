@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { onSourceSwitched, runSourceSwitch } from '../media/sourceSwitch';
 import { useIsDesktop } from './useIsDesktop';
@@ -10,7 +10,12 @@ type Params = {
   stopBroadcast: () => Promise<void>;
 };
 
-const INITIAL_STATE: DesktopFollowState = { enabled: true, following: false, activeName: null };
+const INITIAL_STATE: DesktopFollowState = {
+  enabled: true,
+  following: false,
+  activeName: null,
+  lastError: null,
+};
 
 /**
  * Renderer side of follow-app. Main decides which window to show and pushes
@@ -20,18 +25,26 @@ const INITIAL_STATE: DesktopFollowState = { enabled: true, following: false, act
 export function useSourceFollower({ status, changeSource, stopBroadcast }: Params) {
   const isDesktop = useIsDesktop();
   const [state, setState] = useState<DesktopFollowState>(INITIAL_STATE);
+  const shownErrorRef = useRef<string | null>(null);
   const isCapturing = status === StreamStatus.Preview || status === StreamStatus.Live;
 
   const refresh = useCallback(async () => {
     const next = await window.conveyor?.stream.getFollowState();
-    if (next) setState(next);
+    if (!next) return;
+    setState(next);
+    // Main may have switched itself off while nobody was listening (a fast
+    // snapshot failure during the pick); surface it once per distinct error.
+    if (next.lastError && next.lastError !== shownErrorRef.current) {
+      toast.error(`Follow app turned off: ${next.lastError}`, { id: 'follow-app' });
+    }
+    shownErrorRef.current = next.lastError;
   }, []);
 
   useEffect(() => {
     // refresh() sets state after an await, not synchronously; the rule cannot tell.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isDesktop) void refresh();
-  }, [isDesktop, refresh]);
+  }, [isDesktop, isCapturing, refresh]);
 
   // Subscribe only while something is captured; the follower is idle otherwise.
   useEffect(() => {
@@ -55,10 +68,8 @@ export function useSourceFollower({ status, changeSource, stopBroadcast }: Param
           void stopBroadcast();
           break;
         case 'error':
-          toast.error(`Follow app turned off: ${payload.message}`, { id: 'follow-app' });
-          break;
         case 'noop':
-          break;
+          break; // refresh() below shows the error, if any
       }
       void refresh();
     });

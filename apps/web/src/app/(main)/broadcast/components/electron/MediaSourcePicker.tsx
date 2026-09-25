@@ -11,7 +11,7 @@ import { Source } from '@/lib/types';
 
 type MediaSourcePickerProps = {
   status: StreamStatus | null;
-  selectSource: () => void;
+  selectSource: () => void | Promise<void>;
   /** Fired after main accepted the pick, with the full source (used for the follow toggle). */
   onSourcePicked?: (source: Source) => void;
 };
@@ -43,11 +43,13 @@ export function MediaSourcePicker({
       await window.conveyor?.stream.pickSource(sourceId);
       const picked = sources?.find((s) => s.id === sourceId);
       if (picked) onSourcePicked?.(picked);
-      selectSource();
       setIsOpen(false);
       reset();
+      await selectSource();
     } catch (e) {
       console.log(e);
+      // Main anchored the follower on pick; nothing is captured, so let it go.
+      void window.conveyor?.stream.releaseSource();
       toast.error('Cannot select this source. Try again');
     }
   };

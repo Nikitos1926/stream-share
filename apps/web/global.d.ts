@@ -36,7 +36,12 @@ declare global {
     | { reason: 'error'; message: string };
 
   /** Mirrors `followStateSchema` in apps/desktop/src/conveyor/schemas/stream.schema.ts. */
-  type DesktopFollowState = { enabled: boolean; following: boolean; activeName: string | null };
+  type DesktopFollowState = {
+    enabled: boolean;
+    following: boolean;
+    activeName: string | null;
+    lastError: string | null;
+  };
 
   interface Window {
     conveyor?: {

@@ -296,9 +296,9 @@ export function useStreamer() {
     }
     const newStream = await captureStream();
     mediaStreamRef.current = newStream;
-    await replaceStream(newStream);
-
     videoRef.current.srcObject = newStream;
+    // In Preview there is no transport yet; the new stream is produced when going live.
+    if (transportRef.current) await replaceStream(newStream);
   }, [captureStream, detachEndedListener, replaceStream, stopMediaTracks]);
 
   /**
@@ -319,8 +319,14 @@ export function useStreamer() {
     if (result.reason === 'noop') return;
     if (result.reason !== 'return') return stopBroadcast();
     const name = result.name;
-    await runSourceSwitch(changeSource);
-    toast.success(`Back to ${name}`, { id: 'follow-app' });
+    try {
+      await runSourceSwitch(changeSource);
+      toast.success(`Back to ${name}`, { id: 'follow-app' });
+    } catch (e) {
+      console.error('[handleTrackEnded] switching back failed:', e);
+      toast.error(`Could not switch back to ${name}`, { id: 'follow-app' });
+      await stopBroadcast();
+    }
   }, [changeSource, isDesktop, stopBroadcast]);
 
   useEffect(() => {
