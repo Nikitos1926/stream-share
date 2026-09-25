@@ -16,6 +16,8 @@ import { Lock, LockOpen, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { MediaSourcePicker } from './components/electron/MediaSourcePicker';
+import { FollowAppToggle } from './components/electron/FollowAppToggle';
+import { useSourceFollower } from '@/lib/hooks/useSourceFollower';
 import { isFpsAllowed } from '@/lib/media/encoding';
 
 const qualities = Object.values(StreamQuality);
@@ -39,10 +41,13 @@ export default function Broadcast() {
     changeQuality,
     changeFps,
     selectSource,
+    changeSource,
     broadcast,
     stopBroadcast,
     reconnect,
   } = useStreamer();
+  const [isScreenSource, setIsScreenSource] = useState(false);
+  const follow = useSourceFollower({ status, changeSource, stopBroadcast });
   const isLive = status === StreamStatus.Live;
   const isPreview = status === StreamStatus.Preview;
   const isDesktop = useIsDesktop();
@@ -81,7 +86,21 @@ export default function Broadcast() {
   };
 
   const renderPickSourceButton = () => {
-    if (isDesktop) return <MediaSourcePicker status={status} selectSource={selectSource} />;
+    if (isDesktop)
+      return (
+        <>
+          <MediaSourcePicker
+            status={status}
+            selectSource={selectSource}
+            onSourcePicked={(source) => setIsScreenSource(source.isScreen)}
+          />
+          <FollowAppToggle
+            enabled={follow.enabled}
+            disabled={isScreenSource}
+            onChange={(enabled) => void follow.setEnabled(enabled)}
+          />
+        </>
+      );
 
     return (
       <Button
@@ -226,6 +245,11 @@ export default function Broadcast() {
                 </Button>
               )}
             </div>
+            {isDesktop && follow.following && follow.activeName && (
+              <Typography size="sm" tone="muted">
+                Following: {follow.activeName}
+              </Typography>
+            )}
             <div className="flex items-center gap-2 border-t border-line pt-3">
               <Typography size="xs" tone="muted" className="whitespace-nowrap">
                 Stream link

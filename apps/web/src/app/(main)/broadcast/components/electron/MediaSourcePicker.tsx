@@ -7,13 +7,16 @@ import { useState } from 'react';
 import { SourceGrid } from './SourceGrid';
 import { useDesktopMediaSources } from '@/lib/hooks/useDesktopMediaSources';
 import toast from 'react-hot-toast';
+import { Source } from '@/lib/types';
 
 type MediaSourcePickerProps = {
   status: StreamStatus | null;
   selectSource: () => void;
+  /** Fired after main accepted the pick, with the full source (used for the follow toggle). */
+  onSourcePicked?: (source: Source) => void;
 };
 
-export function MediaSourcePicker({ status, selectSource }: MediaSourcePickerProps) {
+export function MediaSourcePicker({ status, selectSource, onSourcePicked }: MediaSourcePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'apps' | 'screens'>('apps');
   const { sources, isLoading, error, fetchSources, reset } = useDesktopMediaSources();
@@ -34,6 +37,8 @@ export function MediaSourcePicker({ status, selectSource }: MediaSourcePickerPro
   const handleSelectSourceClick = async (sourceId: string) => {
     try {
       await window.conveyor?.stream.pickSource(sourceId);
+      const picked = sources?.find((s) => s.id === sourceId);
+      if (picked) onSourcePicked?.(picked);
       selectSource();
       setIsOpen(false);
       reset();
