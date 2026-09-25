@@ -1,5 +1,8 @@
-import { ipcMain } from 'electron';
+import { ipcMain, type BrowserWindow } from 'electron';
 import {
+  type EventChannelName,
+  type EventPayload,
+  validateEventPayload,
   ipcInvokeSchemas,
   SendChannelArgs,
   SendChannelName,
@@ -49,4 +52,17 @@ export const on = <T extends SendChannelName>(
       throw error;
     }
   });
+};
+
+/**
+ * Push a typed event to the renderer. Validates the payload so a bad object
+ * fails loudly in main instead of silently in the page.
+ */
+export const sendEvent = <T extends EventChannelName>(
+  window: BrowserWindow,
+  channel: T,
+  payload: EventPayload<T>,
+): void => {
+  if (window.isDestroyed()) return;
+  window.webContents.send(channel, validateEventPayload(channel, payload));
 };

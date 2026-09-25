@@ -1,5 +1,7 @@
 import type { ElectronAPI, IpcRenderer, IpcRendererListener } from '@electron-toolkit/preload';
 import type {
+  EventChannelName,
+  EventPayload,
   InvokeChannelName,
   InvokeChannelArgs,
   InvokeChannelReturn,
@@ -29,5 +31,17 @@ export abstract class ConveyorApi {
 
   on = <T extends SendChannelName>(channel: T, listener: IpcRendererListener): void => {
     this.renderer.on(channel, listener);
+  };
+
+  /** Subscribe to a main -> renderer event. Returns the unsubscribe function. */
+  onEvent = <T extends EventChannelName>(
+    channel: T,
+    listener: (payload: EventPayload<T>) => void,
+  ): (() => void) => {
+    const wrapped: IpcRendererListener = (_event, payload) => listener(payload as EventPayload<T>);
+    this.renderer.on(channel, wrapped);
+    return () => {
+      this.renderer.removeListener(channel, wrapped);
+    };
   };
 }

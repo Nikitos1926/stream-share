@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { appIpcSchema } from './app.schema';
 import { authIpcInvokeSchema } from './auth.schema';
-import { streamIpcInvokeSchema } from './stream.schema';
+import { streamIpcEventSchema, streamIpcInvokeSchema } from './stream.schema';
 import { windowIpcSchema } from './window.schema';
 
 // Define all IPC channel schemas in one place
@@ -67,4 +67,21 @@ export const validateSendArgs = <T extends SendChannelName>(
 ): SendChannelArgs<T> => {
   const schemas = ipcSendSchemas as Record<SendChannelName, IPCSendSchema>;
   return schemas[channel].args.parse(args) as SendChannelArgs<T>;
+};
+
+// Main -> renderer events. One zod payload per channel.
+export const ipcEventSchemas = {
+  ...streamIpcEventSchema,
+} as const;
+
+export type EventChannelName = keyof typeof ipcEventSchemas;
+export type EventPayload<T extends EventChannelName> = z.infer<
+  (typeof ipcEventSchemas)[T]['payload']
+>;
+
+export const validateEventPayload = <T extends EventChannelName>(
+  channel: T,
+  payload: unknown,
+): EventPayload<T> => {
+  return ipcEventSchemas[channel].payload.parse(payload) as EventPayload<T>;
 };
