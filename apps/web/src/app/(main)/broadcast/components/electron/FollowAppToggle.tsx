@@ -1,5 +1,4 @@
 import { Button } from '@/app/components/ui/Button';
-import { Typography } from '@/app/components/ui/Typography';
 import { ArrowLeftRight } from 'lucide-react';
 
 type FollowAppToggleProps = {
@@ -11,18 +10,18 @@ type FollowAppToggleProps = {
 
 export function FollowAppToggle({ enabled, disabled, onChange }: FollowAppToggleProps) {
   const title = disabled
-    ? 'Only for application windows'
-    : 'Follow the captured app into windows it opens. Fullscreen games should use Borderless mode.';
+    ? 'Follow app: only for application windows'
+    : 'Follow app: switch to windows the captured app opens. Fullscreen games should use Borderless mode.';
 
   return (
     <span title={title}>
       <Button
         variant={enabled && !disabled ? 'primary' : 'ghost'}
+        size="md"
         disabled={disabled}
         onClick={() => onChange(!enabled)}
       >
         <ArrowLeftRight />
-        <Typography>Follow app</Typography>
       </Button>
     </span>
   );

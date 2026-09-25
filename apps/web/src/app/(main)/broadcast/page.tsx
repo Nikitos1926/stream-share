@@ -88,18 +88,11 @@ export default function Broadcast() {
   const renderPickSourceButton = () => {
     if (isDesktop)
       return (
-        <>
-          <MediaSourcePicker
-            status={status}
-            selectSource={selectSource}
-            onSourcePicked={(source) => setIsScreenSource(source.isScreen)}
-          />
-          <FollowAppToggle
-            enabled={follow.enabled}
-            disabled={isScreenSource}
-            onChange={(enabled) => void follow.setEnabled(enabled)}
-          />
-        </>
+        <MediaSourcePicker
+          status={status}
+          selectSource={selectSource}
+          onSourcePicked={(source) => setIsScreenSource(source.isScreen)}
+        />
       );
 
     return (
@@ -226,6 +219,13 @@ export default function Broadcast() {
                       {isPrivate ? <Lock /> : <LockOpen />}
                     </Button>
                   </span>
+                  {isDesktop && (
+                    <FollowAppToggle
+                      enabled={follow.enabled}
+                      disabled={isScreenSource}
+                      onChange={(enabled) => void follow.setEnabled(enabled)}
+                    />
+                  )}
                 </div>
               </div>
 
