@@ -16,7 +16,11 @@ type MediaSourcePickerProps = {
   onSourcePicked?: (source: Source) => void;
 };
 
-export function MediaSourcePicker({ status, selectSource, onSourcePicked }: MediaSourcePickerProps) {
+export function MediaSourcePicker({
+  status,
+  selectSource,
+  onSourcePicked,
+}: MediaSourcePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'apps' | 'screens'>('apps');
   const { sources, isLoading, error, fetchSources, reset } = useDesktopMediaSources();
