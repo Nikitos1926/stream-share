@@ -12,6 +12,7 @@ import { signalingWsUrl } from '../signaling';
 import { useBeforeUnload } from './useBeforeUnload';
 import { ensureAudioCapture, teardownAudioCapture } from '../media/audio.bridge';
 import { useIsDesktop } from './useIsDesktop';
+import { runSourceSwitch } from '../media/sourceSwitch';
 import {
   clampVideoSettings,
   deriveVideoEncoding,
@@ -47,6 +48,11 @@ export function useStreamer() {
   const transportRef = useRef<Transport>(null);
   const producersRef = useRef<Producer[]>([]);
   const stopCapturingThumbnailRef = useRef<() => void>(null);
+  // The `ended` listener attached to the current video track, so it can be removed on re-pick.
+  const endedListenerRef = useRef<(() => void) | null>(null);
+  // Latest track-ended behaviour; the listener above delegates to it so captureStream
+  // does not need changeSource in its dependency list (which would be circular).
+  const trackEndedHandlerRef = useRef<() => void>(() => {});
   const { data: session } = useSession();
   const userId = session?.user.id;
   const startCapturingThumbnail = useThumbnailCapture(videoRef);
@@ -187,6 +193,13 @@ export function useStreamer() {
     if (isDesktop) teardownAudioCapture();
   }, [isDesktop]);
 
+  const detachEndedListener = useCallback(() => {
+    const track = mediaStreamRef.current?.getVideoTracks()[0];
+    const listener = endedListenerRef.current;
+    if (track && listener) track.removeEventListener('ended', listener);
+    endedListenerRef.current = null;
+  }, []);
+
   const handleSocketClose = useCallback(() => {
     producersRef.current?.forEach((producer) => producer.close());
     transportRef.current?.close();
@@ -261,7 +274,9 @@ export function useStreamer() {
     const [audioTrack] = stream.getAudioTracks();
     setIsMuteToggleEnabled(!!audioTrack);
 
-    videoTrack?.addEventListener('ended', stopBroadcast);
+    const onEnded = () => trackEndedHandlerRef.current();
+    videoTrack?.addEventListener('ended', onEnded);
+    endedListenerRef.current = onEnded;
     // Set the content hint before the first frame reaches the encoder.
     if (videoTrack) videoTrack.contentHint = deriveEncodingForTrack(videoTrack).contentHint;
 
@@ -271,12 +286,12 @@ export function useStreamer() {
     }
 
     return stream;
-  }, [deriveEncodingForTrack, isDesktop, stopBroadcast]);
+  }, [deriveEncodingForTrack, isDesktop]);
 
   const changeSource = useCallback(async () => {
     if (!videoRef.current) return;
     if (mediaStreamRef.current) {
-      mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
+      detachEndedListener();
       stopMediaTracks();
     }
     const newStream = await captureStream();
@@ -284,7 +299,31 @@ export function useStreamer() {
     await replaceStream(newStream);
 
     videoRef.current.srcObject = newStream;
-  }, [captureStream, replaceStream, stopBroadcast, stopMediaTracks]);
+  }, [captureStream, detachEndedListener, replaceStream, stopMediaTracks]);
+
+  /**
+   * Browser: a closed window ends the stream, as before.
+   * Desktop: ask main whether the follower can point at a fallback window
+   * (the League client after the game closes). Only stop when it cannot.
+   */
+  const handleTrackEnded = useCallback(async () => {
+    if (!isDesktop || !window.conveyor) return stopBroadcast();
+    let result: DesktopSourceChanged;
+    try {
+      result = await window.conveyor.stream.resolveEndedSource();
+    } catch (e) {
+      console.error('[handleTrackEnded] resolveEndedSource failed:', e);
+      result = { reason: 'lost' };
+    }
+    if (result.reason !== 'return') return stopBroadcast();
+    const name = result.name;
+    await runSourceSwitch(changeSource);
+    toast.success(`Back to ${name}`, { id: 'follow-app' });
+  }, [changeSource, isDesktop, stopBroadcast]);
+
+  useEffect(() => {
+    trackEndedHandlerRef.current = () => void handleTrackEnded();
+  }, [handleTrackEnded]);
 
   const connectToStream = useCallback(
     async (stream: Stream) => {
@@ -367,7 +406,7 @@ export function useStreamer() {
   const pickSource = useCallback(async () => {
     if (!videoRef.current) return;
     if (mediaStreamRef.current) {
-      mediaStreamRef.current.getVideoTracks()[0]!.removeEventListener('ended', stopBroadcast);
+      detachEndedListener();
       stopMediaTracks();
     }
 
@@ -390,7 +429,7 @@ export function useStreamer() {
     if (forcedTabSwitch) {
       broadcast();
     }
-  }, [broadcast, captureStream, stopBroadcast, stopMediaTracks]);
+  }, [broadcast, captureStream, detachEndedListener, stopMediaTracks]);
 
   const selectSource = useCallback(async () => {
     if (status === StreamStatus.Live) {
@@ -434,6 +473,7 @@ export function useStreamer() {
     changeQuality,
     changeFps,
     selectSource,
+    changeSource,
     broadcast,
     stopBroadcast,
     reconnect,

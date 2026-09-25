@@ -28,6 +28,15 @@ declare global {
     | { status: 'timeout' }
     | { status: 'error'; message: string };
 
+  /** Mirrors `sourceChangedSchema` in apps/desktop/src/conveyor/schemas/stream.schema.ts. */
+  type DesktopSourceChanged =
+    | { reason: 'follow' | 'return'; sourceId: string; name: string }
+    | { reason: 'lost' }
+    | { reason: 'error'; message: string };
+
+  /** Mirrors `followStateSchema` in apps/desktop/src/conveyor/schemas/stream.schema.ts. */
+  type DesktopFollowState = { enabled: boolean; following: boolean; activeName: string | null };
+
   interface Window {
     conveyor?: {
       auth: {
@@ -39,6 +48,12 @@ declare global {
         pickSource(sourceId: string): Promise<void>;
         startAudioCapture(): Promise<void>;
         stopAudioCapture(): Promise<void>;
+        setFollowApp(enabled: boolean): Promise<void>;
+        getFollowState(): Promise<DesktopFollowState>;
+        resolveEndedSource(): Promise<DesktopSourceChanged>;
+        releaseSource(): Promise<void>;
+        /** Returns the unsubscribe function. */
+        onSourceChanged(listener: (payload: DesktopSourceChanged) => void): () => void;
       };
     };
   }
