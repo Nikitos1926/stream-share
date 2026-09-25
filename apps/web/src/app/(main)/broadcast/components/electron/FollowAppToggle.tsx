@@ -1,4 +1,5 @@
 import { Button } from '@/app/components/ui/Button';
+import { Tooltip } from '@/app/components/ui/Tooltip';
 import { ArrowLeftRight } from 'lucide-react';
 
 type FollowAppToggleProps = {
@@ -9,12 +10,12 @@ type FollowAppToggleProps = {
 };
 
 export function FollowAppToggle({ enabled, disabled, onChange }: FollowAppToggleProps) {
-  const title = disabled
+  const content = disabled
     ? 'Follow app: only for application windows'
     : 'Follow app: switch to windows the captured app opens. Fullscreen games should use Borderless mode.';
 
   return (
-    <span title={title}>
+    <Tooltip content={content}>
       <Button
         variant={enabled && !disabled ? 'primary' : 'ghost'}
         size="md"
@@ -23,6 +24,6 @@ export function FollowAppToggle({ enabled, disabled, onChange }: FollowAppToggle
       >
         <ArrowLeftRight />
       </Button>
-    </span>
+    </Tooltip>
   );
 }
