@@ -8,9 +8,7 @@ const listeners = new Set<() => void>();
 
 export function runSourceSwitch(fn: () => Promise<void>): Promise<void> {
   const next = chain.catch(() => undefined).then(fn);
-  chain = next
-    .then(() => listeners.forEach((l) => l()))
-    .catch(() => undefined);
+  chain = next.then(() => listeners.forEach((l) => l())).catch(() => undefined);
   return next;
 }
 
