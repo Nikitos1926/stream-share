@@ -315,6 +315,8 @@ export function useStreamer() {
       console.error('[handleTrackEnded] resolveEndedSource failed:', e);
       result = { reason: 'lost' };
     }
+    // 'noop': main already switched back and the renderer's recapture is in flight.
+    if (result.reason === 'noop') return;
     if (result.reason !== 'return') return stopBroadcast();
     const name = result.name;
     await runSourceSwitch(changeSource);

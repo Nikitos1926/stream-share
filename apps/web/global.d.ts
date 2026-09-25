@@ -32,6 +32,7 @@ declare global {
   type DesktopSourceChanged =
     | { reason: 'follow' | 'return'; sourceId: string; name: string }
     | { reason: 'lost' }
+    | { reason: 'noop' }
     | { reason: 'error'; message: string };
 
   /** Mirrors `followStateSchema` in apps/desktop/src/conveyor/schemas/stream.schema.ts. */

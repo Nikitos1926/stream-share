@@ -4,6 +4,12 @@ import { findFamilyRoot, isInFamily } from './processFamily';
 import type { ProcessTable } from './processTable';
 
 export const POLL_INTERVAL_MS = 1500;
+/**
+ * After the poller returns to the anchor, the renderer needs a moment to
+ * recapture. A track that ends inside this window is the old followed
+ * window's, already handled; answering `return` again would recapture twice.
+ */
+export const RETURN_GRACE_MS = 4000;
 
 export type WindowSource = { id: string; name: string };
 
@@ -36,6 +42,7 @@ export class SourceFollower {
   private knownWindowIds = new Set<string>();
   private timer: NodeJS.Timeout | null = null;
   private ticking = false;
+  private lastReturnAt = 0;
 
   constructor(private readonly deps: FollowerDeps) {}
 
@@ -91,7 +98,8 @@ export class SourceFollower {
    * the next tick: return to the anchor if it still exists, otherwise `lost`.
    */
   async resolveEnded(): Promise<SourceChanged> {
-    if (!this.enabled || !this.anchor) return { reason: 'lost' };
+    const anchor = this.anchor;
+    if (!this.enabled || !anchor) return { reason: 'lost' };
     let windows: WindowSource[] = [];
     try {
       windows = await this.deps.listWindows();
@@ -99,6 +107,11 @@ export class SourceFollower {
       log.warn('[follower] listWindows failed in resolveEnded', err);
     }
     this.knownWindowIds = new Set(windows.map((w) => w.id));
+
+    const anchorListed = windows.some((w) => w.id === anchor.sourceId);
+    const justReturned = Date.now() - this.lastReturnAt < RETURN_GRACE_MS;
+    if (this.active === null && justReturned && anchorListed) return { reason: 'noop' };
+
     return this.returnToAnchor(windows);
   }
 
@@ -161,6 +174,8 @@ export class SourceFollower {
 
     this.deps.setSelectedSourceId(target.id);
     this.anchor = { ...anchor, sourceId: target.id };
+    this.lastReturnAt = Date.now();
+    log.info('[follower] returned to', target.name, target.id);
     return { reason: 'return', sourceId: target.id, name: target.name };
   }
 

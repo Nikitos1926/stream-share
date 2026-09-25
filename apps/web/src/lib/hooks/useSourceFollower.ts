@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { runSourceSwitch } from '../media/sourceSwitch';
+import { onSourceSwitched, runSourceSwitch } from '../media/sourceSwitch';
 import { useIsDesktop } from './useIsDesktop';
 import { StreamStatus } from './useStreamer';
 
@@ -57,12 +57,20 @@ export function useSourceFollower({ status, changeSource, stopBroadcast }: Param
         case 'error':
           toast.error(`Follow app turned off: ${payload.message}`, { id: 'follow-app' });
           break;
+        case 'noop':
+          break;
       }
       void refresh();
     });
 
     return unsubscribe;
   }, [changeSource, isCapturing, isDesktop, refresh, stopBroadcast]);
+
+  // The track-ended path in useStreamer switches without an event; pick up its result too.
+  useEffect(() => {
+    if (!isDesktop) return;
+    return onSourceSwitched(() => void refresh());
+  }, [isDesktop, refresh]);
 
   // Nothing captured -> nothing to follow. Stops the poller after stop/failed pick.
   useEffect(() => {

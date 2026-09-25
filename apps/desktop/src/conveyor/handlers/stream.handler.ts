@@ -11,6 +11,7 @@ import type { AudioWorkerInit, AudioWorkerStatus } from '../../audioWorker/messa
 import { getPidFromWindowHandle } from 'electron-native-screenshare';
 import { SourceFollower } from '../../main/sourceFollower';
 import { listProcesses } from '../../main/processTable';
+import log from 'electron-log/main';
 
 /** `window:<hwnd>:0` / `screen:<id>:0` -> owning PID, 0 for screens or unknown handles. */
 function pidForSource(sourceId: string): number {
@@ -67,8 +68,10 @@ export function registerStreamHandlers(mainWindow: BrowserWindow) {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   session.defaultSession.setDisplayMediaRequestHandler(async (request, callback) => {
+    log.info('[capture] display media request for', selectedSourceId);
     const sources = await desktopCapturer.getSources({ types: ['window', 'screen'] });
     const chosen = sources.find((s) => s.id === selectedSourceId);
+    log.info('[capture] answering with', chosen?.name ?? `fallback ${sources[0]?.name}`);
     callback({ video: chosen ?? sources[0] });
   });
 

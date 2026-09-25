@@ -7,6 +7,8 @@ export const sourceChangedSchema = z.discriminatedUnion('reason', [
     name: z.string(),
   }),
   z.strictObject({ reason: z.literal('lost') }),
+  /** Only as an invoke result: the ended track was already handled by a poller-driven return. */
+  z.strictObject({ reason: z.literal('noop') }),
   z.strictObject({ reason: z.literal('error'), message: z.string() }),
 ]);
 export type SourceChanged = z.infer<typeof sourceChangedSchema>;
