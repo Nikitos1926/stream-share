@@ -5,12 +5,40 @@ import {
   session,
   utilityProcess,
 } from 'electron';
-import { handle } from '../../main/shared';
+import { handle, sendEvent } from '../../main/shared';
 import { join } from 'path';
 import type { AudioWorkerInit, AudioWorkerStatus } from '../../audioWorker/messages';
 import { getPidFromWindowHandle } from 'electron-native-screenshare';
+import { SourceFollower } from '../../main/sourceFollower';
+import { listProcesses } from '../../main/processTable';
+
+/** `window:<hwnd>:0` / `screen:<id>:0` -> owning PID, 0 for screens or unknown handles. */
+function pidForSource(sourceId: string): number {
+  if (!sourceId.startsWith('window:')) return 0;
+  const hwnd = Number(sourceId.split(':')[1]);
+  return Number.isFinite(hwnd) ? getPidFromWindowHandle(hwnd) : 0;
+}
 
 export function registerStreamHandlers(mainWindow: BrowserWindow) {
+  let selectedSourceId: string | null = null;
+
+  const follower = new SourceFollower({
+    listWindows: async () => {
+      const sources = await desktopCapturer.getSources({
+        types: ['window'],
+        thumbnailSize: { width: 0, height: 0 },
+        fetchWindowIcons: false,
+      });
+      return sources.map((s) => ({ id: s.id, name: s.name }));
+    },
+    listProcesses,
+    resolvePid: pidForSource,
+    setSelectedSourceId: (id) => {
+      selectedSourceId = id;
+    },
+    emit: (payload) => sendEvent(mainWindow, 'stream:sourceChanged', payload),
+  });
+
   handle('stream:getSources', async () => {
     const [width, height] = mainWindow.getSize();
     const sources = await desktopCapturer.getSources({
@@ -26,11 +54,16 @@ export function registerStreamHandlers(mainWindow: BrowserWindow) {
     }));
   });
 
-  let selectedSourceId: string | null = null;
-
   handle('stream:pickSource', async (sourceId: string) => {
     selectedSourceId = sourceId;
+    // Detached on purpose: the snapshot takes ~350 ms and the picker must not wait.
+    void follower.onSourcePicked(sourceId);
   });
+
+  handle('stream:setFollowApp', async (enabled: boolean) => follower.setEnabled(enabled));
+  handle('stream:getFollowState', async () => follower.getState());
+  handle('stream:resolveEndedSource', async () => follower.resolveEnded());
+  handle('stream:releaseSource', async () => follower.stop());
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   session.defaultSession.setDisplayMediaRequestHandler(async (request, callback) => {
@@ -57,8 +90,7 @@ export function registerStreamHandlers(mainWindow: BrowserWindow) {
       });
     });
 
-    const hwnd = parseInt(selectedSourceId.split(':')[1]!);
-    const pid = getPidFromWindowHandle(hwnd);
+    const pid = pidForSource(selectedSourceId);
 
     const init: AudioWorkerInit = { type: 'init', processId: pid };
     child.postMessage(init, [port1]);
