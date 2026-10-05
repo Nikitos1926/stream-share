@@ -7,12 +7,15 @@
     (Word fills it: Ctrl+A, F9 — the document also asks Word to update fields on open);
   * page number top-right in the header, the title page counted but not numbered
     («different first page»);
-  * every chapter / structural element on a new page (Heading 1 «page break before»).
+  * every chapter / structural element on a new page (Heading 1 «page break before»);
+  * tables ruled, full text width with content-fitted columns, header row centred (§1.7);
+  * «ДОДАТОК А» / title of the appendix on two lines (§1.4).
 
 Usage: assemble.py IN.docx OUT.docx [--metadata thesis/metadata.yaml] [--template T.docx]
 """
 import argparse
 import copy
+import re
 import sys
 from pathlib import Path
 
@@ -82,6 +85,15 @@ def copy_title_styles(doc, template):
         # The template centres everything through docDefaults; make that explicit here.
         ppr.append(el("w:ind", **{"w:left": "0", "w:right": "0", "w:firstLine": "0"}))
         ppr.append(el("w:jc", **{"w:val": "center"}))
+        # The template has no space before/after (its docDefaults); reference.docx's docDefaults
+        # add 10 pt after, which pushed «Одеса – рік» onto page 2.
+        spacing = ppr.find(qn("w:spacing"))
+        if spacing is None:
+            spacing = el("w:spacing")
+            ppr.find(qn("w:ind")).addprevious(spacing)  # schema order: spacing, ind, jc
+        for side in ("w:before", "w:after"):
+            if spacing.get(qn(side)) is None:
+                spacing.set(qn(side), "0")
         dst.append(new)
         ids[name] = sid
     missing = {f"Т{i}" for i in range(1, 12)} - ids.keys()
@@ -168,6 +180,13 @@ def insert_toc(doc):
     if target is None:
         print("assemble.py: no chapter heading found, TOC not inserted", file=sys.stderr)
         return
+    # АНОТАЦІЯ / ABSTRACT precede ЗМІСТ and are not listed in it (addendum_v): same look as
+    # Heading 1 via the TOC Title style, but no outline level, so the TOC field skips them.
+    for p in list(doc.element.body.iter(qn("w:p"))):
+        if p is target:
+            break
+        if is_heading1(p) and para_text(p).lower() in FRONT_MATTER:
+            p.find(qn("w:pPr") + "/" + qn("w:pStyle")).set(qn("w:val"), "TOCTitle")
     title = make_para("TOCTitle", "Зміст")
     toc = make_para("toc1", "")
     for r in field_runs('TOC \\o "1-2" \\h \\z \\u',
@@ -214,6 +233,123 @@ def number_pages(doc):
             p._p.append(r)
 
 
+# --------------------------------------------------------------------------- tables
+TEXT_WIDTH = 9921          # twips: 210 − 25 − 10 = 175 mm
+CELL_PAD = 2 * 115         # default left + right cell margins (twips)
+CHAR_W = {28: 150, 24: 130}  # glyph width (twips) of TNR 14 / 12 pt, Cyrillic, with margin
+WIDE_COLS = 5              # PLAN.md §1.7: 12 pt allowed for wide tables
+
+
+def column_widths(cols, size):
+    """Auto-fit like a browser: each column gets at least its longest word, the rest of the text
+    width is shared in proportion to how much longer the column's text is than that minimum."""
+    cw = CHAR_W[size]
+    mins = [max((len(w) for c in col for w in c.split()), default=1) * cw + CELL_PAD for col in cols]
+    maxs = [max(max((len(c) for c in col), default=1) * cw + CELL_PAD, m) for col, m in zip(cols, mins)]
+    if sum(maxs) <= TEXT_WIDTH:
+        return [round(m * TEXT_WIDTH / sum(maxs)) for m in maxs], True
+    if sum(mins) >= TEXT_WIDTH:
+        return [round(m * TEXT_WIDTH / sum(mins)) for m in mins], False
+    spare, extra = TEXT_WIDTH - sum(mins), [b - a for a, b in zip(mins, maxs)]
+    return [round(a + spare * e / sum(extra)) for a, e in zip(mins, extra)], True
+
+
+def format_tables(doc):
+    """PLAN.md §1.7: ruled tables over the full text width, header row centred and repeated on
+    every page, single spacing (Compact style); 12 pt in wide tables (≥ 5 columns or words that
+    do not fit at 14 pt)."""
+    for tbl in doc.element.body.iter(qn("w:tbl")):
+        rows = tbl.findall(qn("w:tr"))
+        ncols = len(tbl.find(qn("w:tblGrid")).findall(qn("w:gridCol")))
+        cols = [[] for _ in range(ncols)]
+        for tr in rows:
+            for k, tc in enumerate(tr.findall(qn("w:tc"))[:ncols]):
+                cols[k].append(" ".join(para_text(p) for p in tc.iter(qn("w:p"))))
+        size = 24 if ncols >= WIDE_COLS else 28
+        widths, fits = column_widths(cols, size)
+        if not fits and size == 28:
+            size = 24
+            widths, _ = column_widths(cols, size)
+        widths[-1] += TEXT_WIDTH - sum(widths)
+
+        tblpr = tbl.find(qn("w:tblPr"))
+        for tag in ("w:tblW", "w:tblBorders", "w:tblLayout"):
+            for e in tblpr.findall(qn(tag)):
+                tblpr.remove(e)
+        style = tblpr.find(qn("w:tblStyle"))
+        pos = list(tblpr).index(style) + 1 if style is not None else 0
+        borders = el("w:tblBorders")
+        for side in ("top", "left", "bottom", "right", "insideH", "insideV"):
+            borders.append(el(f"w:{side}", **{"w:val": "single", "w:sz": "4", "w:space": "0",
+                                              "w:color": "000000"}))
+        for e in reversed([el("w:tblW", **{"w:w": str(TEXT_WIDTH), "w:type": "dxa"}),
+                           el("w:jc", **{"w:val": "center"}), borders,
+                           el("w:tblLayout", **{"w:type": "fixed"})]):
+            for old in tblpr.findall(e.tag):
+                tblpr.remove(old)
+            tblpr.insert(pos, e)
+        grid = tbl.find(qn("w:tblGrid"))
+        for gc, w in zip(grid.findall(qn("w:gridCol")), widths):
+            gc.set(qn("w:w"), str(w))
+        for i, tr in enumerate(rows):
+            for k, tc in enumerate(tr.findall(qn("w:tc"))):
+                tcpr = tc.find(qn("w:tcPr"))
+                if tcpr is None:
+                    tcpr = el("w:tcPr")
+                    tc.insert(0, tcpr)
+                for e in tcpr.findall(qn("w:tcW")):
+                    tcpr.remove(e)
+                if k < len(widths):
+                    tcpr.insert(0, el("w:tcW", **{"w:w": str(widths[k]), "w:type": "dxa"}))
+                for p in tc.iter(qn("w:p")):
+                    if i == 0:
+                        ppr = p.find(qn("w:pPr"))
+                        if ppr is None:
+                            ppr = el("w:pPr")
+                            p.insert(0, ppr)
+                        for e in ppr.findall(qn("w:jc")):
+                            ppr.remove(e)
+                        ppr.append(el("w:jc", **{"w:val": "center"}))
+                    if size != 28:
+                        for r in p.iter(qn("w:r")):
+                            rpr = r.find(qn("w:rPr"))
+                            if rpr is None:
+                                rpr = el("w:rPr")
+                                r.insert(0, rpr)
+                            for tag in ("w:sz", "w:szCs"):
+                                for e in rpr.findall(qn(tag)):
+                                    rpr.remove(e)
+                            rpr.append(el("w:sz", **{"w:val": str(size)}))
+                            rpr.append(el("w:szCs", **{"w:val": str(size)}))
+
+
+def split_appendix_headings(doc):
+    """PLAN.md §1.4 and both examples: «ДОДАТОК А» on one line, the title below it in sentence
+    case (Heading 1 is all caps), as one heading so ЗМІСТ lists «Додаток А Лістинг програми»."""
+    for p in doc.element.body.iter(qn("w:p")):
+        if not is_heading1(p):
+            continue
+        m = re.match(r"(Додаток\s+\S)\s+(.+)$", para_text(p))
+        if not m:
+            continue
+        for r in p.findall(qn("w:r")):
+            p.remove(r)
+        r = el("w:r")
+        t = el("w:t")
+        t.text = m.group(1)
+        r.append(t)
+        r.append(el("w:br"))
+        p.append(r)
+        r = el("w:r")
+        rpr = el("w:rPr")
+        rpr.append(el("w:caps", **{"w:val": "0"}))
+        r.append(rpr)
+        t = el("w:t")
+        t.text = m.group(2)
+        r.append(t)
+        p.append(r)
+
+
 def chapters_on_new_page(doc):
     h1 = doc.styles["Heading 1"]
     h1.paragraph_format.page_break_before = True
@@ -232,6 +368,8 @@ def main():
     insert_title_page(doc, meta, a.template)
     insert_toc(doc)
     number_pages(doc)
+    format_tables(doc)
+    split_appendix_headings(doc)
     chapters_on_new_page(doc)
     doc.save(a.output)
 

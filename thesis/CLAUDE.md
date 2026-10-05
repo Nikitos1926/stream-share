@@ -26,6 +26,9 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   `--check` fails on an unresolved `[@key]`, a duplicate or uncited source, or a stale list) and
   `chapters/A0-appendix-a.md` (`python3 thesis/tools/appendix.py`, code read from the commit pinned
   in the script). Re-run both after changing citations or the appendix listings.
+- Appendices Б (`B0-appendix-b.md`, DB column tables) and В (`C0-appendix-v.md`, test-case tables)
+  are hand-written; their tables are defined there and referenced from §3.3 / §5.2. Volume is at the
+  limit (main ≈ 76 of 80 pp, total ≈ 116 of ~120 by `pages.txt`): any addition needs an equal cut.
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
   abbreviation is used ≥ 3 times; expand it in the text at first use.
@@ -43,5 +46,16 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
 - `assemble.py` adds the title page (Appendix_A styles, fields from `metadata.yaml`; optional
   `consultants:` list), ЗМІСТ + TOC field before the first `#` element after АНОТАЦІЯ/ABSTRACT,
   and the header page number (top right, none on the title page). Fields fill in Word: Ctrl+A, F9.
+- `assemble.py` also rules tables (full 175 mm width, columns fitted to content, header row
+  centred, 12 pt for ≥ 5 columns or words that do not fit), keeps АНОТАЦІЯ/ABSTRACT out of ЗМІСТ
+  (TOC Title style), and splits «ДОДАТОК А» / title onto two lines.
+- Every full build runs `tools/qa.py`: each fig/tbl/lst/eq/sc defined once and referenced (ranges
+  `@tbl:a–@tbl:c` count), main-text listings ≤ 25 lines; it regenerates `thesis/OPEN_ITEMS.md`
+  (all `[ПОТРЕБУЄ …]` placeholders with location — generated, never edit by hand).
+- `build.sh --pdf` → `out/thesis.pdf` via headless LibreOffice (`tools/pdf.sh` fetches it into
+  `.cache/libreoffice`, no root; `tools/topdf.py` fills ЗМІСТ and prints **real page counts** per
+  section — use these, not `wordcount.py`, for the PLAN.md §2 budget). `build.sh --release` = strict
+  build + PDF copied to `thesis/final/` (the committed deliverable; re-run and commit after any
+  chapter change). The PDF uses Liberation fonts; the author exports PDF/A from Word (G10).
 - Toolchain change → `bash thesis/tools/build.sh --test` (fixture `tools/fixture/sample.md`, one
   of every element, checked by `tools/check_docx.py`); keep fixture and checker in sync.

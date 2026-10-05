@@ -46,9 +46,15 @@ def main(path):
     # Title page first, then АНОТАЦІЯ, ЗМІСТ (TOC field) before ВСТУП.
     expect(texts[0] == "МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ", "title page is not first")
     expect(items[0][1].startswith("TitlePage"), "title page does not use the template styles")
+    for s in doc.styles.element.findall(f"{W}style"):
+        if s.get(f"{W}styleId", "").startswith("TitlePage"):
+            sp = s.find(f"{W}pPr/{W}spacing")
+            expect(sp is not None and sp.get(f"{W}after") == "0" and sp.get(f"{W}before") == "0",
+                   "title page styles must have no space before/after (page 1 overflows)")
     i_abs, i_toc, i_intro = find("Анотація"), find("Зміст"), find("Вступ")
     expect(i_abs < i_toc < i_intro, "order must be title, Анотація, Зміст, Вступ")
     expect(items[i_toc][1] == "TOCTitle", "ЗМІСТ title must use the TOC Title style")
+    expect(items[i_abs][1] == "TOCTitle", "АНОТАЦІЯ must not be an outline heading (kept out of ЗМІСТ)")
     instr = " ".join(t.text for t in doc.element.body.iter(W + "instrText"))
     expect("TOC \\o" in instr, "TOC field missing")
     expect(doc.settings.element.find(qn("w:updateFields")) is not None, "updateFields missing")
@@ -56,7 +62,7 @@ def main(path):
     # Every chapter / structural element starts on a new page.
     expect(doc.styles["Heading 1"].paragraph_format.page_break_before, "Heading 1 lacks page break")
     expect(body[i_abs].find(f"{W}pPr/{W}pageBreakBefore") is not None or
-           items[i_abs][1] == "Heading1", "first element after title page not on a new page")
+           items[i_abs][1] in ("Heading1", "TOCTitle"), "first element after title page not on a new page")
 
     # Figures: caption below the image, centred style; per-chapter numbering; appendix letter.
     for cap in ("Рисунок 1.1 – Перший рисунок", "Рисунок 2.1 – Другий рисунок",
@@ -71,6 +77,15 @@ def main(path):
         if i >= 0:
             expect(items[i][1] == "TableCaption", f"«{cap}» is not a Table Caption")
             expect(items[i + 1][0] == "tbl", f"no table right below «{cap}»")
+            if items[i + 1][0] == "tbl":
+                tbl = body[i + 1]
+                expect(tbl.find(f"{W}tblPr/{W}tblBorders/{W}insideV") is not None,
+                       f"table under «{cap}» is not ruled")
+                grid = sum(int(g.get(qn("w:w"))) for g in tbl.iter(f"{W}gridCol"))
+                expect(grid == 9921, f"table under «{cap}» is {grid} twips wide, not 175 mm")
+                first = tbl.find(f"{W}tr/{W}tc/{W}p/{W}pPr/{W}jc")
+                expect(first is not None and first.get(qn("w:val")) == "center",
+                       f"header row of the table under «{cap}» is not centred")
     # Listing: caption above the code.
     i = find("Лістинг 1.1 – Перший лістинг")
     if i >= 0:
@@ -104,6 +119,13 @@ def main(path):
         expect(texts[i + 2].startswith("2. WebRTC: Real-Time"), "source 2 must be w3c-webrtc")
         expect(texts[i + 3].startswith("3. Alvestrand H."), "source 3 must be rfc8825")
         expect(texts[i + 4].strip().lower().startswith("додаток"), "only cited sources are listed")
+
+    # Appendix heading: «ДОДАТОК А», line break, title not in caps (PLAN.md §1.4).
+    app = [e for e in body if style_of(e) == "Heading1" and text(e).lower().startswith("додаток")]
+    expect(len(app) == 1, "appendix heading missing")
+    if app:
+        expect(app[0].find(f".//{W}br") is not None, "appendix title not on its own line")
+        expect(app[0].find(f".//{W}caps[@{W}val='0']") is not None, "appendix title must not be caps")
 
     # Page numbers: header PAGE field, right-aligned; title page counted but blank.
     sec = doc.sections[0]
