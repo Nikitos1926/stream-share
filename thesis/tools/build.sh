@@ -106,6 +106,6 @@ chapters=("$THESIS"/chapters/*.md)
 if (( ! ${#chapters[@]} )); then echo "no chapters yet"; exit 0; fi
 build_docx "$THESIS/chapters" "$OUT/thesis.docx" -- "${chapters[@]}"
 python3 "$HERE/wordcount.py" "${chapters[@]}"
-todo=$(cat "${chapters[@]}" "$THESIS/metadata.yaml" | grep -o "ПОТРЕБУЄ УТОЧНЕННЯ" | wc -l)
+todo=$(cat "${chapters[@]}" "$THESIS/metadata.yaml" | { grep -o "ПОТРЕБУЄ УТОЧНЕННЯ" || true; } | wc -l)
 echo "placeholders [ПОТРЕБУЄ УТОЧНЕННЯ: …] left (chapters + metadata.yaml): $todo"
 echo "built $OUT/thesis.docx — open in Word, Ctrl+A, F9 to fill ЗМІСТ and page numbers"
