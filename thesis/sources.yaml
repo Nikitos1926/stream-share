@@ -142,3 +142,18 @@ sources:
     text: "Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026)."
   - key: google-embedded-webviews
     text: "Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026)."
+  # --- Chapter 4 part A (§4.2–4.3) ---
+  - key: electron-message-ports
+    text: "MessagePorts in Electron. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/message-ports (дата звернення: 05.10.2026)."
+  - key: mdn-audioworklet
+    text: "AudioWorklet. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet (дата звернення: 05.10.2026)."
+  - key: mediasoup-api
+    text: "mediasoup :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/api/ (дата звернення: 05.10.2026)."
+  - key: mediasoup-client-api
+    text: "mediasoup-client :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/api/ (дата звернення: 05.10.2026)."
+  - key: rfc7742
+    text: "Roach A. B. WebRTC Video Processing and Codec Requirements : RFC 7742. IETF, 2016. URL: https://www.rfc-editor.org/rfc/rfc7742 (дата звернення: 05.10.2026)."
+  - key: rfc6184
+    text: "RTP Payload Format for H.264 Video : RFC 6184 / Y.-K. Wang et al. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6184 (дата звернення: 05.10.2026)."
+  - key: w3c-mst-content-hint
+    text: "MediaStreamTrack Content Hints : W3C Working Draft 19 September 2025. URL: https://www.w3.org/TR/mst-content-hint/ (дата звернення: 05.10.2026)."
