@@ -1,0 +1,81 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 11
+
+' Reflects: broadcast/components/electron/MediaSourcePicker.tsx, lib/hooks/useStreamer.ts,
+' lib/media/audio.bridge.ts, lib/media/encoding.ts (web); conveyor/handlers/stream.handler.ts,
+' preload/preload.ts, audioWorker/audioCapture.worker.ts (desktop);
+' controllers/streams.controller.ts, services/{streamers,mediasoup}.service.ts (signaling).
+
+|Сторінка (renderer)|
+start
+:Відкрити вікно вибору джерела;
+|Головний процес|
+:stream:getSources —
+desktopCapturer.getSources
+(screen, window, мініатюри, піктограми);
+|Сторінка (renderer)|
+:Користувач обирає вікно застосунку;
+|Головний процес|
+:stream:pickSource —
+зберегти selectedSourceId,
+зафіксувати якір SourceFollower;
+|Сторінка (renderer)|
+:getDisplayMedia(video: до 3840×2160,
+frameRate ≤ обраної частоти кадрів);
+|Головний процес|
+:setDisplayMediaRequestHandler —
+повернути обране джерело;
+|Сторінка (renderer)|
+:Отримати відеодоріжку;
+:ensureAudioCapture();
+|Головний процес|
+:stream:startAudioCapture —
+PID за дескриптором вікна,
+utilityProcess.fork(audioWorker);
+|Утилітний процес|
+if (Нативний модуль доступний і\nstartCapture(PID, include) успішний?) then (так)
+  :Повідомити ready;
+  |Головний процес|
+  :Передати MessagePort сторінці
+  (через preload);
+  |Сторінка (renderer)|
+  :AudioWorklet pcm-source-processor
+  → звукова доріжка;
+else (ні)
+  |Утилітний процес|
+  :Повідомити error;
+  |Сторінка (renderer)|
+  :Повідомлення «лише відео»;
+endif
+|Сторінка (renderer)|
+:deriveVideoEncoding, pickVideoCodec
+(профіль, частота кадрів, бюджет бітрейту);
+:Натиснути «почати» — POST /streams,
+WebSocket /ws/streams/:id/broadcast;
+|Сервер сигналізації|
+:getRtpCapabilities — маршрутизатор
+на найменш завантаженому worker;
+:createTransport(send),
+connectTransport —
+setMaxIncomingBitrate;
+:produce (відео, звук; maxBitrate,
+last) — статус live;
+|Сторінка (renderer)|
+fork
+  :Кадри вікна → кодувальник
+  H.264 / VP8 → SRTP;
+fork again
+  |Утилітний процес|
+  :Буфери PCM → MessagePort;
+  |Сторінка (renderer)|
+  :Opus → SRTP;
+end fork
+|Сервер сигналізації|
+:Пересилання RTP споживачам глядачів;
+stop
+@enduml

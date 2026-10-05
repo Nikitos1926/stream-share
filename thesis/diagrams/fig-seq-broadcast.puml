@@ -1,0 +1,69 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+hide footbox
+
+actor "Стрімер" as U
+participant "Сторінка /broadcast\n(useStreamer,\nmediasoup-client)" as P
+participant "StreamsController" as C
+participant "StreamsService" as SS
+participant "StreamersService" as ST
+participant "MediasoupService\n(Router, WebRtcTransport)" as MS
+database "PostgreSQL" as DB
+
+U -> P : вибір джерела, «Start stream»
+P -> C : POST /streams {isPrivate}\n(cookie сеансу)
+C -> C : validateWsJwt
+C -> SS : create(userId, isPrivate)
+SS -> DB : INSERT stream (status = created)
+C --> P : 201 {data: stream}
+
+P -> C : WebSocket /ws/streams/:streamId/broadcast
+C -> C : validateWsJwt
+C -> SS : update(status = connecting)
+SS -> DB : UPDATE stream
+
+P -> C : getRtpCapabilities
+C -> SS : requireContext(streamId)
+SS -> MS : createRouter() на найменш\nзавантаженому worker
+C --> P : router.rtpCapabilities
+P -> P : device.load()
+
+P -> C : createTransport {direction: send}
+C -> ST : createTransport()
+ST -> MS : createTransport(router, 'send')
+C --> P : id, iceParameters,\ndtlsParameters, iceCandidates
+P -> P : createSendTransport()
+
+loop для кожної доріжки (audio, video)
+  P -> P : transport.produce(track)
+  opt перша доріжка: подія «connect»
+    P -> C : connectTransport {dtlsParameters}
+    C -> ST : connectTransport()
+    ST -> MS : limitIncomingBitrate()
+    C --> P : null
+  end
+  P -> C : produce {kind, rtpParameters,\nlast, maxBitrate}
+  C -> ST : produce() → Producer
+  opt last = true
+    C -> SS : update(status = live)
+    SS -> DB : UPDATE stream
+  end
+  C --> P : {producerId}
+end
+
+P ->> MS : RTP/SRTP (ICE, DTLS)
+
+U -> P : «Stop stream»
+P -> C : endStream
+C -> SS : update(status = ended,\nendReason = streamer_stop)
+SS -> DB : UPDATE stream
+C --> P : null
+P -> C : закриття WebSocket
+C -> ST : releaseResources(streamId)
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+
+start
+:stream:pickSource(sourceId)\n→ onSourcePicked;
+if (джерело – вікно\n(sourceId починається з «window:»)?) then (ні)
+  stop
+endif
+:визначити pid вікна,\nпрочитати таблицю процесів;
+if (процес є оболонкою (isShellProcess)\nабо відсутній у таблиці?) then (так)
+  stop
+endif
+:зафіксувати якір: sourceId, pid,\nім'я виконуваного файлу, корінь\nсімейства процесів (findFamilyRoot);
+while (слідування ввімкнено і якір існує?) is (так)
+  :очікування POLL_INTERVAL_MS = 1500 мс;
+  :отримати перелік вікон (desktopCapturer);
+  if (поточне вікно слідування зникло?) then (так)
+    if (вікно якоря присутнє?) then (так)
+      :повернутися до якоря;\nподія stream:sourceChanged {reason: return};
+    else (ні)
+      :почати очікування повернення якоря;
+    endif
+  endif
+  if (з'явилися нові вікна?) then (так)
+    if (нове вікно належить процесу якоря\nпід час очікування повернення?) then (так)
+      :повернутися до якоря;\nподія {reason: return};
+    else (ні)
+      :відібрати вікна процесів того самого сімейства,\nстворених після фіксації якоря,\nз іншим виконуваним файлом (isInFamily);
+      if (процес якоря завершився і з'явився\nпроцес із тим самим виконуваним файлом?) then (так)
+        :перенести якір на новий процес;
+      elseif (є кандидати?) then (так)
+        :обрати найновіше вікно;\nsetSelectedSourceId;\nподія {reason: follow};
+      else (ні)
+      endif
+    endif
+  endif
+  if (якір не повернувся за RETURN_WAIT_MS = 20 с?) then (так)
+    :зупинити слідування;\nподія {reason: lost};
+    stop
+  endif
+endwhile (ні)
+stop
+@enduml

@@ -1,0 +1,125 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 11
+hide empty members
+skinparam classAttributeIconSize 0
+
+class DiService {
+  - container : Container
+  + init()
+  + resolve(token)
+  + register(token, instance)
+}
+class Container {
+  - instances : Map<Class, unknown>
+  + register(token, instance)
+  + resolve(token)
+}
+
+class StreamsController {
+  + initRoutes()
+  - handleCreate()
+  - handleGetOne() / handleGetList() / handleGetActive()
+  - handleGetThumbnail() / handleChangeThumbnail()
+  - handleBroadcast() / handleWatch()
+  - handleStreamerMessage() / handleViewerMessage()
+  - handleStreamerSocketClose()
+  - handleViewerSocketClose()
+  - notifyViewers(streamId, event)
+}
+class UsersController {
+  + initRoutes()
+  - handleGetUser()
+}
+
+class StreamsService {
+  - registry : Map<string, StreamContext>
+  + getOne() / getList() / getLiveByUserId()
+  + create(streamerId, isPrivate)
+  + update(stream)
+  + stopUnfinishedStreams()
+  + requireStream(streamId)
+  + requireContext(streamId)
+  + getContext() / setContext() / removeContext()
+}
+class StreamersService {
+  + createTransport(streamId, ctx)
+  + connectTransport()
+  + produce()
+  + releaseResources(streamId)
+}
+class ViewersService {
+  + joinStream()
+  + createTransport()
+  + connectTransport()
+  + consume()
+  + releaseResources(userId, streamId)
+}
+class UsersService {
+  + getOne() / update()
+  + requireUser(userId)
+  + pruneGuests()
+  + registerCronJobs()
+}
+class MediasoupService {
+  + createWorkers()
+  + pickLeastLoadedWorker()
+  + createRouter()
+  + createTransport()
+  + limitIncomingBitrate(transport)
+}
+class StreamsRepository {
+  + getOne() / getList() / getLiveByUserId()
+  + insert() / update() / batchUpdate()
+  + updateUnfinishedStreams()
+  + addViewer() / removeViewer()
+  + removeViewersByStream(s)()
+}
+class UsersRepository {
+  + getOne() / update()
+  + pruneGuests()
+}
+
+class StreamContext <<type>> {
+  router : Router
+  transport? : WebRtcTransport
+  producers? : Producer[]
+  videoMaxBitrate? : number
+  reconnectionId? : Timeout
+  viewers : Record<string, StreamViewerContext>
+}
+class StreamViewerContext <<type>> {
+  transport : WebRtcTransport | null
+  consumers? : Consumer[]
+  socket : WebSocket
+}
+
+DiService *-- Container
+DiService ..> StreamsController : створює
+DiService ..> UsersController : створює
+
+StreamsController --> StreamsService
+StreamsController --> UsersService
+StreamsController --> StreamersService
+StreamsController --> ViewersService
+UsersController --> UsersService
+
+StreamersService --> StreamsService
+StreamersService --> StreamsRepository
+StreamersService --> UsersRepository
+StreamersService --> MediasoupService
+ViewersService --> StreamsService
+ViewersService --> StreamsRepository
+ViewersService --> UsersRepository
+ViewersService --> MediasoupService
+StreamsService --> StreamsRepository
+StreamsService --> MediasoupService
+UsersService --> UsersRepository
+
+StreamsService o-- "*" StreamContext
+StreamContext *-- "*" StreamViewerContext
+@enduml

@@ -1,0 +1,77 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+hide circle
+skinparam linetype ortho
+
+entity "user" as user {
+  * id : text <<PK>>
+  --
+  email : varchar(512) <<unique>>
+  emailVerified : timestamp
+  image : text
+  name : varchar(255)
+  password_hash : text
+  * role : varchar (user | admin | guest)
+  * status : varchar (active | blocked | deleted)
+  * failed_login_count : integer
+  locked_until : timestamptz
+  * created_at : timestamptz
+  activeAt : timestamptz
+}
+
+entity "account" as account {
+  * provider : text <<PK>>
+  * providerAccountId : text <<PK>>
+  --
+  * userId : text <<FK>>
+  * type : text
+  refresh_token : text
+  access_token : text
+  expires_at : integer
+  token_type : text
+  scope : text
+  id_token : text
+  session_state : text
+}
+
+entity "stream" as stream {
+  * id : text <<PK>>
+  --
+  * user_id : text <<FK>>
+  isPrivate : boolean
+  status : varchar
+  endReason : varchar
+  startedAt : timestamptz
+  endedAt : timestamptz
+  thumbnailUpdatedAt : timestamptz
+}
+
+entity "stream_to_user" as stu {
+  * id : text <<PK>>
+  --
+  * stream_id : text <<FK>>
+  * user_id : text <<FK>>
+}
+
+entity "audit_log" as audit {
+  * id : uuid <<PK>>
+  --
+  actor_user_id : text <<FK>>
+  action : text
+  targetType : text
+  targetId : text
+  metadata : jsonb
+  createdAt : timestamptz
+}
+
+user ||--o{ account
+user ||--o{ stream
+user ||--o{ stu
+stream ||--o{ stu
+user |o--o{ audit
+@enduml

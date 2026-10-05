@@ -1,0 +1,73 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+hide footbox
+
+actor "Глядач" as U
+participant "Сторінка\n/:streamId/watch\n(Watch, useViewer)" as P
+participant "apps/web\nAuth.js (guest)" as A
+participant "StreamsController /\nUsersController" as C
+participant "ViewersService" as VS
+participant "MediasoupService" as MS
+database "PostgreSQL" as DB
+
+U -> P : відкриття посилання
+opt немає сеансу користувача
+  P -> P : guestUserId з localStorage
+  P -> A : signIn('guest', {userId})
+  alt userId порожній
+    A -> DB : createUser(role = guest,\nвипадкове ім'я, identicon)
+  else userId задано
+    A -> DB : getUser(userId)
+  end
+  A --> P : cookie сеансу (JWT)
+end
+
+P -> C : WebSocket /ws/streams/:streamId/watch
+C -> C : validateWsJwt
+P -> C : joinStream
+C -> C : requireStream, requireUser,\nrequireContext
+C -> VS : joinStream()
+VS -> DB : INSERT stream_to_user,\nUPDATE user.activeAt
+C --> P : {producerIds, rtpCapabilities}
+P -> P : device.load()
+
+P -> C : createTransport {direction: recv}
+C -> VS : createTransport()
+VS -> MS : createTransport(router, 'recv',\nvideoMaxBitrate)
+C --> P : id, iceParameters,\ndtlsParameters, iceCandidates
+P -> P : createRecvTransport()
+
+loop для кожного producerId
+  P -> C : consume {rtpCapabilities, producerId}
+  C -> VS : consume(): router.canConsume(),\ntransport.consume()
+  C --> P : {consumerId, rtpParameters, kind}
+  P -> P : transport.consume()
+  opt перший виклик: подія «connect»
+    P -> C : connectTransport {dtlsParameters}
+    C -> VS : connectTransport()
+    C --> P : null
+  end
+end
+MS ->> P : RTP/SRTP
+
+alt стрімер втратив з'єднання
+  C -->> P : подія streamerDisconnect
+  opt стрімер повернувся
+    C -->> P : подія streamerReconnected {producerId}
+    P -> C : consume {rtpCapabilities, producerId}
+  end
+else трансляцію завершено
+  C -->> P : подія streamEnd
+  P -> P : «The stream has ended»
+end
+
+P -> C : закриття WebSocket
+C -> VS : releaseResources()
+VS -> DB : DELETE stream_to_user
+@enduml

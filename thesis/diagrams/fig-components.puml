@@ -1,0 +1,62 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+
+package "Клієнтська сторона" {
+  node "Браузер" as Browser {
+    component "Сторінки Next.js\n(React, mediasoup-client)" as WebClient
+  }
+  node "apps/desktop (Electron)" as Desktop {
+    component "Вікно BrowserWindow\n(завантажує вебзастосунок)" as Renderer
+    component "preload\n(window.conveyor)" as Preload
+    component "Головний процес\n(conveyor handlers,\nSourceFollower, googleAuth,\nupdater, tray)" as Main
+    component "Службовий процес\naudioWorker\n(electron-native-screenshare)" as Audio
+  }
+}
+
+package "Серверна сторона" {
+  component "apps/web (Next.js)\nсторінки, Proxy,\nAuth.js, /api/desktop-auth/*" as Web
+  component "apps/signaling (Fastify)\nREST /streams, /users,\nWS /ws/streams/:streamId/*,\nmediasoup SFU" as Sig
+  database "PostgreSQL" as PG
+}
+
+package "Спільні пакети" {
+  component "@stream-share/db\n(схеми Drizzle, createDb)" as PDb
+  component "@stream-share/shared\n(протокол WS, cookie сеансу,\nрозрахунок бітрейту)" as PShared
+  component "@stream-share/env\n(перевірка змінних\nсередовища, zod)" as PEnv
+}
+
+cloud "Google OAuth 2.0" as Google
+cloud "GitHub Releases" as GH
+
+WebClient --> Web : HTTPS
+WebClient --> Sig : HTTPS (REST), WSS
+WebClient <..> Sig : WebRTC (SRTP/UDP)
+Renderer --> Preload : виклики API
+Preload --> Main : IPC (invoke / події)
+Main --> Audio : MessagePort
+Audio ..> Renderer : PCM (MessagePort)
+Renderer --> Web : HTTPS
+Renderer --> Sig : REST, WSS, WebRTC
+Main --> Web : системний браузер,\n/api/desktop-auth/start
+Main --> GH : оновлення
+Web --> Sig : HTTP (рендеринг на сервері)
+Web --> PG : адаптер Auth.js
+Sig --> PG : репозиторії
+Web --> Google : OAuth 2.0
+
+Web ..> PDb
+Web ..> PShared
+Web ..> PEnv
+Sig ..> PDb
+Sig ..> PShared
+Sig ..> PEnv
+Main ..> PEnv
+PShared ..> PDb
+@enduml
