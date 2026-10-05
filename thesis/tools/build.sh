@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Thesis build: PlantUML -> PNG, Markdown chapters -> DOCX (pandoc + reference.docx + Lua filter).
-# Usage (from repo root, branch `diploma`):  mise install && bash thesis/tools/build.sh [--diagrams-only]
+# Usage (from repo root, branch `diploma`):  mise install && bash thesis/tools/build.sh [--diagrams-only|--test]
 # Output: thesis/out/thesis.docx (+ page estimate printed by wordcount.py).
-# See thesis/PLAN.md §4. The Lua filter and assemble.py are TODO for the toolchain ticket.
+#   --diagrams-only  render diagrams/*.puml only
+#   --test           build tools/fixture/sample.md -> out/fixture.docx and check it (check_docx.py)
+# THESIS_STRICT=1 turns unknown cross-references into errors (use for the final build).
+# See thesis/PLAN.md §4 and thesis/CLAUDE.md «Build».
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -60,22 +63,49 @@ if (( ${#pumls[@]} )); then
 fi
 [[ "${1:-}" == "--diagrams-only" ]] && exit 0
 
-# --- reference.docx (styles from PLAN.md §1) ---
-python3 "$HERE/make_reference_docx.py" "$OUT/reference.docx"
+# --- Python deps (python-docx, PyYAML) in a private venv: the sandbox sets PIP_USER=1 ---
+VENV="$CACHE/venv"
+REQ="$HERE/requirements.txt"
+if [[ ! -x "$VENV/bin/python" ]] || ! cmp -s "$REQ" "$VENV/requirements.txt"; then
+  python3 -m venv "$VENV"
+  PIP_USER=0 "$VENV/bin/pip" install -q --disable-pip-version-check -r "$REQ"
+  cp "$REQ" "$VENV/requirements.txt"
+fi
+PY="$VENV/bin/python"
 
-# --- Markdown -> DOCX ---
+# --- reference.docx (styles from PLAN.md §1) ---
+"$PY" "$HERE/make_reference_docx.py" "$OUT/reference.docx"
+
+# --- Markdown -> DOCX: pandoc + thesis.lua (numbering, cross-refs, sources), then assemble.py
+# (title page, ЗМІСТ field, header page numbers). Run from the Markdown's directory: image paths
+# are relative to it (chapters use ../diagrams/x.png).
+build_docx() { # workdir out.docx extra-pandoc-args... -- files...
+  local dir="$1" out="$2"; shift 2
+  local args=() files=()
+  while [[ "$1" != "--" ]]; do args+=("$1"); shift; done; shift
+  files=("$@")
+  (
+    cd "$dir"
+    pandoc "${files[@]}" \
+      --from markdown+fenced_divs+link_attributes+pipe_tables+tex_math_dollars \
+      --to docx --reference-doc "$OUT/reference.docx" \
+      --metadata-file "$THESIS/metadata.yaml" \
+      --lua-filter "$HERE/thesis.lua" "${args[@]}" -o "$out.pandoc.docx"
+  )
+  "$PY" "$HERE/assemble.py" "$out.pandoc.docx" "$out" --metadata "$THESIS/metadata.yaml"
+  rm -f "$out.pandoc.docx"
+}
+
+if [[ "${1:-}" == "--test" ]]; then
+  build_docx "$HERE/fixture" "$OUT/fixture.docx" -M thesis-unused-ok=true -- sample.md
+  "$PY" "$HERE/check_docx.py" "$OUT/fixture.docx"
+  exit 0
+fi
+
 chapters=("$THESIS"/chapters/*.md)
 if (( ! ${#chapters[@]} )); then echo "no chapters yet"; exit 0; fi
-filter=()
-[[ -f "$HERE/thesis.lua" ]] && filter=(--lua-filter "$HERE/thesis.lua")
-(
-  cd "$THESIS/chapters"  # image paths in chapters are relative: ../diagrams/x.png
-  pandoc "${chapters[@]}" \
-    --from markdown+fenced_divs+link_attributes+pipe_tables+tex_math_dollars \
-    --to docx --reference-doc "$OUT/reference.docx" \
-    --metadata-file "$THESIS/metadata.yaml" \
-    "${filter[@]}" -o "$OUT/thesis.docx"
-)
-# TODO(toolchain ticket): python3 "$HERE/assemble.py" — title page, header PAGE field, TOC.
+build_docx "$THESIS/chapters" "$OUT/thesis.docx" -- "${chapters[@]}"
 python3 "$HERE/wordcount.py" "${chapters[@]}"
-echo "built $OUT/thesis.docx"
+todo=$(cat "${chapters[@]}" "$THESIS/metadata.yaml" | grep -o "ПОТРЕБУЄ УТОЧНЕННЯ" | wc -l)
+echo "placeholders [ПОТРЕБУЄ УТОЧНЕННЯ: …] left (chapters + metadata.yaml): $todo"
+echo "built $OUT/thesis.docx — open in Word, Ctrl+A, F9 to fill ЗМІСТ and page numbers"

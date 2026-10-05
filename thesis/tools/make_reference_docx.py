@@ -12,7 +12,7 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Mm, Pt
@@ -112,8 +112,41 @@ def main(out: str) -> None:
         if kind == WD_STYLE_TYPE.PARAGRAPH:
             para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, spacing=1.0)
 
-    # TODO(toolchain ticket): header with right-aligned PAGE field + different first page
-    # (assemble.py), table cell style (single spacing, 14/12 pt), TOC styles (indents 5 / 12.5 mm).
+    # Formula line written by thesis.lua: <tab>formula<tab>(2.1) — centre tab mid-text, right tab
+    # at the right margin (text width 210 − 25 − 10 = 175 mm).
+    s = style(doc, "Formula") or doc.styles.add_style("Formula", WD_STYLE_TYPE.PARAGRAPH)
+    s.base_style = style(doc, "Normal")
+    set_font(s)
+    para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, before=6, after=6)
+    s.paragraph_format.tab_stops.add_tab_stop(Mm(87.5), WD_TAB_ALIGNMENT.CENTER)
+    s.paragraph_format.tab_stops.add_tab_stop(Mm(175), WD_TAB_ALIGNMENT.RIGHT)
+
+    # ЗМІСТ title (assemble.py) — looks like Heading 1 but is not a heading, so it stays out of
+    # the TOC. TOC entries follow addendum_v: level 1 at 5 mm hanging, level 2 at 5 mm,
+    # level 3 at 12.5 mm; page number at the right margin after a dot leader.
+    s = style(doc, "TOC Title") or doc.styles.add_style("TOC Title", WD_STYLE_TYPE.PARAGRAPH)
+    set_font(s, bold=True, caps=True)
+    para(s, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, after=21, keep_next=True)
+    s.paragraph_format.page_break_before = True
+    for level, left, hanging in ((1, 5, 5), (2, 5, 0), (3, 12.5, 0)):
+        name = f"toc {level}"  # Word's built-in name, so the TOC field uses it
+        s = style(doc, name) or doc.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH, builtin=True)
+        s.base_style = style(doc, "Normal")
+        set_font(s)
+        para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0)
+        s.paragraph_format.left_indent = Mm(left)
+        s.paragraph_format.first_line_indent = Mm(-hanging) if hanging else Mm(0)
+        s.paragraph_format.right_indent = Mm(0)
+        s.paragraph_format.tab_stops.add_tab_stop(Mm(175), WD_TAB_ALIGNMENT.RIGHT,
+                                                  WD_TAB_LEADER.DOTS)
+
+    # Header paragraph (assemble.py puts the PAGE field in it): right, no indent.
+    s = style(doc, "Header") or doc.styles.add_style("Header", WD_STYLE_TYPE.PARAGRAPH, builtin=True)
+    set_font(s)
+    para(s, align=WD_ALIGN_PARAGRAPH.RIGHT, indent=0, spacing=1.0)
+
+    # Table cells use "Compact" (single spacing, 14 pt, above). Header page number, title page
+    # and TOC field are added by assemble.py.
     doc.save(out)
 
 
