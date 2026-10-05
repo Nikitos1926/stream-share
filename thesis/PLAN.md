@@ -370,8 +370,8 @@ thesis/
   sources.yaml          bibliography: key → ready ДСТУ 8302:2015 string
   chapters/             Markdown, concatenated in lexical order
     00-abstract-uk.md  01-abstract-en.md  02-abbreviations.md  03-intro.md
-    10-chapter1.md     20-chapter2.md     30-chapter3.md
-    40-chapter4-a.md   41-chapter4-b.md   50-chapter5.md   60-chapter6.md
+    10-chapter1.md     11-chapter1-b.md   20-chapter2.md     30-chapter3.md
+    39-chapter4-stack.md 40-chapter4-a.md 41-chapter4-b.md   50-chapter5.md   60-chapter6.md
     90-conclusions.md  95-references.md   A0-appendix-a.md
   diagrams/             <id>.puml + rendered <id>.png side by side (both committed)
   screenshots/          real UI screenshots from the user (PNG)
@@ -381,6 +381,9 @@ thesis/
 ```
 
 A chapter may span several files (`40-…-a`, `41-…-b`) so two tickets never edit one file.
+Only the first file of a chapter carries its `#` heading: `11-chapter1-b.md` (§1.3–1.4 + «Висновки
+до розділу 1») continues `10-chapter1.md`; `39-chapter4-stack.md` holds `# 4 Програмна реалізація
+системи` + §4.1, so `40-chapter4-a.md` starts at `## 4.2` and must not repeat `# 4`.
 
 ### 4.2 Toolchain decision
 
