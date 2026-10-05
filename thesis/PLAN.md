@@ -356,6 +356,12 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 the WS part of `streams.controller.ts`, `useStreamer.ts` (abridged), `googleAuth.ts`. Pin the
 commit hash in the appendix intro sentence.
 
+**Додаток Б «Структура таблиць бази даних»** (tables Б.1–Б.5, the column tables of §3.3) and
+**Додаток В «Тестові приклади функціонального тестування»** (tables В.1–В.5, the test-case tables
+of §5.2) were moved out of the main text to keep it within 60–80 pp. Appendices are lettered in the
+order of their first mention: А in §3.1.1, Б in §3.3.2, В in §5.2. Додаток А omits imports, helper
+code and fragments already shown in the main text, so the whole document stays ≤ ~120 pp.
+
 ---
 
 ## 4. Source format and toolchain
@@ -372,7 +378,7 @@ thesis/
     00-abstract-uk.md  01-abstract-en.md  02-abbreviations.md  03-intro.md
     10-chapter1.md     11-chapter1-b.md   20-chapter2.md     30-chapter3.md
     39-chapter4-stack.md 40-chapter4-a.md 41-chapter4-b.md   50-chapter5.md   60-chapter6.md
-    90-conclusions.md  95-references.md   A0-appendix-a.md
+    90-conclusions.md  95-references.md   A0-appendix-a.md  B0-appendix-b.md  C0-appendix-v.md
   diagrams/             <id>.puml + rendered <id>.png side by side (both committed)
   screenshots/          real UI screenshots from the user (PNG)
   tools/                build.sh, make_reference_docx.py, thesis.lua, wordcount.py (not `build/`: ignored by the root .gitignore)

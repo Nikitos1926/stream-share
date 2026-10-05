@@ -118,7 +118,7 @@ export const validateWsJwt = async (
 
 Теми різняться лише значеннями змінних кольорів, тому компонент, що використовує кольори теми, підтримує обидві без додаткового коду.
 
-**4.6.3 Збирання та розгортання.** За теґом `v*` робочий процес GitHub Actions збирає образи `web`, `signaling` і `migrate` для розгортання (рис. @fig:deployment), а за теґом `desktop-v*` – інсталятори NSIS, DMG і AppImage засобами electron-builder [@electron-builder] для випуску GitHub. Автоматичне оновлення [@electron-builder-autoupdate] працює лише у Windows і Linux, бо в macOS воно потребує підписаного застосунку.
+**4.6.3 Збирання та розгортання.** За тегом `v*` робочий процес GitHub Actions збирає образи `web`, `signaling` і `migrate` у GitHub Container Registry та оновлює їх на сервері через SSH (`docker compose pull`, `up -d`) згідно з діаграмою розгортання (рис. @fig:deployment), а за тегом `desktop-v*` – інсталятори NSIS, DMG і AppImage засобами electron-builder [@electron-builder] для випуску GitHub. Автоматичне оновлення [@electron-builder-autoupdate] працює лише у Windows і Linux, бо в macOS воно потребує підписаного застосунку.
 
 ## Висновки до розділу 4
 

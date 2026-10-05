@@ -85,6 +85,15 @@ def copy_title_styles(doc, template):
         # The template centres everything through docDefaults; make that explicit here.
         ppr.append(el("w:ind", **{"w:left": "0", "w:right": "0", "w:firstLine": "0"}))
         ppr.append(el("w:jc", **{"w:val": "center"}))
+        # The template has no space before/after (its docDefaults); reference.docx's docDefaults
+        # add 10 pt after, which pushed «Одеса – рік» onto page 2.
+        spacing = ppr.find(qn("w:spacing"))
+        if spacing is None:
+            spacing = el("w:spacing")
+            ppr.find(qn("w:ind")).addprevious(spacing)  # schema order: spacing, ind, jc
+        for side in ("w:before", "w:after"):
+            if spacing.get(qn(side)) is None:
+                spacing.set(qn(side), "0")
         dst.append(new)
         ids[name] = sid
     missing = {f"Т{i}" for i in range(1, 12)} - ids.keys()

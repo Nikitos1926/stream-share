@@ -137,7 +137,7 @@ def write_open_items(out: Path, chapters: list[Path]) -> None:
         "Every item is a `[ПОТРЕБУЄ …]` placeholder: data only the author can provide (PLAN.md §5, gaps",
         "G1–G11). `front/task-sheet.md` is the separate task form, not part of thesis.docx.",
         "",
-        "Final steps outside the sources (G10): open `thesis/out/thesis.docx` in Word, Ctrl+A → F9",
+        "Final steps outside the sources (G10): open `thesis/final/thesis.docx` in Word, Ctrl+A → F9",
         "(ЗМІСТ, page numbers), add «Продовження таблиці» labels to tables split across pages, update",
         "the volume sentence of both abstracts with the final page counts, export PDF/A with Times New",
         "Roman embedded, sign with КЕП, get the bibliographic description at https://bo.op.edu.ua.",

@@ -46,6 +46,11 @@ def main(path):
     # Title page first, then АНОТАЦІЯ, ЗМІСТ (TOC field) before ВСТУП.
     expect(texts[0] == "МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ", "title page is not first")
     expect(items[0][1].startswith("TitlePage"), "title page does not use the template styles")
+    for s in doc.styles.element.findall(f"{W}style"):
+        if s.get(f"{W}styleId", "").startswith("TitlePage"):
+            sp = s.find(f"{W}pPr/{W}spacing")
+            expect(sp is not None and sp.get(f"{W}after") == "0" and sp.get(f"{W}before") == "0",
+                   "title page styles must have no space before/after (page 1 overflows)")
     i_abs, i_toc, i_intro = find("Анотація"), find("Зміст"), find("Вступ")
     expect(i_abs < i_toc < i_intro, "order must be title, Анотація, Зміст, Вступ")
     expect(items[i_toc][1] == "TOCTitle", "ЗМІСТ title must use the TOC Title style")

@@ -26,6 +26,9 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   `--check` fails on an unresolved `[@key]`, a duplicate or uncited source, or a stale list) and
   `chapters/A0-appendix-a.md` (`python3 thesis/tools/appendix.py`, code read from the commit pinned
   in the script). Re-run both after changing citations or the appendix listings.
+- Appendices Б (`B0-appendix-b.md`, DB column tables) and В (`C0-appendix-v.md`, test-case tables)
+  are hand-written; their tables are defined there and referenced from §3.3 / §5.2. Volume is at the
+  limit (main ≈ 76 of 80 pp, total ≈ 116 of ~120 by `pages.txt`): any addition needs an equal cut.
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
   abbreviation is used ≥ 3 times; expand it in the text at first use.
