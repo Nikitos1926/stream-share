@@ -1,0 +1,65 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+left to right direction
+
+actor "Гість" as Guest
+actor "Користувач\n(стрімер / глядач)" as User
+actor "Google\n(OAuth 2.0)" as Google <<зовнішня система>>
+
+User -|> Guest
+
+rectangle "Вебсервіс трансляції медіаконтенту" {
+  usecase "Переглянути трансляцію\nза посиланням" as UC_Watch
+  usecase "Отримати гостьовий сеанс" as UC_GuestSession
+  usecase "Керувати відтворенням\n(гучність, PiP, повний екран)" as UC_Playback
+  usecase "Завантажити\nнастільний застосунок" as UC_Download
+
+  usecase "Увійти через Google" as UC_Login
+  usecase "Увійти з настільного\nзастосунку через\nсистемний браузер" as UC_DesktopLogin
+  usecase "Вийти з облікового запису" as UC_Logout
+  usecase "Переглянути перелік\nактивних трансляцій" as UC_List
+
+  usecase "Провести трансляцію" as UC_Stream
+  usecase "Розпочати трансляцію\nу браузері" as UC_BrowserStream
+  usecase "Розпочати трансляцію\nокремого застосунку" as UC_AppStream
+  usecase "Обрати вікно\nабо екран" as UC_PickSource
+  usecase "Захопити звук\nзастосунку" as UC_AppAudio
+  usecase "Слідувати за вікнами\nзастосунку" as UC_Follow
+  usecase "Налаштувати\nякість і частоту кадрів" as UC_Quality
+  usecase "Зробити трансляцію\nприватною" as UC_Private
+  usecase "Скопіювати посилання\nна перегляд" as UC_Link
+  usecase "Вимкнути звук\nтрансляції" as UC_Mute
+  usecase "Завершити трансляцію" as UC_End
+  usecase "Відновити незавершену\nтрансляцію" as UC_Reconnect
+}
+
+Guest --> UC_Watch
+Guest --> UC_Download
+Guest --> UC_Login
+UC_Watch ..> UC_GuestSession : <<include>>
+UC_Playback ..> UC_Watch : <<extend>>
+UC_DesktopLogin ..> UC_Login : <<extend>>
+UC_Login --> Google
+
+User --> UC_Logout
+User --> UC_List
+User --> UC_Stream
+User --> UC_End
+User --> UC_Reconnect
+
+UC_BrowserStream -|> UC_Stream
+UC_AppStream -|> UC_Stream
+UC_AppStream ..> UC_PickSource : <<include>>
+UC_AppStream ..> UC_AppAudio : <<include>>
+UC_Follow ..> UC_AppStream : <<extend>>
+UC_Quality ..> UC_Stream : <<extend>>
+UC_Private ..> UC_Stream : <<extend>>
+UC_Link ..> UC_Stream : <<extend>>
+UC_Mute ..> UC_Stream : <<extend>>
+@enduml

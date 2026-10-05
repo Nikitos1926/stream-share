@@ -70,3 +70,70 @@ sources:
     text: "Use the Web App (browser). Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381650129300-Use-the-Web-App-browser (дата звернення: 05.10.2026)."
   - key: electron-session
     text: "session. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/session (дата звернення: 05.10.2026)."
+  # --- Chapter 1 (§1.3–1.4) and §4.1 ---
+  - key: omg-uml
+    text: "OMG Unified Modeling Language (OMG UML) : Version 2.5.1. Object Management Group, 2017. URL: https://www.omg.org/spec/UML/2.5.1 (дата звернення: 05.10.2026)."
+  - key: iso25010
+    text: "ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026)."
+  - key: rfc8252
+    text: "Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026)."
+  - key: rfc7636
+    text: "Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026)."
+  - key: google-oauth-native
+    text: "OAuth 2.0 for iOS & Desktop Apps. Google for Developers. URL: https://developers.google.com/identity/protocols/oauth2/native-app (дата звернення: 05.10.2026)."
+  - key: electron-builder-autoupdate
+    text: "Auto Update. electron-builder. URL: https://www.electron.build/docs/features/auto-update (дата звернення: 05.10.2026)."
+  - key: typescript
+    text: "TypeScript : JavaScript with syntax for types. Microsoft. URL: https://www.typescriptlang.org/ (дата звернення: 05.10.2026)."
+  - key: pnpm-workspaces
+    text: "Workspace. pnpm Documentation. URL: https://pnpm.io/workspaces (дата звернення: 05.10.2026)."
+  - key: zod
+    text: "Zod : TypeScript-first schema validation with static type inference. URL: https://zod.dev/ (дата звернення: 05.10.2026)."
+  - key: nextjs-docs
+    text: "Next.js Docs. Vercel. URL: https://nextjs.org/docs (дата звернення: 05.10.2026)."
+  - key: react-19
+    text: "React v19. React Blog. 2024. 5 December. URL: https://react.dev/blog/2024/12/05/react-19 (дата звернення: 05.10.2026)."
+  - key: nextjs-proxy
+    text: "File-system conventions: proxy.js. Next.js Docs. URL: https://nextjs.org/docs/app/api-reference/file-conventions/proxy (дата звернення: 05.10.2026)."
+  - key: authjs-session-strategies
+    text: "Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026)."
+  - key: fastify-docs
+    text: "Fastify Documentation. OpenJS Foundation. URL: https://fastify.dev/docs/latest/ (дата звернення: 05.10.2026)."
+  - key: rfc6455
+    text: "Fette I., Melnikov A. The WebSocket Protocol : RFC 6455. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6455 (дата звернення: 05.10.2026)."
+  - key: fastify-websocket
+    text: "@fastify/websocket : WebSocket support for Fastify. GitHub. URL: https://github.com/fastify/fastify-websocket (дата звернення: 05.10.2026)."
+  - key: mediasoup-design
+    text: "Design. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/design/ (дата звернення: 05.10.2026)."
+  - key: janus-docs
+    text: "Janus WebRTC Server : Documentation. Meetecho. URL: https://janus.conf.meetecho.com/docs/ (дата звернення: 05.10.2026)."
+  - key: livekit-about
+    text: "About LiveKit. LiveKit Docs. URL: https://docs.livekit.io/intro/about/ (дата звернення: 05.10.2026)."
+  - key: mediasoup-scalability
+    text: "Scalability. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/scalability/ (дата звернення: 05.10.2026)."
+  - key: mediasoup-client
+    text: "mediasoup-client. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/ (дата звернення: 05.10.2026)."
+  - key: electron-docs
+    text: "Introduction. Electron Documentation. URL: https://www.electronjs.org/docs/latest/ (дата звернення: 05.10.2026)."
+  - key: tauri-webview
+    text: "Webview Versions. Tauri 2 Documentation. URL: https://v2.tauri.app/reference/webview-versions/ (дата звернення: 05.10.2026)."
+  - key: electron-process-model
+    text: "Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026)."
+  - key: tauri-architecture
+    text: "Tauri Architecture. Tauri 2 Documentation. URL: https://v2.tauri.app/concept/architecture/ (дата звернення: 05.10.2026)."
+  - key: electron-utility-process
+    text: "utilityProcess. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/utility-process (дата звернення: 05.10.2026)."
+  - key: electron-context-isolation
+    text: "Context Isolation. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/context-isolation (дата звернення: 05.10.2026)."
+  - key: electron-builder
+    text: "electron-builder : A complete solution to package and build a ready for distribution Electron app. URL: https://www.electron.build/ (дата звернення: 05.10.2026)."
+  - key: postgresql-about
+    text: "About PostgreSQL. The PostgreSQL Global Development Group. URL: https://www.postgresql.org/about/ (дата звернення: 05.10.2026)."
+  - key: prisma-what-is
+    text: "What is Prisma ORM? Prisma Documentation. URL: https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma (дата звернення: 05.10.2026)."
+  - key: drizzle-overview
+    text: "Drizzle ORM : Overview. Drizzle Team. URL: https://orm.drizzle.team/docs/overview (дата звернення: 05.10.2026)."
+  - key: docker-compose-model
+    text: "How Compose works. Docker Docs. URL: https://docs.docker.com/compose/intro/compose-application-model/ (дата звернення: 05.10.2026)."
+  - key: caddy-https
+    text: "Automatic HTTPS. Caddy Documentation. URL: https://caddyserver.com/docs/automatic-https (дата звернення: 05.10.2026)."
