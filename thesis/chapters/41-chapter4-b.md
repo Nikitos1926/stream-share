@@ -41,7 +41,6 @@ export async function decodeAuthToken(rawToken: string): Promise<JWT | null> {
     secret: env.AUTH_SECRET,
     token: rawToken,
   });
-
   if (!payload?.sub) return null;
   return payload;
 }

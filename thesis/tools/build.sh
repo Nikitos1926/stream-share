@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Thesis build: PlantUML -> PNG, Markdown chapters -> DOCX (pandoc + reference.docx + Lua filter).
-# Usage (from repo root, branch `diploma`):  mise install && bash thesis/tools/build.sh [--diagrams-only|--test]
+# Usage (from repo root, branch `diploma`):  mise install && bash thesis/tools/build.sh [--diagrams-only|--test|--pdf]
 # Output: thesis/out/thesis.docx (+ page estimate printed by wordcount.py).
 #   --diagrams-only  render diagrams/*.puml only
 #   --test           build tools/fixture/sample.md -> out/fixture.docx and check it (check_docx.py)
+#   --pdf            also out/thesis.pdf via LibreOffice (tools/pdf.sh) with real page counts
+#   --release        strict build + PDF, copied to thesis/final/ (committed deliverable)
+# Every full build runs tools/qa.py (numbering, references, listing length) and regenerates
+# thesis/OPEN_ITEMS.md from the [ПОТРЕБУЄ …] placeholders.
 # THESIS_STRICT=1 turns unknown cross-references into errors (use for the final build).
 # See thesis/PLAN.md §4 and thesis/CLAUDE.md «Build».
 set -euo pipefail
@@ -62,6 +66,7 @@ if (( ${#pumls[@]} )); then
   echo "rendered ${#pumls[@]} diagram(s)"
 fi
 [[ "${1:-}" == "--diagrams-only" ]] && exit 0
+[[ "${1:-}" == "--release" ]] && export THESIS_STRICT=1
 
 # --- Python deps (python-docx, PyYAML) in a private venv: the sandbox sets PIP_USER=1 ---
 VENV="$CACHE/venv"
@@ -106,6 +111,13 @@ chapters=("$THESIS"/chapters/*.md)
 if (( ! ${#chapters[@]} )); then echo "no chapters yet"; exit 0; fi
 build_docx "$THESIS/chapters" "$OUT/thesis.docx" -- "${chapters[@]}"
 python3 "$HERE/wordcount.py" "${chapters[@]}"
-todo=$(cat "${chapters[@]}" "$THESIS/metadata.yaml" | { grep -o "ПОТРЕБУЄ УТОЧНЕННЯ" || true; } | wc -l)
-echo "placeholders [ПОТРЕБУЄ УТОЧНЕННЯ: …] left (chapters + metadata.yaml): $todo"
+python3 "$HERE/qa.py" --open-items "$THESIS/OPEN_ITEMS.md"
 echo "built $OUT/thesis.docx — open in Word, Ctrl+A, F9 to fill ЗМІСТ and page numbers"
+if [[ "${1:-}" == "--pdf" || "${1:-}" == "--release" ]]; then
+  bash "$HERE/pdf.sh" "$OUT/thesis.docx" "$OUT/thesis.pdf" | tee "$OUT/pages.txt"
+fi
+if [[ "${1:-}" == "--release" ]]; then
+  mkdir -p "$THESIS/final"
+  cp "$OUT/thesis.docx" "$OUT/thesis.pdf" "$OUT/pages.txt" "$THESIS/final/"
+  echo "release copied to $THESIS/final/"
+fi
