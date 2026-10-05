@@ -1,0 +1,7 @@
+# Bibliography. One entry per source: a stable key (cited as [@key]) and the full ДСТУ 8302:2015 string.
+# The Lua filter numbers sources in order of first citation and writes СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ.
+# Only real sources the writer actually opened; «дата звернення» = the day it was opened. See PLAN.md §1.11.
+sources:
+  # - key: mediasoup-docs
+  #   text: "mediasoup v3 documentation. URL: https://mediasoup.org/documentation/v3/ (дата звернення: ДД.ММ.РРРР)."
+  []

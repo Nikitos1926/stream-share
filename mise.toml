@@ -1,0 +1,4 @@
+# Toolchain for the diploma thesis build (thesis/tools/build.sh). Branch `diploma` only.
+[tools]
+pandoc = "3.8"
+java = "temurin-21"

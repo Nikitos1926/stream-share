@@ -1,0 +1,20 @@
+# Title page and abstract fields. Values in [ПОТРЕБУЄ УТОЧНЕННЯ: …] must come from the user (PLAN.md §5, G1).
+# Layout follows docs/formatting_examples/Appendix_A_-_Sample_Title_Page_Formatting.docx.
+lang: uk-UA
+ministry: "МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ"
+university: "НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ «ОДЕСЬКА ПОЛІТЕХНІКА»"
+institute: "[ПОТРЕБУЄ УТОЧНЕННЯ: інститут — у прикладах «Навчально-науковий інститут комп’ютерних систем»]"
+department: "[ПОТРЕБУЄ УТОЧНЕННЯ: кафедра — у прикладах «Кафедра інженерії програмного забезпечення»]"
+work_type: "КВАЛІФІКАЦІЙНА РОБОТА БАКАЛАВРА"
+title_uk: "[ПОТРЕБУЄ УТОЧНЕННЯ: тема українською за наказом]"
+title_en: "WEB SERVICE FOR STREAMING MEDIA CONTENT WITH THE FUNCTION OF CAPTURING INDIVIDUAL APPLICATIONS"
+student: "[ПОТРЕБУЄ УТОЧНЕННЯ: Ім’я ПРІЗВИЩЕ]"
+student_full: "[ПОТРЕБУЄ УТОЧНЕННЯ: Прізвище Ім’я По батькові — для бібліографічного опису]"
+student_en: "[ПОТРЕБУЄ УТОЧНЕННЯ: Name SURNAME]"
+group: "[ПОТРЕБУЄ УТОЧНЕННЯ: група]"
+specialty: "[ПОТРЕБУЄ УТОЧНЕННЯ: 121 Інженерія програмного забезпечення?]"
+program: "[ПОТРЕБУЄ УТОЧНЕННЯ: освітньо-професійна програма]"
+supervisor: "[ПОТРЕБУЄ УТОЧНЕННЯ: науковий ступінь, вчене звання, Ім’я ПРІЗВИЩЕ]"
+city_year: "Одеса – [ПОТРЕБУЄ УТОЧНЕННЯ: рік]"
+keywords_uk: []   # 5–15, written last
+keywords_en: []
