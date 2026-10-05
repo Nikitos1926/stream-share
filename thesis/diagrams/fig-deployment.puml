@@ -1,0 +1,52 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+
+node "Комп'ютер глядача або стрімера" as PC {
+  node "Браузер" as Br
+  node "Настільний застосунок\n(інсталятор electron-builder)" as App
+}
+
+node "Сервер (Docker Engine)\ninfra/docker-compose.prod.yml" as Host {
+  node "caddy\n(caddy:2-alpine)\n:80, :443" as Caddy
+  node "web\n(ghcr.io/…/web)\n:3000" as Web
+  node "signaling\n(ghcr.io/…/signaling)\n:4000" as Sig
+  node "migrate\n(ghcr.io/…/migrate)\ndrizzle-kit push" as Mig
+  database "postgres\n(postgres:16-alpine)" as PG
+  storage "том thumbnails" as Thumb
+  storage "том postgres_data" as PGData
+  storage "томи caddy_data,\ncaddy_config" as CData
+}
+
+node "GitHub" as GitHub {
+  node "GitHub Actions\ndocker-prod.yml (теги v*)\ndesktop-release.yml (теги desktop-v*)" as GA
+  node "GitHub Container\nRegistry (GHCR)" as GHCR
+  node "GitHub Releases" as Rel
+}
+
+cloud "Google OAuth 2.0" as Google
+
+Br --> Caddy : HTTPS / WSS
+App --> Caddy : HTTPS / WSS
+Br --> Sig : RTP/SRTP, UDP або TCP\nMEDIASOUP_RTC_MIN_PORT–MAX_PORT
+App --> Sig : RTP/SRTP
+App --> Rel : electron-updater
+Caddy --> Sig : /sfu/* (префікс знімається)
+Caddy --> Web : усі інші шляхи
+Web --> Sig : SIGNALING_INTERNAL_URL
+Web --> PG : TCP (DATABASE_URL)
+Sig --> PG : TCP (DATABASE_URL)
+Mig --> PG : застосування схеми
+Sig --> Thumb
+PG --> PGData
+Caddy --> CData
+Web --> Google : OAuth 2.0
+GA --> GHCR : образи web,\nsignaling, migrate
+GA --> Rel : інсталятори
+GA --> Host : SSH: docker compose\npull, up -d
+Host ..> GHCR : завантаження образів
+@enduml
