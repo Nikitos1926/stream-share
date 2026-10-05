@@ -15,7 +15,8 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   in the text before they appear and are followed by an explanatory paragraph.
 - Diagrams: `diagrams/<name>.puml` (file name = figure ID with `fig-` prefix, e.g. `fig-components.puml`),
   first lines `@startuml` + `!pragma layout smetana` + `skinparam defaultFontName "Liberation Serif"`
-  + `skinparam dpi 200`. Render with `bash thesis/tools/build.sh --diagrams-only` and commit the PNG
+  + `skinparam dpi 200` (Salt wireframes: `@startsalt` … `@endsalt` instead — PlantUML 1.2026.8 rejects
+  `salt` inside `@startuml`; keep the other three lines). Render with `bash thesis/tools/build.sh --diagrams-only` and commit the PNG
   next to the `.puml`.
 - Listings ≤ 25 lines, copied verbatim from the repository; elisions as `// ...`.
 - Sources: add to `sources.yaml` (ДСТУ 8302:2015 string), cite as `[@key]`; only sources actually opened.

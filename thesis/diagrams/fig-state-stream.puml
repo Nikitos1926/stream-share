@@ -1,0 +1,29 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+
+state "Незавершена трансляція" as Active {
+  state "created" as created
+  state "connecting" as connecting
+  state "live" as live
+  state "reconnecting" as reconnecting
+
+  [*] --> created : POST /streams
+  created --> connecting : підключення WebSocket /broadcast\n[немає таймера очікування]
+  connecting --> live : produce {last: true}
+  live --> reconnecting : повторне підключення WebSocket\n/broadcast [таймер очікування активний]
+  reconnecting --> live : produce {last: true} /\nподія streamerReconnected
+}
+
+state "ended" as ended : endedAt, endReason
+
+[*] --> Active
+Active --> ended : endStream\n[endReason = streamer_stop]
+Active --> ended : WebSocket стрімера закрито,\nочікування повернення вичерпано\n[endReason = timeout] / подія streamEnd
+Active --> ended : запуск сервера сигналізації\n(stopUnfinishedStreams)\n[endReason = server_force]
+ended --> [*]
+@enduml

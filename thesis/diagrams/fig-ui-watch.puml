@@ -1,0 +1,17 @@
+@startsalt
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+{+
+  { <&monitor> stream-share | . | . | . | . | . | . | . | . | . | . | <&person> }
+  --
+  {+
+    .
+    <b>Відеопрогравач (VideoPlayer)</b>
+    [<&media-play>] – кнопка відтворення, якщо браузер заблокував автозапуск
+    .
+    .
+    { [<&volume-high>] | "- - - - - o - - -" | . | . | . | . | . | . | [<&browser>] | [<&fullscreen-enter>] }
+  }
+}
+@endsalt

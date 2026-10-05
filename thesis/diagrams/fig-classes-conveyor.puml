@@ -1,0 +1,98 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 11
+hide empty members
+allowmixing
+top to bottom direction
+skinparam classAttributeIconSize 0
+
+package "Процес рендерингу (preload)" {
+  abstract class ConveyorApi {
+    # renderer : IpcRenderer
+    + invoke(channel, ...args)
+    + send(channel, ...args)
+    + on(channel, listener)
+    + onEvent(channel, listener) : () => void
+  }
+  class AppApi {
+    + version()
+  }
+  class AuthApi {
+    + signInWithGoogle()
+    + cancelSignIn()
+  }
+  class WindowApi {
+    + windowInit()
+    + windowMinimize() / windowMaximize()
+    + windowClose()
+    + webReload() / webZoomIn() / ...
+  }
+  class StreamApi {
+    + getSources()
+    + pickSource(sourceId)
+    + startAudioCapture() / stopAudioCapture()
+    + setFollowApp(enabled)
+    + getFollowState()
+    + resolveEndedSource()
+    + releaseSource()
+    + onSourceChanged(listener)
+  }
+  note "contextBridge.exposeInMainWorld('conveyor', …)\nwindow.conveyor = { app, auth, window, stream }" as N1
+}
+
+package "Спільні схеми (conveyor/schemas)" {
+  class ipcInvokeSchemas <<zod>> {
+    канал → { args, return }
+  }
+  class ipcEventSchemas <<zod>> {
+    канал події → { payload }
+  }
+}
+
+package "Головний процес" {
+  class "main/shared.ts" as shared <<module>> {
+    + handle(channel, handler)
+    + on(channel, handler)
+    + sendEvent(window, channel, payload)
+  }
+  class "conveyor/handlers" as handlers <<module>> {
+    + registerAppHandlers(app)
+    + registerWindowHandlers(window)
+    + registerAuthHandlers(window)
+    + registerStreamHandlers(window)
+  }
+  class SourceFollower {
+    - anchor : Anchor
+    - active : Active
+    + onSourcePicked(sourceId)
+    + setEnabled(enabled)
+    + getState()
+    + resolveEnded()
+    + stop()
+  }
+  class "googleAuth.ts" as googleAuth <<module>> {
+    + startGoogleSignIn(window)
+    + cancelGoogleSignIn()
+  }
+}
+node "audioWorker\n(utilityProcess)" as audio
+
+ConveyorApi <|-- AppApi
+ConveyorApi <|-- AuthApi
+ConveyorApi <|-- WindowApi
+ConveyorApi <|-- StreamApi
+N1 .. ConveyorApi
+
+ConveyorApi ..> ipcInvokeSchemas : типи каналів
+shared ..> ipcInvokeSchemas : перевірка args / return
+shared ..> ipcEventSchemas : перевірка payload
+handlers ..> shared : handle(), sendEvent()
+handlers --> SourceFollower
+handlers --> googleAuth
+handlers ..> audio : fork(), MessagePort
+ConveyorApi ..> handlers : IPC (ipcRenderer.invoke)
+@enduml

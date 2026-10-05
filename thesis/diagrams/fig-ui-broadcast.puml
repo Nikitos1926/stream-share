@@ -1,0 +1,28 @@
+@startsalt
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+{+
+  { <&monitor> stream-share | . | . | . | . | . | . | . | . | [Start stream] | <&person> }
+  --
+  {+
+    ● LIVE
+    .
+    <b>Попередній перегляд трансляції</b> (елемент video із захопленим джерелом)
+    .
+    .
+  }
+  {+
+    {
+      [<&monitor> Change source] | {^"Quality"
+        [360p] | [480p] | [<b>720p</b>] | [1080p] | [1440p] | [Source]
+      } | {^"Frame rate"
+        [5] | [<b>30</b>] | [60]
+      } | [<&volume-high>] | [<&lock-unlocked>] | [<&loop-square>] | [Stop stream]
+    }
+    Following: <назва вікна застосунку>
+    --
+    { Stream link | "https://<домен>/<streamId>/watch        " | [Copy] }
+  }
+}
+@endsalt
