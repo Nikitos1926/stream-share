@@ -1,7 +1,72 @@
 # Bibliography. One entry per source: a stable key (cited as [@key]) and the full ДСТУ 8302:2015 string.
 # The Lua filter numbers sources in order of first citation and writes СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ.
 # Only real sources the writer actually opened; «дата звернення» = the day it was opened. See PLAN.md §1.11.
+# Keep entries grouped by the ticket that added them; never delete another ticket's key.
 sources:
-  # - key: mediasoup-docs
-  #   text: "mediasoup v3 documentation. URL: https://mediasoup.org/documentation/v3/ (дата звернення: ДД.ММ.РРРР)."
-  []
+  # --- Chapter 1 (§1.1–1.2) and draft introduction ---
+  - key: rfc8216
+    text: "Pantos R., May W. HTTP Live Streaming : RFC 8216. IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8216 (дата звернення: 05.10.2026)."
+  - key: apple-hls-authoring
+    text: "HTTP Live Streaming (HLS) authoring specification for Apple devices. Apple Developer Documentation. URL: https://developer.apple.com/documentation/http-live-streaming/hls-authoring-specification-for-apple-devices (дата звернення: 05.10.2026)."
+  - key: apple-ll-hls
+    text: "Enabling Low-Latency HTTP Live Streaming (HLS). Apple Developer Documentation. URL: https://developer.apple.com/documentation/http-live-streaming/enabling-low-latency-http-live-streaming-hls (дата звернення: 05.10.2026)."
+  - key: youtube-latency
+    text: "Understand live streaming latency. YouTube Help. URL: https://support.google.com/youtube/answer/7444635 (дата звернення: 05.10.2026)."
+  - key: enhanced-rtmp
+    text: "Enhanced RTMP (V2) : Document Version v2-2026-01-31-r2 / Veovera Software Organization. URL: https://github.com/veovera/enhanced-rtmp/blob/main/docs/enhanced/enhanced-rtmp-v2.md (дата звернення: 05.10.2026)."
+  - key: twitch-video-broadcast
+    text: "Video Broadcast. Twitch Developers. URL: https://dev.twitch.tv/docs/video-broadcast/ (дата звернення: 05.10.2026)."
+  - key: w3c-webrtc
+    text: "WebRTC: Real-Time Communication in Browsers : W3C Recommendation 13 March 2025 / ed. by C. Jennings et al. URL: https://www.w3.org/TR/webrtc/ (дата звернення: 05.10.2026)."
+  - key: rfc8825
+    text: "Alvestrand H. Overview: Real-Time Protocols for Browser-Based Applications : RFC 8825. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8825 (дата звернення: 05.10.2026)."
+  - key: rfc3550
+    text: "RTP: A Transport Protocol for Real-Time Applications : RFC 3550 / H. Schulzrinne et al. IETF, 2003. URL: https://www.rfc-editor.org/rfc/rfc3550 (дата звернення: 05.10.2026)."
+  - key: rfc8827
+    text: "Rescorla E. WebRTC Security Architecture : RFC 8827. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8827 (дата звернення: 05.10.2026)."
+  - key: rfc8445
+    text: "Keranen A., Holmberg C., Rosenberg J. Interactive Connectivity Establishment (ICE): A Protocol for Network Address Translator (NAT) Traversal : RFC 8445. IETF, 2018. URL: https://www.rfc-editor.org/rfc/rfc8445 (дата звернення: 05.10.2026)."
+  - key: rfc9429
+    text: "Uberti J., Jennings C., Rescorla E. JavaScript Session Establishment Protocol (JSEP) : RFC 9429. IETF, 2024. URL: https://www.rfc-editor.org/rfc/rfc9429 (дата звернення: 05.10.2026)."
+  - key: rfc7667
+    text: "Westerlund M., Wenger S. RTP Topologies : RFC 7667. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7667 (дата звернення: 05.10.2026)."
+  - key: andre2018
+    text: "Comparative Study of WebRTC Open Source SFUs for Video Conferencing / E. Andre et al. 2018 Principles, Systems and Applications of IP Telecommunications (IPTComm). IEEE, 2018. P. 1–8. DOI: 10.1109/IPTCOMM.2018.8567642."
+  - key: mediasoup-overview
+    text: "Overview. mediasoup documentation. URL: https://mediasoup.org/documentation/overview/ (дата звернення: 05.10.2026)."
+  - key: w3c-screen-capture
+    text: "Screen Capture : W3C Working Draft 27 August 2026 / ed. by J.-I. Bruaroey, E. Alon. URL: https://www.w3.org/TR/screen-capture/ (дата звернення: 05.10.2026)."
+  - key: mdn-getdisplaymedia
+    text: "MediaDevices: getDisplayMedia() method. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia (дата звернення: 05.10.2026)."
+  - key: chrome-screen-sharing-controls
+    text: "Privacy-preserving screen sharing controls. Chrome for Developers. URL: https://developer.chrome.com/docs/web-platform/screen-sharing-controls (дата звернення: 05.10.2026)."
+  - key: electron-desktop-capturer
+    text: "desktopCapturer. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/desktop-capturer (дата звернення: 05.10.2026)."
+  - key: electron-native-screenshare
+    text: "electron-native-screenshare : Cross-platform native audio capture for Electron screen sharing with process-level isolation. GitHub. URL: https://github.com/CilginSinek/electron-native-screenshare (дата звернення: 05.10.2026)."
+  - key: obs-home
+    text: "OBS Studio : Free and open source software for video recording and live streaming. OBS Project. URL: https://obsproject.com/ (дата звернення: 05.10.2026)."
+  - key: obs-window-capture
+    text: "Window Capture Sources. OBS Knowledge Base. URL: https://obsproject.com/kb/window-capture-sources (дата звернення: 05.10.2026)."
+  - key: obs-app-audio
+    text: "Application Audio Capture Guide. OBS Knowledge Base. URL: https://obsproject.com/kb/application-audio-capture-guide (дата звернення: 05.10.2026)."
+  - key: youtube-get-started
+    text: "Get started with live streaming. YouTube Help. URL: https://support.google.com/youtube/answer/2474026 (дата звернення: 05.10.2026)."
+  - key: youtube-privacy
+    text: "Change video privacy settings. YouTube Help. URL: https://support.google.com/youtube/answer/157177 (дата звернення: 05.10.2026)."
+  - key: discord-go-live
+    text: "Go Live and Screen Share. Discord Support. URL: https://support.discord.com/hc/en-us/articles/360040816151-Go-Live-and-Screen-Share (дата звернення: 05.10.2026)."
+  - key: meet-present
+    text: "Present during a video meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9308856 (дата звернення: 05.10.2026)."
+  - key: zoom-share-screen
+    text: "Freigeben des Bildschirms oder Desktops in Zoom. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0060609 (дата звернення: 05.10.2026)."
+  - key: parsec-overview
+    text: "Overview. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32361354307348-Overview (дата звернення: 05.10.2026)."
+  - key: parsec-hosting
+    text: "Hosting and Permissions. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381747079572-Hosting-and-Permissions (дата звернення: 05.10.2026)."
+  - key: parsec-compat
+    text: "Hardware and Software Compatibility. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381568346644-Hardware-and-Software-Compatibility (дата звернення: 05.10.2026)."
+  - key: parsec-web
+    text: "Use the Web App (browser). Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381650129300-Use-the-Web-App-browser (дата звернення: 05.10.2026)."
+  - key: electron-session
+    text: "session. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/session (дата звернення: 05.10.2026)."

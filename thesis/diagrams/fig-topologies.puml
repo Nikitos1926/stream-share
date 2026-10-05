@@ -1,0 +1,38 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+left to right direction
+
+package "в) SFU (обрано)" as Sfu {
+  node "Стрімер" as F_S
+  component "SFU\n(пересилання RTP\nбез декодування)" as F_M
+  node "Глядач 1" as F_V1
+  node "Глядач N" as F_V3
+  F_S --> F_M : 1 потік
+  F_M --> F_V1 : пересланий потік
+  F_M --> F_V3 : пересланий потік
+}
+
+package "б) MCU" as Mcu {
+  node "Стрімер" as C_S
+  component "MCU\n(декодування,\nзмішування,\nповторне кодування)" as C_M
+  node "Глядач 1" as C_V1
+  node "Глядач N" as C_V3
+  C_S --> C_M : 1 потік
+  C_M --> C_V1 : новий потік
+  C_M --> C_V3 : новий потік
+}
+
+package "а) Mesh" as Mesh {
+  node "Стрімер" as M_S
+  node "Глядач 1" as M_V1
+  node "Глядач N" as M_V3
+  M_S --> M_V1 : копія 1
+  M_S --> M_V3 : копія N
+}
+@enduml
