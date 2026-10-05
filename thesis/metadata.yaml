@@ -6,7 +6,7 @@ university: "НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ «ОДЕСЬКА П
 institute: "[ПОТРЕБУЄ УТОЧНЕННЯ: інститут — у прикладах «Навчально-науковий інститут комп’ютерних систем»]"
 department: "[ПОТРЕБУЄ УТОЧНЕННЯ: кафедра — у прикладах «Кафедра інженерії програмного забезпечення»]"
 work_type: "КВАЛІФІКАЦІЙНА РОБОТА БАКАЛАВРА"
-title_uk: "[ПОТРЕБУЄ УТОЧНЕННЯ: тема українською за наказом]"
+title_uk: "ВЕБСЕРВІС ДЛЯ ПОТОКОВОЇ ПЕРЕДАЧІ МЕДІАКОНТЕНТУ З ФУНКЦІЄЮ ЗАХОПЛЕННЯ ОКРЕМИХ ЗАСТОСУНКІВ [ПОТРЕБУЄ УТОЧНЕННЯ: звірити формулювання з наказом]"
 title_en: "WEB SERVICE FOR STREAMING MEDIA CONTENT WITH THE FUNCTION OF CAPTURING INDIVIDUAL APPLICATIONS"
 student: "[ПОТРЕБУЄ УТОЧНЕННЯ: Ім’я ПРІЗВИЩЕ]"
 student_full: "[ПОТРЕБУЄ УТОЧНЕННЯ: Прізвище Ім’я По батькові — для бібліографічного опису]"
@@ -16,5 +16,5 @@ specialty: "[ПОТРЕБУЄ УТОЧНЕННЯ: 121 Інженерія про�
 program: "[ПОТРЕБУЄ УТОЧНЕННЯ: освітньо-професійна програма]"
 supervisor: "[ПОТРЕБУЄ УТОЧНЕННЯ: науковий ступінь, вчене звання, Ім’я ПРІЗВИЩЕ]"
 city_year: "Одеса – [ПОТРЕБУЄ УТОЧНЕННЯ: рік]"
-keywords_uk: []   # 5–15, written last
-keywords_en: []
+keywords_uk: [вебсервіс, потокова передача медіаконтенту, пряма трансляція, захоплення застосунку, захоплення звуку процесу, WebRTC, SFU, mediasoup, Electron, Next.js, TypeScript, PostgreSQL]   # = chapters/00-abstract-uk.md
+keywords_en: [web service, media streaming, live streaming, application capture, process audio capture, WebRTC, SFU, mediasoup, Electron, Next.js, TypeScript, PostgreSQL]   # = chapters/01-abstract-en.md
