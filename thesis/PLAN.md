@@ -404,9 +404,9 @@ Only the first file of a chapter carries its `#` heading: `11-chapter1-b.md` (§
   instead of pandoc-crossref/citeproc: no CSL for ДСТУ 8302 we can trust, and pandoc-crossref is
   pinned to exact pandoc versions. Bibliography strings are written pre-formatted in
   `sources.yaml`, so the filter only orders and numbers them.
-- **Assembly / post-processing** (`tools/assemble.py`, python-docx + docxcompose): title page from
-  the official Appendix_A template filled from `metadata.yaml`, abstract pages, «different first
-  page» so page 1 has no visible number, TOC field. The user then opens the DOCX in Word, updates
+- **Assembly / post-processing** (`tools/assemble.py`, python-docx): title page in the official
+  Appendix_A template's styles filled from `metadata.yaml`, «different first page» so page 1 has
+  no visible number, ЗМІСТ + TOC field before the first chapter-level element after the abstracts. The user then opens the DOCX in Word, updates
   fields (Ctrl+A, F9), does the manual table-continuation pass (§1.7) and exports PDF/A.
 
 ### 4.3 Markdown conventions (for writers)
@@ -458,8 +458,9 @@ Placeholders for unknown facts: `[ПОТРЕБУЄ УТОЧНЕННЯ: …]` —
 `thesis/tools/build.sh` (stub committed with this plan): renders `diagrams/*.puml` → PNG,
 generates `reference.docx`, runs pandoc on `chapters/*.md` with the Lua filter, writes
 `out/thesis.docx`, and prints a words-per-chapter page estimate (240 words/page + item
-allowances of §2) against the targets. The Lua filter and `assemble.py` are TODO for the
-toolchain ticket; until then `build.sh` produces a plain DOCX with the right styles.
+allowances of §2) against the targets. Then `assemble.py` adds the title page, ЗМІСТ and header page
+numbers. `build.sh --test` builds `tools/fixture/sample.md` and checks it with `tools/check_docx.py`;
+usage is in `thesis/CLAUDE.md` «Build».
 
 ---
 
