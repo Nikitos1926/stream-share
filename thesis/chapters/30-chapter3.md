@@ -20,6 +20,8 @@
 
 – `caddy` (порти 80, 443) автоматично отримує TLS-сертифікат [@caddy-https] і спрямовує запити `/sfu/*` без префікса до сервера сигналізації, а решту – до `web` (порт 3000);
 
+– `web` (внутрішній порт 3000) запускає вебзастосунок Next.js з образу в GitHub Container Registry; змінні `AUTH_URL` (публічна адреса `https://${PUBLIC_HOST}`) і `AUTH_TRUST_HOST` налаштовують Auth.js на роботу за зворотним проксі;
+
 – `signaling` (порт 4000) додатково публікує діапазон портів UDP і TCP `MEDIASOUP_RTC_MIN_PORT`–`MEDIASOUP_RTC_MAX_PORT`, через який медіадані йдуть до клієнтів в обхід Caddy;
 
 – `postgres` (образ `postgres:16-alpine`) зберігає дані [@postgresql-about];
