@@ -137,3 +137,8 @@ sources:
     text: "How Compose works. Docker Docs. URL: https://docs.docker.com/compose/intro/compose-application-model/ (дата звернення: 05.10.2026)."
   - key: caddy-https
     text: "Automatic HTTPS. Caddy Documentation. URL: https://caddyserver.com/docs/automatic-https (дата звернення: 05.10.2026)."
+  # --- Chapter 2 (planning) ---
+  - key: azzeh-nassif-ucp
+    text: "Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026)."
+  - key: google-embedded-webviews
+    text: "Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026)."

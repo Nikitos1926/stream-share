@@ -1,0 +1,63 @@
+@startgantt
+!pragma layout smetana
+skinparam defaultFontName "Liberation Serif"
+skinparam dpi 200
+' Етапи реконструйовано з історії комітів гілки main (2026-05-27 – 2026-09-25):
+' етап закінчується датою свого останнього коміту й починається наступного дня після
+' попереднього етапу. Реальні дати етапів – прогалина G8 (thesis/PLAN.md §5).
+' Вісь часу – календарні тижні проєкту, D+0 = понеділок 25.05.2026; назв місяців українською PlantUML
+' не має (language підтримує лише fr/es/de/ja/ko/ru/zh), тому календарні дати – у табл. 2.5.
+<style>
+ganttDiagram {
+  FontName "Liberation Serif"
+  FontSize 12
+  task {
+    FontName "Liberation Serif"
+    FontSize 12
+    BackGroundColor #BBBBBB
+    LineColor #333333
+  }
+  milestone {
+    FontName "Liberation Serif"
+    FontSize 12
+    BackGroundColor #333333
+  }
+  timeline {
+    FontName "Liberation Serif"
+    FontSize 11
+  }
+  arrow {
+    LineColor #333333
+  }
+}
+</style>
+printscale weekly
+hide footbox
+hide column start
+hide column end
+hide column duration
+
+[1 Каркас монорепозиторію] as [T1] starts D+2 and lasts 1 days
+[2 Базова трансляція через SFU] as [T2] starts D+3 and lasts 47 days
+[3 Оптимізація конфігурації] as [T3] starts D+50 and lasts 8 days
+[4 Гостьовий сеанс і функції трансляції] as [T4] starts D+58 and lasts 22 days
+[5 Розгортання на сервері] as [T5] starts D+80 and lasts 17 days
+[6 Доопрацювання інтерфейсу] as [T6] starts D+97 and lasts 5 days
+[7 Настільний застосунок] as [T7] starts D+102 and lasts 11 days
+[8 Автооновлення, керування трансляцією] as [T8] starts D+113 and lasts 3 days
+[9 Вхід через системний браузер] as [T9] starts D+116 and lasts 2 days
+[10 Апаратне кодування H.264] as [T10] starts D+118 and lasts 1 days
+[11 Режим слідування за вікнами] as [T11] starts D+119 and lasts 5 days
+[Початок пояснювальної записки] as [M1] happens D+133
+
+[T1] -> [T2]
+[T2] -> [T3]
+[T3] -> [T4]
+[T4] -> [T5]
+[T5] -> [T6]
+[T6] -> [T7]
+[T7] -> [T8]
+[T8] -> [T9]
+[T9] -> [T10]
+[T10] -> [T11]
+@endgantt
