@@ -159,3 +159,18 @@ sources:
     text: "MediaStreamTrack Content Hints : W3C Working Draft 19 September 2025. URL: https://www.w3.org/TR/mst-content-hint/ (дата звернення: 05.10.2026)."
   - key: w3c-webrtc-stats
     text: "Identifiers for WebRTC's Statistics API : W3C Candidate Recommendation Draft 25 September 2025 / ed. by H. Alvestrand, V. Singh, H. Boström. URL: https://www.w3.org/TR/webrtc-stats/ (дата звернення: 05.10.2026)."
+  # --- Chapter 4 part B (§4.4–4.6) ---
+  - key: authjs-credentials
+    text: "Credentials. Auth.js. URL: https://authjs.dev/getting-started/authentication/credentials (дата звернення: 05.10.2026)."
+  - key: authjs-google
+    text: "Google. Auth.js. URL: https://authjs.dev/getting-started/providers/google (дата звернення: 05.10.2026)."
+  - key: mdn-set-cookie
+    text: "Set-Cookie header. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie (дата звернення: 05.10.2026)."
+  - key: fastify-hooks
+    text: "Hooks. Fastify. URL: https://fastify.dev/docs/latest/Reference/Hooks/ (дата звернення: 05.10.2026)."
+  - key: drizzle-kit-push
+    text: "drizzle-kit push. Drizzle ORM. URL: https://orm.drizzle.team/docs/drizzle-kit-push (дата звернення: 05.10.2026)."
+  - key: tailwind-theme
+    text: "Theme variables. Tailwind CSS. URL: https://tailwindcss.com/docs/theme (дата звернення: 05.10.2026)."
+  - key: next-themes
+    text: "next-themes : Perfect Next.js dark mode in 2 lines of code. GitHub. URL: https://github.com/pacocoursey/next-themes (дата звернення: 05.10.2026)."
