@@ -22,3 +22,10 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
 - Sources: add to `sources.yaml` (ДСТУ 8302:2015 string), cite as `[@key]`; only sources actually opened.
 - Check volume with `python3 thesis/tools/wordcount.py thesis/chapters/<file>.md` against the
   PLAN.md §2 budget (±10 %). 240 words ≈ one full text page.
+- Generated files — never edit by hand: `chapters/95-references.md` (`python3 thesis/tools/references.py`;
+  `--check` fails on an unresolved `[@key]`, a duplicate or uncited source, or a stale list) and
+  `chapters/A0-appendix-a.md` (`python3 thesis/tools/appendix.py`, code read from the commit pinned
+  in the script). Re-run both after changing citations or the appendix listings.
+- `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
+  the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
+  abbreviation is used ≥ 3 times; expand it in the text at first use.
