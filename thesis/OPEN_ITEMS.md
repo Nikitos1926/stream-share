@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **107** — `metadata.yaml` 11, `chapters/00-abstract-uk.md` 10, `chapters/01-abstract-en.md` 9, `chapters/03-intro.md` 2, `chapters/10-chapter1.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 4, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 19, `chapters/90-conclusions.md` 1, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 27.
+Total placeholders: **106** — `metadata.yaml` 11, `chapters/00-abstract-uk.md` 10, `chapters/01-abstract-en.md` 9, `chapters/03-intro.md` 2, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 4, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 19, `chapters/90-conclusions.md` 1, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 27.
 
 ## metadata.yaml
 
@@ -66,19 +66,13 @@ Total placeholders: **107** — `metadata.yaml` 11, `chapters/00-abstract-uk.md`
 | 34 | Вступ | граничне значення затримки, мс |
 | 79 | Вступ | доповіді на конференціях або публікації за темою роботи з повними бібліографічними даними; якщо їх немає, абзац вилучається |
 
-## chapters/10-chapter1.md
-
-| Рядок | Де | Що потрібно |
-| --- | --- | --- |
-| 56 | 1.2.3 Засоби віддаленого доступу | умови перегляду за офіційною довідкою Twitch |
-
 ## chapters/11-chapter1-b.md
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 3 | 1.3.1 Дійові особи та варіанти використання | звірити перелік вимог із формулюваннями індивідуального завдання на кваліфікаційну роботу |
-| 184 | 1.4 Нефункціональні вимоги | цільове значення затримки та результати її вимірювання |
-| 196 | 1.4 Нефункціональні вимоги | чи випробувано настільний застосунок на macOS і які операційні системи заявляти як підтримувані |
+| 3 | 1.3 Функціональні вимоги до програмної системи | звірити перелік вимог із формулюваннями індивідуального завдання на кваліфікаційну роботу |
+| 240 | 1.4 Нефункціональні вимоги | цільове значення затримки та результати її вимірювання |
+| 252 | 1.4 Нефункціональні вимоги | чи випробувано настільний застосунок на macOS і які операційні системи заявляти як підтримувані |
 
 ## chapters/20-chapter2.md
 
