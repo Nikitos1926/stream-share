@@ -50,7 +50,7 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
   `[@key]` (→ «[n]», order of first citation). The source list goes into `::: {#refs} :::`, else
   under `# Список використаних джерел`, else before the first appendix. Unknown source key = error;
   unknown cross-reference = warning + «??» (error with `THESIS_STRICT=1`, use it for the final build).
-  A literal `@` in prose (npm scopes) must be in backticks or escaped `\@`.
+  A literal `@` in prose (npm scopes) is escaped `\@`, never put in backticks (PLAN.md §0.2).
 - `assemble.py` adds the title page (Appendix_A styles, fields from `metadata.yaml`; optional
   `consultants:` list), ЗМІСТ + TOC field before the first `#` element after АНОТАЦІЯ/ABSTRACT,
   and the header page number (top right, none on the title page). Fields fill in Word: Ctrl+A, F9.

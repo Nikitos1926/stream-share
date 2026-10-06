@@ -55,118 +55,116 @@
 
 26. Application Audio Capture Guide. OBS Knowledge Base. URL: https://obsproject.com/kb/application-audio-capture-guide (дата звернення: 05.10.2026).
 
-27. Get started with live streaming. YouTube Help. URL: https://support.google.com/youtube/answer/2474026 (дата звернення: 05.10.2026).
+27. Issues with Non-Supported Browsers. Twitch Help. URL: https://help.twitch.tv/s/article/supported-browsers (дата звернення: 06.10.2026).
 
-28. Change video privacy settings. YouTube Help. URL: https://support.google.com/youtube/answer/157177 (дата звернення: 05.10.2026).
+28. 2k Streaming on Twitch. Twitch Help. URL: https://help.twitch.tv/s/article/stream-quality (дата звернення: 06.10.2026).
 
-29. Freigeben des Bildschirms oder Desktops in Zoom. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0060609 (дата звернення: 05.10.2026).
+29. Join a meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9303069 (дата звернення: 06.10.2026).
 
-30. Overview. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32361354307348-Overview (дата звернення: 05.10.2026).
+30. Freigeben des Bildschirms oder Desktops in Zoom. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0060609 (дата звернення: 05.10.2026).
 
-31. Hosting and Permissions. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381747079572-Hosting-and-Permissions (дата звернення: 05.10.2026).
+31. Joining a Zoom meeting without an account. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0059553 (дата звернення: 06.10.2026).
 
-32. Hardware and Software Compatibility. Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381568346644-Hardware-and-Software-Compatibility (дата звернення: 05.10.2026).
+32. OMG Unified Modeling Language (OMG UML) : Version 2.5.1. Object Management Group, 2017. URL: https://www.omg.org/spec/UML/2.5.1 (дата звернення: 05.10.2026).
 
-33. Use the Web App (browser). Parsec Support. URL: https://support.parsec.app/hc/en-us/articles/32381650129300-Use-the-Web-App-browser (дата звернення: 05.10.2026).
+33. Cockburn A. Writing Effective Use Cases. Boston : Addison-Wesley, 2001. 270 p.
 
-34. OMG Unified Modeling Language (OMG UML) : Version 2.5.1. Object Management Group, 2017. URL: https://www.omg.org/spec/UML/2.5.1 (дата звернення: 05.10.2026).
+34. ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026).
 
-35. ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026).
+35. Auto Update. electron-builder. URL: https://www.electron.build/docs/features/auto-update (дата звернення: 05.10.2026).
 
-36. Auto Update. electron-builder. URL: https://www.electron.build/docs/features/auto-update (дата звернення: 05.10.2026).
+36. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
 
-37. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
+37. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
 
-38. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
+38. OAuth 2.0 for iOS & Desktop Apps. Google for Developers. URL: https://developers.google.com/identity/protocols/oauth2/native-app (дата звернення: 05.10.2026).
 
-39. OAuth 2.0 for iOS & Desktop Apps. Google for Developers. URL: https://developers.google.com/identity/protocols/oauth2/native-app (дата звернення: 05.10.2026).
+39. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
 
-40. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
+40. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
 
-41. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
+41. Workspace. pnpm Documentation. URL: https://pnpm.io/workspaces (дата звернення: 05.10.2026).
 
-42. Workspace. pnpm Documentation. URL: https://pnpm.io/workspaces (дата звернення: 05.10.2026).
+42. Fette I., Melnikov A. The WebSocket Protocol : RFC 6455. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6455 (дата звернення: 05.10.2026).
 
-43. Fette I., Melnikov A. The WebSocket Protocol : RFC 6455. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6455 (дата звернення: 05.10.2026).
+43. Design. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/design/ (дата звернення: 05.10.2026).
 
-44. Design. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/design/ (дата звернення: 05.10.2026).
+44. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
 
-45. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
+45. Drizzle ORM : Overview. Drizzle Team. URL: https://orm.drizzle.team/docs/overview (дата звернення: 05.10.2026).
 
-46. Drizzle ORM : Overview. Drizzle Team. URL: https://orm.drizzle.team/docs/overview (дата звернення: 05.10.2026).
+46. Zod : TypeScript-first schema validation with static type inference. URL: https://zod.dev/ (дата звернення: 05.10.2026).
 
-47. Zod : TypeScript-first schema validation with static type inference. URL: https://zod.dev/ (дата звернення: 05.10.2026).
+47. How Compose works. Docker Docs. URL: https://docs.docker.com/compose/intro/compose-application-model/ (дата звернення: 05.10.2026).
 
-48. How Compose works. Docker Docs. URL: https://docs.docker.com/compose/intro/compose-application-model/ (дата звернення: 05.10.2026).
+48. Automatic HTTPS. Caddy Documentation. URL: https://caddyserver.com/docs/automatic-https (дата звернення: 05.10.2026).
 
-49. Automatic HTTPS. Caddy Documentation. URL: https://caddyserver.com/docs/automatic-https (дата звернення: 05.10.2026).
+49. About PostgreSQL. The PostgreSQL Global Development Group. URL: https://www.postgresql.org/about/ (дата звернення: 05.10.2026).
 
-50. About PostgreSQL. The PostgreSQL Global Development Group. URL: https://www.postgresql.org/about/ (дата звернення: 05.10.2026).
+50. mediasoup-client. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/ (дата звернення: 05.10.2026).
 
-51. mediasoup-client. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/ (дата звернення: 05.10.2026).
+51. File-system conventions: proxy.js. Next.js Docs. URL: https://nextjs.org/docs/app/api-reference/file-conventions/proxy (дата звернення: 05.10.2026).
 
-52. File-system conventions: proxy.js. Next.js Docs. URL: https://nextjs.org/docs/app/api-reference/file-conventions/proxy (дата звернення: 05.10.2026).
+52. Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026).
 
-53. Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026).
+53. Fastify Documentation. OpenJS Foundation. URL: https://fastify.dev/docs/latest/ (дата звернення: 05.10.2026).
 
-54. Fastify Documentation. OpenJS Foundation. URL: https://fastify.dev/docs/latest/ (дата звернення: 05.10.2026).
+54. \@fastify/websocket : WebSocket support for Fastify. GitHub. URL: https://github.com/fastify/fastify-websocket (дата звернення: 05.10.2026).
 
-55. \@fastify/websocket : WebSocket support for Fastify. GitHub. URL: https://github.com/fastify/fastify-websocket (дата звернення: 05.10.2026).
+55. Context Isolation. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/context-isolation (дата звернення: 05.10.2026).
 
-56. Context Isolation. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/context-isolation (дата звернення: 05.10.2026).
+56. utilityProcess. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/utility-process (дата звернення: 05.10.2026).
 
-57. utilityProcess. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/utility-process (дата звернення: 05.10.2026).
+57. TypeScript : JavaScript with syntax for types. Microsoft. URL: https://www.typescriptlang.org/ (дата звернення: 05.10.2026).
 
-58. TypeScript : JavaScript with syntax for types. Microsoft. URL: https://www.typescriptlang.org/ (дата звернення: 05.10.2026).
+58. Next.js Docs. Vercel. URL: https://nextjs.org/docs (дата звернення: 05.10.2026).
 
-59. Next.js Docs. Vercel. URL: https://nextjs.org/docs (дата звернення: 05.10.2026).
+59. React v19. React Blog. 2024. 5 December. URL: https://react.dev/blog/2024/12/05/react-19 (дата звернення: 05.10.2026).
 
-60. React v19. React Blog. 2024. 5 December. URL: https://react.dev/blog/2024/12/05/react-19 (дата звернення: 05.10.2026).
+60. Janus WebRTC Server : Documentation. Meetecho. URL: https://janus.conf.meetecho.com/docs/ (дата звернення: 05.10.2026).
 
-61. Janus WebRTC Server : Documentation. Meetecho. URL: https://janus.conf.meetecho.com/docs/ (дата звернення: 05.10.2026).
+61. About LiveKit. LiveKit Docs. URL: https://docs.livekit.io/intro/about/ (дата звернення: 05.10.2026).
 
-62. About LiveKit. LiveKit Docs. URL: https://docs.livekit.io/intro/about/ (дата звернення: 05.10.2026).
+62. Introduction. Electron Documentation. URL: https://www.electronjs.org/docs/latest/ (дата звернення: 05.10.2026).
 
-63. Introduction. Electron Documentation. URL: https://www.electronjs.org/docs/latest/ (дата звернення: 05.10.2026).
+63. Webview Versions. Tauri 2 Documentation. URL: https://v2.tauri.app/reference/webview-versions/ (дата звернення: 05.10.2026).
 
-64. Webview Versions. Tauri 2 Documentation. URL: https://v2.tauri.app/reference/webview-versions/ (дата звернення: 05.10.2026).
+64. Tauri Architecture. Tauri 2 Documentation. URL: https://v2.tauri.app/concept/architecture/ (дата звернення: 05.10.2026).
 
-65. Tauri Architecture. Tauri 2 Documentation. URL: https://v2.tauri.app/concept/architecture/ (дата звернення: 05.10.2026).
+65. What is Prisma ORM? Prisma Documentation. URL: https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma (дата звернення: 05.10.2026).
 
-66. What is Prisma ORM? Prisma Documentation. URL: https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma (дата звернення: 05.10.2026).
+66. electron-builder : A complete solution to package and build a ready for distribution Electron app. URL: https://www.electron.build/ (дата звернення: 05.10.2026).
 
-67. electron-builder : A complete solution to package and build a ready for distribution Electron app. URL: https://www.electron.build/ (дата звернення: 05.10.2026).
+67. MessagePorts in Electron. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/message-ports (дата звернення: 05.10.2026).
 
-68. MessagePorts in Electron. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/message-ports (дата звернення: 05.10.2026).
+68. AudioWorklet. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet (дата звернення: 05.10.2026).
 
-69. AudioWorklet. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet (дата звернення: 05.10.2026).
+69. mediasoup-client :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/api/ (дата звернення: 05.10.2026).
 
-70. mediasoup-client :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/api/ (дата звернення: 05.10.2026).
+70. mediasoup :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/api/ (дата звернення: 05.10.2026).
 
-71. mediasoup :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/api/ (дата звернення: 05.10.2026).
+71. Roach A. B. WebRTC Video Processing and Codec Requirements : RFC 7742. IETF, 2016. URL: https://www.rfc-editor.org/rfc/rfc7742 (дата звернення: 05.10.2026).
 
-72. Roach A. B. WebRTC Video Processing and Codec Requirements : RFC 7742. IETF, 2016. URL: https://www.rfc-editor.org/rfc/rfc7742 (дата звернення: 05.10.2026).
+72. RTP Payload Format for H.264 Video : RFC 6184 / Y.-K. Wang et al. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6184 (дата звернення: 05.10.2026).
 
-73. RTP Payload Format for H.264 Video : RFC 6184 / Y.-K. Wang et al. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6184 (дата звернення: 05.10.2026).
+73. MediaStreamTrack Content Hints : W3C Working Draft 19 September 2025. URL: https://www.w3.org/TR/mst-content-hint/ (дата звернення: 05.10.2026).
 
-74. MediaStreamTrack Content Hints : W3C Working Draft 19 September 2025. URL: https://www.w3.org/TR/mst-content-hint/ (дата звернення: 05.10.2026).
+74. Google. Auth.js. URL: https://authjs.dev/getting-started/providers/google (дата звернення: 05.10.2026).
 
-75. Google. Auth.js. URL: https://authjs.dev/getting-started/providers/google (дата звернення: 05.10.2026).
+75. Credentials. Auth.js. URL: https://authjs.dev/getting-started/authentication/credentials (дата звернення: 05.10.2026).
 
-76. Credentials. Auth.js. URL: https://authjs.dev/getting-started/authentication/credentials (дата звернення: 05.10.2026).
+76. Set-Cookie header. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie (дата звернення: 05.10.2026).
 
-77. Set-Cookie header. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie (дата звернення: 05.10.2026).
+77. Hooks. Fastify. URL: https://fastify.dev/docs/latest/Reference/Hooks/ (дата звернення: 05.10.2026).
 
-78. Hooks. Fastify. URL: https://fastify.dev/docs/latest/Reference/Hooks/ (дата звернення: 05.10.2026).
+78. drizzle-kit push. Drizzle ORM. URL: https://orm.drizzle.team/docs/drizzle-kit-push (дата звернення: 05.10.2026).
 
-79. drizzle-kit push. Drizzle ORM. URL: https://orm.drizzle.team/docs/drizzle-kit-push (дата звернення: 05.10.2026).
+79. Theme variables. Tailwind CSS. URL: https://tailwindcss.com/docs/theme (дата звернення: 05.10.2026).
 
-80. Theme variables. Tailwind CSS. URL: https://tailwindcss.com/docs/theme (дата звернення: 05.10.2026).
+80. next-themes : Perfect Next.js dark mode in 2 lines of code. GitHub. URL: https://github.com/pacocoursey/next-themes (дата звернення: 05.10.2026).
 
-81. next-themes : Perfect Next.js dark mode in 2 lines of code. GitHub. URL: https://github.com/pacocoursey/next-themes (дата звернення: 05.10.2026).
+81. Identifiers for WebRTC's Statistics API : W3C Candidate Recommendation Draft 25 September 2025 / ed. by H. Alvestrand, V. Singh, H. Boström. URL: https://www.w3.org/TR/webrtc-stats/ (дата звернення: 05.10.2026).
 
-82. Identifiers for WebRTC's Statistics API : W3C Candidate Recommendation Draft 25 September 2025 / ed. by H. Alvestrand, V. Singh, H. Boström. URL: https://www.w3.org/TR/webrtc-stats/ (дата звернення: 05.10.2026).
-
-83. Scalability. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/scalability/ (дата звернення: 05.10.2026).
+82. Scalability. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/scalability/ (дата звернення: 05.10.2026).
 
 :::

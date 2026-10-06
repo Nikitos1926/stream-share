@@ -15,28 +15,28 @@ actor "Google\n(OAuth 2.0)" as Google <<зовнішня система>>
 User -|> Guest
 
 rectangle "Вебсервіс трансляції медіаконтенту" {
-  usecase "Переглянути трансляцію\nза посиланням" as UC_Watch
-  usecase "Отримати гостьовий сеанс" as UC_GuestSession
-  usecase "Керувати відтворенням\n(гучність, PiP, повний екран)" as UC_Playback
-  usecase "Завантажити\nнастільний застосунок" as UC_Download
+  usecase "Перегляд трансляції" as UC_Watch
+  usecase "Отримання\nгостьового сеансу" as UC_GuestSession
+  usecase "Керування відтворенням\n(гучність, PiP, повний екран)" as UC_Playback
+  usecase "Завантаження\nнастільного застосунку" as UC_Download
 
-  usecase "Увійти через Google" as UC_Login
-  usecase "Увійти з настільного\nзастосунку через\nсистемний браузер" as UC_DesktopLogin
-  usecase "Вийти з облікового запису" as UC_Logout
-  usecase "Переглянути перелік\nактивних трансляцій" as UC_List
+  usecase "Вхід через Google" as UC_Login
+  usecase "Вхід із настільного\nзастосунку" as UC_DesktopLogin
+  usecase "Вихід із системи" as UC_Logout
+  usecase "Перегляд переліку\nактивних трансляцій" as UC_List
 
-  usecase "Провести трансляцію" as UC_Stream
-  usecase "Розпочати трансляцію\nу браузері" as UC_BrowserStream
-  usecase "Розпочати трансляцію\nокремого застосунку" as UC_AppStream
-  usecase "Обрати вікно\nабо екран" as UC_PickSource
-  usecase "Захопити звук\nзастосунку" as UC_AppAudio
-  usecase "Слідувати за вікнами\nзастосунку" as UC_Follow
-  usecase "Налаштувати\nякість і частоту кадрів" as UC_Quality
-  usecase "Зробити трансляцію\nприватною" as UC_Private
-  usecase "Скопіювати посилання\nна перегляд" as UC_Link
-  usecase "Вимкнути звук\nтрансляції" as UC_Mute
-  usecase "Завершити трансляцію" as UC_End
-  usecase "Відновити незавершену\nтрансляцію" as UC_Reconnect
+  usecase "Проведення трансляції" as UC_Stream
+  usecase "Трансляція\nу браузері" as UC_BrowserStream
+  usecase "Трансляція\nокремого застосунку" as UC_AppStream
+  usecase "Вибір вікна\nабо екрана" as UC_PickSource
+  usecase "Захоплення звуку\nзастосунку" as UC_AppAudio
+  usecase "Слідування за вікнами\nзастосунку" as UC_Follow
+  usecase "Налаштування якості\nі частоти кадрів" as UC_Quality
+  usecase "Приватний режим\nтрансляції" as UC_Private
+  usecase "Копіювання посилання\nна перегляд" as UC_Link
+  usecase "Вимкнення звуку\nтрансляції" as UC_Mute
+  usecase "Завершення трансляції" as UC_End
+  usecase "Відновлення трансляції" as UC_Reconnect
 }
 
 Guest --> UC_Watch

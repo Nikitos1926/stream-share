@@ -284,8 +284,8 @@ grep -nE '^#{3,} ' $C
 grep -nE '^(\*\*)?[1-6]\.[0-9]+\.[0-9]+' $C; grep -nE '(пункт[аіу]?|пп?\.) ?[1-6]\.[0-9]+\.[0-9]+' $C
 # 3 no inline code outside fenced listings (prints offending lines)
 awk 'FNR==1{f=0} /^```/{f=!f; next} !f && /`/{print FILENAME":"FNR": "$0}' $C
-# 4 no paths / file names outside listings (references list excluded)
-awk 'FNR==1{f=0} /^```/{f=!f; next} FILENAME ~ /95-references/ {next} !f && (/(^|[^A-Za-z:\/])(apps|packages|src|infra|docs|thesis)\// || /(^|[^A-Za-z])[a-z0-9_-]+\.(js|mjs|cjs|ts|tsx|json|ya?ml|puml|sql|sh|py|md)([^A-Za-z]|$)/ || /Dockerfile|docker-compose|package\.json|tsconfig|pnpm-workspace/){print FILENAME":"FNR": "$0}' $C
+# 4 no paths / file names outside listings (references list and [@citation] keys excluded)
+awk 'FNR==1{f=0} /^```/{f=!f; next} FILENAME ~ /95-references/ {next} {l=$0; gsub(/\[@[^]]*\]/,"",l)} !f && (l ~ /(^|[^A-Za-z:\/])(apps|packages|src|infra|docs|thesis)\// || l ~ /(^|[^A-Za-z])[a-z0-9_-]+\.(js|mjs|cjs|ts|tsx|json|ya?ml|puml|sql|sh|py|md)([^A-Za-z]|$)/ || l ~ /Dockerfile|docker-compose|package\.json|tsconfig|pnpm-workspace/){print FILENAME":"FNR": "$0}' $C
 # 5 no italic/bold identifiers
 grep -nE '(^|[^*])\*[A-Za-z_][A-Za-z0-9_.]*\*([^*]|$)|\*\*[A-Za-z_][A-Za-z0-9_.()]*\*\*' $C
 # 6 scenario fields: only the five E2 labels
