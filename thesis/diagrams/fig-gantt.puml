@@ -2,11 +2,10 @@
 !pragma layout smetana
 skinparam defaultFontName "Liberation Serif"
 skinparam dpi 200
-' Етапи реконструйовано з історії комітів гілки main (2026-05-27 – 2026-09-25):
-' етап закінчується датою свого останнього коміту й починається наступного дня після
-' попереднього етапу. Реальні дати етапів – прогалина G8 (thesis/PLAN.md §5).
-' Вісь часу – календарні тижні проєкту, D+0 = понеділок 25.05.2026; назв місяців українською PlantUML
-' не має (language підтримує лише fr/es/de/ja/ko/ru/zh), тому календарні дати – у табл. 2.5.
+' Побудовано лише за історією Git (усі гілки, станом на 06.10.2026); D+0 = понеділок 25.05.2026.
+' Темна смуга – від першого до останнього коміту етапу (включно); світла – проміжок без комітів
+' між попереднім етапом і першим комітом етапу. Мітки – теги випусків і початок гілки записки.
+' Назв місяців українською PlantUML не має, тому календарні дати – у табл. 2.5.
 <style>
 ganttDiagram {
   FontName "Liberation Serif"
@@ -14,7 +13,6 @@ ganttDiagram {
   task {
     FontName "Liberation Serif"
     FontSize 12
-    BackGroundColor #BBBBBB
     LineColor #333333
   }
   milestone {
@@ -26,9 +24,6 @@ ganttDiagram {
     FontName "Liberation Serif"
     FontSize 11
   }
-  arrow {
-    LineColor #333333
-  }
 }
 </style>
 printscale weekly
@@ -37,27 +32,58 @@ hide column start
 hide column end
 hide column duration
 
-[1 Каркас монорепозиторію] as [T1] starts D+2 and lasts 1 days
-[2 Базова трансляція через SFU] as [T2] starts D+3 and lasts 47 days
-[3 Оптимізація конфігурації] as [T3] starts D+50 and lasts 8 days
-[4 Гостьовий сеанс і функції трансляції] as [T4] starts D+58 and lasts 22 days
-[5 Розгортання на сервері] as [T5] starts D+80 and lasts 17 days
-[6 Доопрацювання інтерфейсу] as [T6] starts D+97 and lasts 5 days
-[7 Настільний застосунок] as [T7] starts D+102 and lasts 11 days
-[8 Автооновлення, керування трансляцією] as [T8] starts D+113 and lasts 3 days
-[9 Вхід через системний браузер] as [T9] starts D+116 and lasts 2 days
-[10 Апаратне кодування H.264] as [T10] starts D+118 and lasts 1 days
-[11 Режим слідування за вікнами] as [T11] starts D+119 and lasts 5 days
-[Початок пояснювальної записки] as [M1] happens D+133
+[1 Каркас монорепозиторію] as [C1] starts D+2 and lasts 1 days
+[2 Базова трансляція, вхід через Google] as [C2] starts D+49 and lasts 1 days
+[​] as [G2] starts D+3 and lasts 46 days
+[3 Конфігурація TypeScript, залежності] as [C3] starts D+57 and lasts 1 days
+[​​] as [G3] starts D+50 and lasts 7 days
+[4 Гостьовий сеанс і функції трансляції] as [C4] starts D+73 and lasts 7 days
+[​​​] as [G4] starts D+58 and lasts 15 days
+[5 Розгортання на сервері] as [C5] starts D+95 and lasts 2 days
+[​​​​] as [G5] starts D+80 and lasts 15 days
+[6 Доопрацювання інтерфейсу] as [C6] starts D+101 and lasts 1 days
+[​​​​​] as [G6] starts D+97 and lasts 4 days
+[7 Настільний застосунок, випуск у CI] as [C7] starts D+111 and lasts 2 days
+[​​​​​​] as [G7] starts D+102 and lasts 9 days
+[8 Керування трансляцією, автооновлення] as [C8] starts D+115 and lasts 1 days
+[​​​​​​​] as [G8] starts D+113 and lasts 2 days
+[9 Вхід через системний браузер, виправлення] as [C9] starts D+117 and lasts 1 days
+[​​​​​​​​] as [G9] starts D+116 and lasts 1 days
+[10 Апаратне кодування H.264] as [C10] starts D+118 and lasts 1 days
+[11 Режим слідування за вікнами] as [C11] starts D+123 and lasts 1 days
+[​​​​​​​​​] as [G11] starts D+119 and lasts 4 days
+[Випуск 0.0.1] happens D+118
+[Випуск 1.0.0] happens D+123
+[Початок роботи над запискою] happens D+133
 
-[T1] -> [T2]
-[T2] -> [T3]
-[T3] -> [T4]
-[T4] -> [T5]
-[T5] -> [T6]
-[T6] -> [T7]
-[T7] -> [T8]
-[T8] -> [T9]
-[T9] -> [T10]
-[T10] -> [T11]
+[G2] displays on same row as [C2]
+[G3] displays on same row as [C3]
+[G4] displays on same row as [C4]
+[G5] displays on same row as [C5]
+[G6] displays on same row as [C6]
+[G7] displays on same row as [C7]
+[G8] displays on same row as [C8]
+[G9] displays on same row as [C9]
+[G11] displays on same row as [C11]
+
+[C1] is colored in #333333/#333333
+[C2] is colored in #333333/#333333
+[C3] is colored in #333333/#333333
+[C4] is colored in #333333/#333333
+[C5] is colored in #333333/#333333
+[C6] is colored in #333333/#333333
+[C7] is colored in #333333/#333333
+[C8] is colored in #333333/#333333
+[C9] is colored in #333333/#333333
+[C10] is colored in #333333/#333333
+[C11] is colored in #333333/#333333
+[G2] is colored in #DDDDDD/#999999
+[G3] is colored in #DDDDDD/#999999
+[G4] is colored in #DDDDDD/#999999
+[G5] is colored in #DDDDDD/#999999
+[G6] is colored in #DDDDDD/#999999
+[G7] is colored in #DDDDDD/#999999
+[G8] is colored in #DDDDDD/#999999
+[G9] is colored in #DDDDDD/#999999
+[G11] is colored in #DDDDDD/#999999
 @endgantt

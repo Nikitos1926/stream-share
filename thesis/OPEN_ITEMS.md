@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **106** — `metadata.yaml` 11, `chapters/00-abstract-uk.md` 10, `chapters/01-abstract-en.md` 9, `chapters/03-intro.md` 2, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 4, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 19, `chapters/90-conclusions.md` 1, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 27.
+Total placeholders: **107** — `metadata.yaml` 11, `chapters/00-abstract-uk.md` 10, `chapters/01-abstract-en.md` 9, `chapters/03-intro.md` 2, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 5, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 19, `chapters/90-conclusions.md` 1, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 27.
 
 ## metadata.yaml
 
@@ -78,10 +78,11 @@ Total placeholders: **106** — `metadata.yaml` 11, `chapters/00-abstract-uk.md`
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 89 | 2.1.4 Фактори середовища | підтвердити оцінки E2, E3 і E7 – попередній досвід розробника та зайнятість протягом проєкту |
-| 123 | 2.1.5 Скориговані точки та трудомісткість | фактичні трудовитрати в годинах, якщо їх обліковували |
-| 127 | 2.2 Розробка плану виконання проєкту | фактичні дати етапів і наявність роботи до 27.05.2026 – аналізу предметної області та вибору технологій |
-| 149 | 2.2 Розробка плану виконання проєкту | дата завершення роботи й етапи календарного плану із завдання на кваліфікаційну роботу |
+| 89 | 2.1 Оцінювання тривалості розробки | підтвердити оцінки E2, E3 і E7 – попередній досвід розробника та зайнятість протягом проєкту |
+| 123 | 2.1 Оцінювання тривалості розробки | фактичні трудовитрати в годинах, якщо їх обліковували |
+| 127 | 2.2 Розробка плану виконання проєкту | роль автора комітів гілки режиму слідування в проєкті |
+| 127 | 2.2 Розробка плану виконання проєкту | чи існував попередній календарний план і чи велася робота до 27.05.2026 |
+| 151 | 2.2 Розробка плану виконання проєкту | дата завершення роботи та етапи календарного плану із завдання на кваліфікаційну роботу |
 
 ## chapters/40-chapter4-a.md
 
@@ -135,7 +136,7 @@ Total placeholders: **106** — `metadata.yaml` 11, `chapters/00-abstract-uk.md`
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 44 | Загальні висновки | за результатами експлуатаційних випробувань, табл. 6.1 |
+| 45 | Загальні висновки | за результатами експлуатаційних випробувань, табл. 6.1 |
 
 ## chapters/C0-appendix-v.md
 
