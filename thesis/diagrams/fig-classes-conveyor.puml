@@ -54,12 +54,12 @@ package "Спільні схеми (conveyor/schemas)" {
 }
 
 package "Головний процес" {
-  class "main/shared.ts" as shared <<module>> {
+  class "Обгортки IPC" as shared <<module>> {
     + handle(channel, handler)
     + on(channel, handler)
     + sendEvent(window, channel, payload)
   }
-  class "conveyor/handlers" as handlers <<module>> {
+  class "Обробники каналів" as handlers <<module>> {
     + registerAppHandlers(app)
     + registerWindowHandlers(window)
     + registerAuthHandlers(window)
@@ -74,7 +74,7 @@ package "Головний процес" {
     + resolveEnded()
     + stop()
   }
-  class "googleAuth.ts" as googleAuth <<module>> {
+  class "Вхід через Google" as googleAuth <<module>> {
     + startGoogleSignIn(window)
     + cancelGoogleSignIn()
   }

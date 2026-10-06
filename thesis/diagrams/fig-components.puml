@@ -12,7 +12,7 @@ package "Клієнтська сторона" {
   node "Браузер" as Browser {
     component "Сторінки Next.js\n(React, mediasoup-client)" as WebClient
   }
-  node "apps/desktop (Electron)" as Desktop {
+  node "Настільний застосунок (Electron)" as Desktop {
     component "Вікно BrowserWindow\n(завантажує вебзастосунок)" as Renderer
     component "preload\n(window.conveyor)" as Preload
     component "Головний процес\n(conveyor handlers,\nSourceFollower, googleAuth,\nupdater, tray)" as Main
@@ -21,15 +21,15 @@ package "Клієнтська сторона" {
 }
 
 package "Серверна сторона" {
-  component "apps/web (Next.js)\nсторінки, Proxy,\nAuth.js, /api/desktop-auth/*" as Web
-  component "apps/signaling (Fastify)\nREST /streams, /users,\nWS /ws/streams/:streamId/*,\nmediasoup SFU" as Sig
+  component "Вебзастосунок (Next.js)\nсторінки, Proxy,\nAuth.js, /api/desktop-auth/*" as Web
+  component "Сервер сигналізації (Fastify)\nREST /streams, /users,\nWS /ws/streams/:streamId/*,\nmediasoup SFU" as Sig
   database "PostgreSQL" as PG
 }
 
-package "Спільні пакети" {
-  component "@stream-share/db\n(схеми Drizzle, createDb)" as PDb
-  component "@stream-share/shared\n(протокол WS, cookie сеансу,\nрозрахунок бітрейту)" as PShared
-  component "@stream-share/env\n(перевірка змінних\nсередовища, zod)" as PEnv
+package "Спільні модулі" {
+  component "Модуль доступу до БД\n(схеми Drizzle)" as PDb
+  component "Спільні типи та константи\n(протокол WS, cookie сеансу,\nрозрахунок бітрейту)" as PShared
+  component "Модуль перевірки\nзмінних оточення (zod)" as PEnv
 }
 
 cloud "Google OAuth 2.0" as Google

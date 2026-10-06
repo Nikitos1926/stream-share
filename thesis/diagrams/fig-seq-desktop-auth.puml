@@ -10,9 +10,9 @@ hide footbox
 
 actor "Користувач" as U
 participant "Вікно застосунку\n(LoginProviders,\nwindow.conveyor)" as R
-participant "Головний процес\n(googleAuth.ts,\nсервер 127.0.0.1)" as M
+participant "Головний процес\n(сервер 127.0.0.1)" as M
 participant "Системний\nбраузер" as B
-participant "apps/web\n/api/desktop-auth/*" as W
+participant "Вебзастосунок\n/api/desktop-auth/*" as W
 participant "Auth.js\n/api/auth/*" as A
 participant "Google" as G
 

@@ -11,7 +11,7 @@ node "Комп'ютер глядача або стрімера" as PC {
   node "Настільний застосунок\n(інсталятор electron-builder)" as App
 }
 
-node "Сервер (Docker Engine)\ninfra/docker-compose.prod.yml" as Host {
+node "Сервер (Docker Engine, Docker Compose)" as Host {
   node "caddy\n(caddy:2-alpine)\n:80, :443" as Caddy
   node "web\n(ghcr.io/…/web)\n:3000" as Web
   node "signaling\n(ghcr.io/…/signaling)\n:4000" as Sig
@@ -23,7 +23,7 @@ node "Сервер (Docker Engine)\ninfra/docker-compose.prod.yml" as Host {
 }
 
 node "GitHub" as GitHub {
-  node "GitHub Actions\ndocker-prod.yml (теги v*)\ndesktop-release.yml (теги desktop-v*)" as GA
+  node "GitHub Actions\n(теги v* і desktop-v*)" as GA
   node "GitHub Container\nRegistry (GHCR)" as GHCR
   node "GitHub Releases" as Rel
 }
