@@ -54,6 +54,16 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
 - `assemble.py` adds the title page (Appendix_A styles, fields from `metadata.yaml`; optional
   `consultants:` list), ЗМІСТ + TOC field before the first `#` element after АНОТАЦІЯ/ABSTRACT,
   and the header page number (top right, none on the title page). Fields fill in Word: Ctrl+A, F9.
+- Spacing (PLAN.md §0.5) is mechanical: styles in `make_reference_docx.py` carry only `before`
+  (captions/figure/formula/listing caption/scenario caption/Heading 2 = 24 pt, figure caption and
+  code = 6 pt) and `after` = 0; `assemble.py` (`GAP_AFTER`) writes the gap after a table, listing,
+  figure caption, formula, scenario or heading as `before` on the next paragraph — max, never sum.
+  Never add empty paragraphs or manual spacing in the Markdown.
+- `thesis.lua` renders inline code as plain body text (§0.2; listings keep Courier New) and lays out
+  `::: {#sc:…}` scenarios: «Scenario Caption», rules above the first / below the last body paragraph
+  (styles Scenario First/Last/Single), list items as typed «N. » paragraphs, flush left.
+- «Продовження таблиці» for a table split across pages cannot be generated (Word has no such
+  feature); the author adds it in Word after the final pagination (OPEN_ITEMS.md).
 - `assemble.py` also rules tables (full 175 mm width, columns fitted to content, header row
   centred, 12 pt for ≥ 5 columns or words that do not fit), keeps АНОТАЦІЯ/ABSTRACT out of ЗМІСТ
   (TOC Title style), and splits «ДОДАТОК А» / title onto two lines.

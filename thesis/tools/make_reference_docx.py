@@ -51,6 +51,36 @@ def para(style, align=WD_ALIGN_PARAGRAPH.JUSTIFY, indent=12.5, spacing=1.5,
     pf.keep_with_next = keep_next
 
 
+def rule(style, sides):
+    """0.5 pt single paragraph border(s), 4 pt from the text (scenario rules, PLAN.md §0.4).
+    §0.4 measured 1 pt in Word; LibreOffice (the committed PDF) puts the 1.5-line leading above
+    the text, so 1 pt drew the closing rule onto the descenders (1.2 pt gap). 4 pt keeps it clear."""
+    ppr = style.element.get_or_add_pPr()
+    for old in ppr.findall(qn("w:pBdr")):
+        ppr.remove(old)
+    bdr = OxmlElement("w:pBdr")
+    for side in ("top", "bottom"):  # schema order: top, left, bottom, right, between, bar
+        if side in sides:
+            e = OxmlElement(f"w:{side}")
+            for k, v in (("w:val", "single"), ("w:sz", "4"), ("w:space", "4"), ("w:color", "000000")):
+                e.set(qn(k), v)
+            bdr.append(e)
+    # CT_PPrBase order: … keepNext, keepLines, pageBreakBefore, framePr, widowControl, numPr,
+    # suppressLineNumbers, pBdr, shd, tabs, …, spacing, ind, … jc …
+    later = {qn(t) for t in ("w:shd", "w:tabs", "w:suppressAutoHyphens", "w:kinsoku",
+                             "w:wordWrap", "w:overflowPunct", "w:topLinePunct", "w:autoSpaceDE",
+                             "w:autoSpaceDN", "w:bidi", "w:adjustRightInd", "w:snapToGrid",
+                             "w:spacing", "w:ind", "w:contextualSpacing", "w:mirrorIndents",
+                             "w:suppressOverlap", "w:jc", "w:textDirection", "w:textAlignment",
+                             "w:textboxTightWrap", "w:outlineLvl", "w:divId", "w:cnfStyle",
+                             "w:rPr", "w:sectPr", "w:pPrChange")}
+    nxt = next((c for c in ppr if c.tag in later), None)
+    if nxt is not None:
+        nxt.addprevious(bdr)
+    else:
+        ppr.append(bdr)
+
+
 def style(doc, name):
     return next((s for s in doc.styles if s.name == name), None)
 
@@ -79,45 +109,70 @@ def main(out: str) -> None:
         para(s, spacing=1.0, indent=0, align=WD_ALIGN_PARAGRAPH.LEFT)
 
     # Heading 1: chapters and structural elements — centred, bold, caps, new page.
+    # Vertical gaps follow PLAN.md §0.5 «max, not sum»: a style carries only its `before`; the gap
+    # *after* an element (heading, table, figure caption, formula, listing, scenario) is written
+    # by assemble.py as `before` on the next paragraph (GAP_AFTER there). So every `after` is 0.
     h1 = style(doc, "Heading 1")
     set_font(h1, bold=True, caps=True)
-    para(h1, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, after=21, keep_next=True)
+    para(h1, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, keep_next=True)  # 21 pt after: assemble.py
     h1.paragraph_format.page_break_before = True
-    # Heading 2/3: subsections — bold, at paragraph indent, sentence case.
+    # Heading 2/3: subsections — bold, at paragraph indent, sentence case; one empty line (24 pt)
+    # before and after (§0.5; the «after» is set by assemble.py).
     for n in (2, 3):
         h = style(doc, f"Heading {n}")
         set_font(h, bold=True, caps=False)
-        para(h, align=WD_ALIGN_PARAGRAPH.LEFT, indent=12.5, before=21, after=21, keep_next=True)
+        para(h, align=WD_ALIGN_PARAGRAPH.LEFT, indent=12.5, before=24, keep_next=True)
         h.font.italic = False
 
-    # Captions: figure below centred; table/listing above at indent.
-    for name, align, indent in (("Image Caption", WD_ALIGN_PARAGRAPH.CENTER, 0),
-                                ("Caption", WD_ALIGN_PARAGRAPH.CENTER, 0),
-                                ("Table Caption", WD_ALIGN_PARAGRAPH.LEFT, 12.5)):
+    # Captions (§0.5): figure caption below, centred, 6 pt under the image (24 pt after: assemble.py);
+    # table/listing caption above at indent, one empty line (24 pt) before, object right under it.
+    for name, align, indent, before in (("Image Caption", WD_ALIGN_PARAGRAPH.CENTER, 0, 6),
+                                        ("Caption", WD_ALIGN_PARAGRAPH.CENTER, 0, 6),
+                                        ("Table Caption", WD_ALIGN_PARAGRAPH.LEFT, 12.5, 24)):
         s = style(doc, name)
         if s is not None:
             set_font(s)
             s.font.italic = False
-            para(s, align=align, indent=indent, keep_next=(name == "Table Caption"))
+            para(s, align=align, indent=indent, before=before,
+                 keep_next=(name == "Table Caption"))
+    # Image paragraph: 24 pt before, single spacing so the image line is not inflated ×1.5.
     s = style(doc, "Captioned Figure")
     if s is not None:
-        para(s, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, keep_next=True)
+        para(s, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, spacing=1.0, before=24, keep_next=True)
 
-    # Code: Courier New 10, single spacing, flush left.
-    # pandoc's default reference.docx lacks these two; pandoc uses them if present.
+    # Code: Courier New 10, single spacing, flush left; 6 pt under the listing caption (§0.5).
+    # pandoc's default reference.docx lacks these two; pandoc uses them if present. Verbatim Char
+    # now only styles listings: thesis.lua renders inline code as plain body text (§0.2).
     for name, kind in (("Source Code", WD_STYLE_TYPE.PARAGRAPH),
                        ("Verbatim Char", WD_STYLE_TYPE.CHARACTER)):
         s = style(doc, name) or doc.styles.add_style(name, kind)
         set_font(s, name=CODE_FONT, size=10)
         if kind == WD_STYLE_TYPE.PARAGRAPH:
-            para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, spacing=1.0)
+            para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, spacing=1.0, before=6)
+
+    # Use-case scenario (§0.4, thesis.lua): caption like a table caption (24 pt before), body flush
+    # left without first-line indent, 0.5 pt rules at full text width above the first and below the
+    # last body paragraph (24 pt after the closing rule: assemble.py).
+    s = style(doc, "Scenario Caption") or doc.styles.add_style("Scenario Caption",
+                                                                WD_STYLE_TYPE.PARAGRAPH)
+    s.base_style = style(doc, "Normal")
+    set_font(s)
+    para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=12.5, before=24, keep_next=True)
+    for name, sides in (("Scenario", ()), ("Scenario First", ("top",)),
+                        ("Scenario Last", ("bottom",)), ("Scenario Single", ("top", "bottom"))):
+        s = style(doc, name) or doc.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
+        s.base_style = style(doc, "Normal")
+        set_font(s)
+        para(s, indent=0, keep_next=(name == "Scenario First"))
+        if sides:
+            rule(s, sides)
 
     # Formula line written by thesis.lua: <tab>formula<tab>(2.1) — centre tab mid-text, right tab
     # at the right margin (text width 210 − 25 − 10 = 175 mm).
     s = style(doc, "Formula") or doc.styles.add_style("Formula", WD_STYLE_TYPE.PARAGRAPH)
     s.base_style = style(doc, "Normal")
     set_font(s)
-    para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, before=6, after=6)
+    para(s, align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, before=24)  # 24 pt after: assemble.py
     s.paragraph_format.tab_stops.add_tab_stop(Mm(87.5), WD_TAB_ALIGNMENT.CENTER)
     s.paragraph_format.tab_stops.add_tab_stop(Mm(175), WD_TAB_ALIGNMENT.RIGHT)
 
