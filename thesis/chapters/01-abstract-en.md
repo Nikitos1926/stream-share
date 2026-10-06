@@ -7,7 +7,7 @@ Surname] ; supervisor [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patronymic Surn
 Univ., [ПОТРЕБУЄ УТОЧНЕННЯ: year]. – [ПОТРЕБУЄ УТОЧНЕННЯ: total number of pages after layout] p.
 
 The qualification work contains the main text part on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout]
-pages, a list of used sources with 83 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
+pages, a list of used sources with 82 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
 appendices on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages.
 
 The purpose of the qualification work is to enable streaming of an individual application together
@@ -15,7 +15,7 @@ with its own audio to viewers in a web browser with low delivery latency by deve
 stream-share web service and a desktop application for capture.
 
 The work analyses media delivery technologies, multiparty transmission topologies and the
-limitations of screen capture in the browser, compares six existing solutions and identifies the
+limitations of screen capture in the browser, compares four existing solutions and identifies the
 niche of the service. Functional and non-functional requirements are formulated, the development
 effort is estimated with the use case points method, and a schedule and a risk register are drawn
 up. The architecture consisting of a web application, a signaling server with an SFU media server

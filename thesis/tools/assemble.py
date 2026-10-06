@@ -246,7 +246,9 @@ def column_widths(cols, size):
     """Auto-fit like a browser: each column gets at least its longest word, the rest of the text
     width is shared in proportion to how much longer the column's text is than that minimum."""
     cw = CHAR_W[size]
-    mins = [max((len(w) for c in col for w in c.split()), default=1) * cw + CELL_PAD for col in cols]
+    # ≥ 3 average glyphs per word: short IDs with a wide Cyrillic letter («П1», «Д10») must not wrap
+    mins = [max((max(len(w), 3) for c in col for w in c.split()), default=3) * cw + CELL_PAD
+            for col in cols]
     maxs = [max(max((len(c) for c in col), default=1) * cw + CELL_PAD, m) for col, m in zip(cols, mins)]
     if sum(maxs) <= TEXT_WIDTH:
         return [round(m * TEXT_WIDTH / sum(maxs)) for m in maxs], True
