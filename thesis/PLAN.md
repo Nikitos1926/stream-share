@@ -24,6 +24,293 @@ Both examples come from the same department (Кафедра інженерії �
 
 ---
 
+## 0. Style addendum (2026-10-06) — binding, overrides §1–§4 where they differ
+
+The user reviewed the finished thesis and issued new rules on 2026-10-06. This section turns them
+into checkable rules. It was measured from the two 100-pt examples with PyMuPDF (fonts, line
+positions, ruling lines). **E1** = `exmaple1.pdf`, **E2** = `example2.pdf`. Page numbers are the
+printed ones, which equal the PDF page index in both files. Every later thesis ticket runs the
+checklist in §0.7 before it hands off.
+
+### 0.1 Heading depth — no level-3 headings
+
+- Only two numbered levels exist: chapter `# N …` and subsection `## N.M …`, plus
+  `## Висновки до розділу N`. **Nothing numbered x.y.z, in any form.** No `###`/`####`, and no
+  run-in bold points `**1.3.1 Назва.** …` either. Both are removed and never cross-referenced
+  («у пункті 1.3.2» → «у підрозділі 1.3» or «вище»).
+- Model = **E1**. Its ЗМІСТ (pp. 4–5) and its whole body use only x.y headings; no x.y.z appears
+  anywhere. E2 does use run-in points (pp. 11–12, 20–31, 59–68, 70–78, and even x.y.z.w on pp. 31–34).
+  That is exactly what the user has now forbidden, so **E2's points are not a model.** Supersedes
+  §1.4 «Пункт», the run-in points of §2 (e.g. «пункти 2.1.1–2.1.5») and the `**1.1.1 …**` line of §4.3.
+- How E1 structures content inside a long subsection instead (use these, in this order of preference):
+  1. **Topic-first paragraphs.** Each paragraph opens with the object it is about, in plain text.
+     Examples: «Goodreads [1] – найбільша у світі…» (E1 p. 8), «Платформа OpenTable дозволяє…»
+     (E2 p. 9), «AuthenticationModule відповідає за…» (E1 p. 37), «Таблиця Reservation (табл. 3.1)
+     містить…» (E2 p. 49).
+  2. **Transition sentences** that announce the next part and point to its object. Examples:
+     «Розглянемо перший варіант використання… (див. сценарій 1.1)» (E1 p. 10), «Наступним
+     розглянемо…» (E1 pp. 11–12), «Перейдемо до оцінки варіантів використання (UUCW)…» (E1 p. 27),
+     «Наступною розглянемо таблицю Book… (табл. 3.2)» (E1 p. 40).
+  3. **Short lead-in sentence + list.** Example: «Основні актори вебзастосунку.» followed by
+     definition paragraphs «Користувачі (читачі) – …» (E1 p. 7). Another: «Основними сутностями
+     предметної області є:» + «1) …;» list (E1 p. 7). Another: «Виконаємо оцінку акторів (UAW):»
+     + «–» list (E1 p. 27). Lists follow §1.5. Prose stays the default; a list is used only for
+     genuinely enumerable items.
+  4. **A further x.y subsection** when a part is large enough to deserve a ЗМІСТ entry. E1 has
+     2–5 subsections per chapter (pp. 4–5). Renumber the following subsections and fix every
+     «підрозділ N.M» reference.
+- No bold run-in lead-ins inside chapters. In E1 the only bold text in the body is headings, the
+  ВСТУП labels (p. 6) and the scenario field labels (pp. 10–24). The ВСТУП labels (§1.13) stay.
+
+### 0.2 Software identifiers in running text
+
+- Write identifiers (method, function, class, hook, variable, field, event or message type,
+  environment variable, DB table/column, CLI command, HTTP route) in the **body font: Times New
+  Roman 14, regular, no quotes, no italics, no bold, no monospace**. Measured examples: «Метод
+  findLeastBusyWaiter», «анотацію @PreAuthorize», «роллю CUSTOMER» (E2 pp. 55–56); «Zod-схему
+  bookSubmissionSchema», «поле suggestedPrice при isForSale=true» (E1 p. 52);
+  «parseGoogleBookItem()», «API-ендпоінт /api/generate-book-description» (E1 p. 53). PyMuPDF
+  reports all of them as TimesNewRomanPSMT 14, flags 4 (regular). Courier New appears only inside
+  listings.
+- **Inline code (Markdown backticks) is forbidden in prose, table cells, captions and appendix
+  lead-ins.** Fenced listings are the only monospace.
+- Introduce every identifier with its kind noun («метод», «функція», «клас», «хук», «подія»,
+  «таблиця», «поле», «змінна оточення», «бібліотека»). Write it exactly as in the code, **without
+  `()`**, as E2 does. The name is written in Latin script and is not declined: «метод
+  setDisplayMediaRequestHandler», «у таблиці stream_to_user».
+- Density as in the examples, which use about 3–10 identifiers per 3–4 pages of chapter 4.
+  Name an identifier only when it ties the text to a listing, a diagram or a table (class diagram,
+  DB tables). Otherwise describe the element by its role: «модуль слідування за вікнами», not a
+  string of names.
+- **Quotes «…» are for UI labels and use-case names only** («Зареєструватися», E2 p. 12;
+  «Варіант використання «Реєстрація»», E2 p. 13), never for code identifiers.
+- A literal `@` in prose (e.g. a decorator or an npm scope) is written as `\@`, never in
+  backticks (thesis.lua treats a bare `@word` as a citation key).
+- Product, library and protocol names are proper names, not identifiers: «mediasoup», «Electron»,
+  «WebRTC», no kind noun needed (E1 pp. 51–52).
+
+### 0.3 No file paths or project tree
+
+- Nowhere in the text: no repository paths (`apps/…`, `packages/…`, `src/…`, `infra/…`,
+  `thesis/…`), no file names with extensions (`*.ts`, `*.mjs`, `*.json`, `*.yml`, `*.puml`,
+  `Dockerfile`, `docker-compose.yml`, `package.json`, …) and no directory trees. This covers
+  prose, tables, captions, appendix lead-ins and footnotes. Neither example names a single source
+  file anywhere, appendices included. The only hit in E1 is inside a code line, an import on
+  p. 86.
+- Describe modules **by role** and use this mapping consistently:
+
+  | Repository unit | Name in the text |
+  | --- | --- |
+  | `apps/web` | вебзастосунок (Next.js) |
+  | `apps/signaling` | сервер сигналізації та пересилання медіапотоків (short: сервер сигналізації) |
+  | `apps/desktop` | настільний застосунок (Electron) |
+  | `packages/db` | модуль доступу до бази даних (схема та міграції Drizzle) |
+  | `packages/env` | модуль перевірки змінних оточення |
+  | `packages/shared` | спільні типи та константи |
+  | test scripts (`smoke.mjs`, `follower.mjs`) | сценарії автоматизованої перевірки (by purpose) |
+
+  Table columns that carry package names (e.g. «Модуль: web, signaling» in table 1.2) use these
+  role names instead, or are dropped.
+- Level of detail, as in E2 4.2 (pp. 55–57, 3 pages, 3 listings) and E1 4.2 (pp. 52–55, 5
+  listings). Each paragraph explains **what a mechanism does, its inputs, its checks and
+  restrictions, what it delegates and what it returns or changes**, then points to the listing:
+  «Метод створення бронювання клієнтом (див. лістинг 4.2) реалізує… Доступ… обмежено…
+  Тіло запиту валідується… після чого метод… передає… до сервісного рівня» (E2 pp. 55–56).
+  No walking through files, folders or build configuration.
+- **Listing captions** describe content by role and may name a class or function, but **never a
+  file**: «Лістинг 4.1 – Метод для отримання доступних столиків» (E2 p. 55), «Лістинг 4.1 – Код
+  фрагменту Zod-схеми валідації подання книги» (E1 p. 52); ours, e.g. «Лістинг А.1 – Клас
+  SourceFollower настільного застосунку».
+- **Appendix А.** E1 (p. 79) and E2 (p. 86) give the code without file names; E1 separates parts
+  with an ordinary code comment. We keep our captioned listings А.1…А.n. The lead-in sentence
+  names the part by role: «Далі наведено клас слідування за вікнами настільного застосунку
+  (лістинг А.1).». **Not** «Далі наведено файл `apps/desktop/…`». The appendix introduction
+  mentions neither a commit hash nor a repository directory such as `thesis/diagrams`.
+  `tools/appendix.py` generates this text, so the fix goes there.
+- Code comments inside listings are code and stay verbatim. Do not add path comments.
+- Commit hashes do not appear in the text. Chapter 2 may cite pull requests by number and date
+  where the Git history is the source (its own ticket).
+
+### 0.4 Use-case scenarios — template of E2 §1.3 (pp. 12–17)
+
+E2 is the relevant model: our chapter 1 mirrors its skeleton («Аналіз наявних програмних
+рішень», «Функціональні вимоги до програмної системи») and its scenario fields. The current
+thesis format (§1.10, chapter file `11-chapter1-b.md`) is wrong and is replaced. Its defects:
+- the hybrid fields «Мета/Результат» and «Передумови», which mix E1 and E2;
+- labels at a 12.5 mm indent;
+- steps as an indented, single-spaced Word list;
+- no gap before the caption and none after the scenario;
+- no ruling lines;
+- alternative steps without «4а.1.» sub-steps.
+
+Exact layout (measured E2 pp. 12–13):
+
+```
+                                        ← one empty line (24 pt) after the preceding text
+      Сценарій 1.1 – Реєстрація         ← caption at paragraph indent 12.5 mm, regular, no final dot
+──────────────────────────────────────  ← thin horizontal rule, full text width (0.5 pt)
+Основна дійова особа: гість.            ← flush left, NO first-line indent; label bold, value regular
+Результат: створено обліковий запис користувача.
+Тригер: користувач відкриває сторінку реєстрації.
+Основний успішний сценарій:             ← bold label alone on its line
+1. Гість переходить до сторінки реєстрації.   ← flush left, typed «N. » (not a Word auto-list), 1.5 spacing
+2. Система відображає форму для введення даних (повне ім’я, email та пароль).
+3. Гість заповнює форму та натискає кнопку «Зареєструватися».
+…
+Альтернативні сценарії:                 ← bold label alone on its line
+4а. Введені дані некоректні.            ← condition: main step number + Cyrillic letter (а, б, в…)
+4а.1. Система виводить помилку та пропонує виправити дані. Повернення до п. 3.   ← reaction steps
+5а. Обліковий запис з такою поштою вже існує.
+5а.1. Система пропонує ввести іншу електронну пошту. Повернення до п. 3.
+──────────────────────────────────────  ← closing rule, full text width
+                                        ← one empty line (24 pt) before the following text
+```
+
+- **Field names, exactly and in this order:** «Основна дійова особа:», «Результат:»,
+  «Тригер:», «Основний успішний сценарій:», «Альтернативні сценарії:». Nothing else: no «Мета»,
+  «Мета/Результат», «Передумови», «Постумови», «Актор». A precondition is either expressed in
+  «Тригер» or is self-evident from the actor (E2 «зареєстрований користувач (клієнт або
+  офіціант)», p. 13).
+- Values: lowercase start, end with «.». Steps: each a full sentence starting with the actor or
+  «Система». Steps alternate between actor and system and use the present tense: «Гість
+  заповнює…», «Система перевіряє…».
+- Alternatives: «Na.» states the condition only; «Na.1.», «Na.2.» state the reaction. The return
+  is worded «Повернення до п. N.» or «(перехід до п. N)». Inclusion of another use case is worded
+  «Na.3. Варіант використання «Реєстрація».» (E2 p. 13). If there is no alternative, omit the
+  label.
+- Caption title = a **noun phrase**, identical to the oval on the use-case diagram: «Реєстрація»,
+  «Авторизація», «Бронювання столика» (E2). Ours: «Вхід через Google», «Трансляція у браузері»,
+  «Трансляція окремого застосунку». Never imperative verb phrases like «Увійти через Google».
+  Update the diagram labels if they differ.
+- Introduce all scenarios with one sentence and a range, with a source for the technique. E2
+  p. 12: «…складемо сценарії [7] для кожного з них (сценарії 1.1 – 1.8)». Scenarios then follow
+  one another with only the empty line between them. Optional one-sentence lead-ins as in E1 are
+  allowed, but stay consistent.
+- Prose, never a table. Numbering «Сценарій N.M» per chapter, en dash, as now.
+- Markdown for writers (thesis.lua keeps `::: {#sc:…}`; the toolchain ticket renders the layout
+  above). Steps are written as an ordinary Markdown list; the filter turns them into flush-left
+  typed numbers:
+
+  ```markdown
+  ::: {#sc:sign-in caption="Вхід через Google"}
+  **Основна дійова особа:** гість.
+
+  **Результат:** користувач увійшов до системи та отримав сеанс.
+
+  **Тригер:** гість відкриває сторінку входу.
+
+  **Основний успішний сценарій:**
+
+  1. Гість натискає кнопку «Увійти через Google».
+  2. Система перенаправляє гостя до сервісу автентифікації Google.
+
+  **Альтернативні сценарії:**
+
+  2а. Гість скасовує вхід.
+
+  2а.1. Система повертає гостя на сторінку входу.
+  :::
+  ```
+
+### 0.5 Spacing around tables, figures, formulas, listings and their captions
+
+Measured on E1 pp. 9–10, 29, 32 and E2 pp. 10, 12, 29, 55. The body line pitch is 24.15 pt
+(TNR 14 at 1.5 lines). **«One empty line» = 24 pt.** The Regulations set no spacing (§1.1), so the
+examples are binding. Ordinary body paragraphs keep 0/0.
+
+| Element | Before | Between caption and object | After | Measured |
+| --- | --- | --- | --- | --- |
+| Table caption «Таблиця N.M – …» (above, at indent) | **24 pt** (one empty line after the text) | **0 pt**: the table starts right under the caption (visible gap ≈ 8 pt from line leading) | — | E1 p. 9, E2 p. 10 |
+| Table (incl. «Продовження таблиці» parts) | — | — | **24 pt** before the next paragraph | E1 p. 9 (401→425), E2 p. 10 (686→711) |
+| Figure (image paragraph, centred, **single** line spacing so the image line is not inflated ×1.5) | **24 pt** | caption follows directly: caption `before` **6 pt** (visible gap image→caption glyphs 9–12 pt) | — | E1 p. 10, E2 pp. 12, 29 |
+| Figure caption «Рисунок N.M – …» (below, centred) | 6 pt | — | **24 pt** | E1 p. 10 (539→587), E2 p. 12 (355→403) |
+| Formula line (centred, number «(N.M)» at right margin) | **24 pt** | — | **24 pt** (also when «де …» follows) | E1 pp. 29, 32 |
+| Listing caption «Лістинг N.M – …» (above, at indent) | **24 pt** | **6 pt**, then code (Courier New 10, single) | — | E2 p. 55 (535→545) |
+| Listing (last code line) | — | — | **24 pt** before the next paragraph | E2 p. 55 (657→684) |
+| Scenario caption | **24 pt** | top rule right under it (rule 0.5 pt, `space` 1 pt) | — | E2 pp. 12–13 |
+| Scenario body (last line) | — | — | closing rule, then **24 pt** | E2 p. 13 (173→rule 182→207) |
+| Heading 2 «N.M …» / «Висновки до розділу N» | 24 pt (one empty line; now 21 pt in the reference DOCX, set to 24) | — | 24 pt | E1 p. 9 (619–667), E2 p. 55 |
+
+Implementation rules for `make_reference_docx.py` / `assemble.py`:
+- Values in OOXML: 24 pt = `w:before/w:after="480"`, 6 pt = `"120"`. Use paragraph spacing, not
+  empty paragraphs. Empty paragraphs break at page tops and are not counted by the QA tools.
+- **Max, not sum.** When two spaced elements meet (a figure caption followed by a table caption,
+  a table followed by a listing caption), the gap stays 24 pt, not 48 pt. Implement every gap as
+  `before` on the following element and set `after = 0`. The only exceptions are table ends and
+  listing ends, which have no paragraph of their own: there, `assemble.py` sets `before = 480` on
+  the first paragraph after them, unless that paragraph is a heading or already has ≥ 480.
+- `keep_with_next` on table and listing captions, on the figure paragraph and on the scenario
+  caption, so no caption is orphaned at a page end.
+- Acceptance: build with `--pdf`, then measure with PyMuPDF on one page per element type, as
+  done for this addendum. The visible gap from the text to a caption or object is ≥ 20 pt. The
+  gap from an object to its caption glyphs is 6–16 pt. No caption touches its object or the
+  neighbouring text.
+
+### 0.6 Comparison table «Порівняння наявних програмних рішень» (`tbl:analogs`)
+
+- The developed application is a **column**, the **first data column** after the criterion
+  column. E1 table 1.1 (p. 9) has «Фактор порівняння | LibProj | Goodreads | LibraryThing |
+  StoryGraph | BookClubs»; E2 table 1.1 (p. 10) has «Функціональна можливість | TasteTales |
+  OpenTable | Resy | TableAgent». Header: «Функціональна можливість | stream-share | …».
+- **At most 4 existing solutions** (E1 has 4, E2 has 3). Keep **Twitch + OBS Studio, Discord Go
+  Live, Google Meet, Zoom**. Drop **YouTube Live**: its capture also goes through a third-party
+  encoder, so it duplicates the OBS column. Drop **Parsec**: remote desktop is a different class
+  and the least relevant. If a column cannot be backed by documentation, swap Zoom for YouTube
+  Live. Remove the dropped ones from the 1.2 prose too, along with their now-uncited
+  `sources.yaml` entries (`references.py --check`) and their mentions in `03-intro.md`.
+- Rows are **functional capabilities** (6–10 rows as in E2). Cells hold only «+», «–» or «+/–»
+  (partial, as E1 p. 9), centred. There are **no citations, notes or prose in cells**. Every mark
+  for an existing solution must follow from the documentation cited in the prose description of
+  that solution (E1 p. 8, E2 p. 9). Every stream-share mark must follow from the code (§6
+  traps). After the table, one sentence explains what «+/–» means for each partial cell. If a cell
+  cannot be established, drop or reword the criterion rather than guess.
+- Candidate criteria, to be verified: захоплення окремого вікна застосунку; передавання звуку лише
+  обраного застосунку; автоматичний перехід до нових вікон застосунку; перегляд у браузері без
+  встановлення програм; перегляд без облікового запису; доступ глядачів за посиланням.
+- Keep the caption «Порівняння наявних програмних рішень». It is followed by the conclusion
+  paragraph, as in E1 p. 9 and E2 pp. 10–11.
+
+### 0.7 Pre-completion checklist (every thesis ticket, before hand-off)
+
+Run from the repository root. `C='thesis/chapters/[0-9A-C]*.md'`. Items 1–6 must print 0 or
+nothing. The baseline on 2026-10-06 before the revision tickets: 1→0, 2→76, 3→201, 4→34,
+6→10, 7→0.
+
+```bash
+C='thesis/chapters/[0-9A-C]*.md'
+# 1 no level-3+ headings
+grep -nE '^#{3,} ' $C
+# 2 no x.y.z points or references to them
+grep -nE '^(\*\*)?[1-6]\.[0-9]+\.[0-9]+' $C; grep -nE '(пункт[аіу]?|пп?\.) ?[1-6]\.[0-9]+\.[0-9]+' $C
+# 3 no inline code outside fenced listings (prints offending lines)
+awk 'FNR==1{f=0} /^```/{f=!f; next} !f && /`/{print FILENAME":"FNR": "$0}' $C
+# 4 no paths / file names outside listings (references list excluded)
+awk 'FNR==1{f=0} /^```/{f=!f; next} FILENAME ~ /95-references/ {next} !f && (/(^|[^A-Za-z:\/])(apps|packages|src|infra|docs|thesis)\// || /(^|[^A-Za-z])[a-z0-9_-]+\.(js|mjs|cjs|ts|tsx|json|ya?ml|puml|sql|sh|py|md)([^A-Za-z]|$)/ || /Dockerfile|docker-compose|package\.json|tsconfig|pnpm-workspace/){print FILENAME":"FNR": "$0}' $C
+# 5 no italic/bold identifiers
+grep -nE '(^|[^*])\*[A-Za-z_][A-Za-z0-9_.]*\*([^*]|$)|\*\*[A-Za-z_][A-Za-z0-9_.()]*\*\*' $C
+# 6 scenario fields: only the five E2 labels
+grep -nE '\*\*(Мета|Мета/Результат|Передумови|Постумови|Актор):\*\*' $C
+# 7 comparison table has the developed app (must print 1)
+grep -A2 '{#tbl:analogs}' thesis/chapters/10-chapter1.md | grep -c 'stream-share'
+# 8 review by eye: Latin words in «» must be UI labels, not identifiers
+grep -noE '«[A-Za-z_][A-Za-z0-9_.()]*»' $C
+```
+
+Then, not grep-able:
+- Build: run `bash thesis/tools/build.sh --pdf` with `THESIS_STRICT=1`; `qa.py` must pass. Open
+  the PDF and check one page of each kind against §0.5: no caption touches text or its object,
+  and every table and figure has an empty line after it.
+- Each chapter has ≥ 2 subsections, no x.y.z, and the ЗМІСТ shows two levels only.
+- Every identifier is plain text with a kind noun and is tied to a listing, diagram or table (§0.2).
+- Implementation is described by role, with no walking through the project structure (§0.3).
+- Scenarios match §0.4 field by field.
+- Chapter 2 facts trace to real commits or PRs. No invented stages, dates or results.
+- Volume is still within §2 (main text 60–80 pp, by `topdf.py` page counts). Truthfulness traps
+  (§6) are re-checked for every changed claim.
+
+---
+
+
 ## 1. Formatting specification
 
 The Regulations (2025) define structure and content but **contain no typographic rules** (no font,
@@ -75,7 +362,7 @@ Each structural element and each chapter **starts on a new page**.
 | Розділ | bold, ALL CAPS, centred, number + space + title, no dot; new page | `1 АНАЛІЗ ПРЕДМЕТНОЇ ОБЛАСТІ ТА СПЕЦИФІКАЦІЯ ВИМОГ` |
 | Підрозділ | bold, sentence case, at paragraph indent (12.5 mm), number + title, no dot | `1.1 Аналіз предметної області` |
 | Висновки до розділу | same as підрозділ, without number | `Висновки до розділу 1` |
-| Пункт | **run-in**: bold number + title ending with a dot, the paragraph text continues on the same line | `**5.2.1 Тестування модуля автентифікації.** Модуль …` |
+| ~~Пункт~~ | **Forbidden since 2026-10-06 (§0.1)**: no x.y.z level at all, not even run-in | — |
 | Додаток | `ДОДАТОК А` bold caps centred, title on the next line bold centred | `ДОДАТОК А` / `Лістинг програми` |
 
 - One empty line (1.5) after a chapter heading and after a subsection heading, and one before a
@@ -92,6 +379,9 @@ Each structural element and each chapter **starts on a new page**.
 - Prefer connected prose; lists only for genuinely enumerable items (user requirement).
 
 ### 1.6 Figures
+
+> Spacing around figures, tables, formulas, listings and scenarios: **§0.5** (binding values).
+
 
 - Caption **below** the figure, **centred**, regular 14 pt: `Рисунок 3.1 – Діаграма компонентів системи`
   (en dash with spaces, no final dot). Numbering per chapter (`N.M`); in appendices `А.1`.
@@ -131,6 +421,9 @@ Each structural element and each chapter **starts on a new page**.
 - Code is copied verbatim from the repository at a pinned commit; elisions marked `// ...`.
 
 ### 1.10 Use-case scenarios
+
+> **Superseded by §0.4** (exact E2 template). The description below is the old, wrong format.
+
 
 Examples present use cases as numbered scenarios, captioned like a table:
 `Сценарій 1.1 – Розпочати трансляцію` at paragraph indent, then blocks with bold run-in labels
@@ -217,7 +510,7 @@ approbation (only if real — Gap G6). Code: `README.md` features list.
 
 | § | Title | pp. | Content | Code / sources | Items |
 | --- | --- | --- | --- | --- | --- |
-| 2.1 | Оцінювання тривалості розробки | 4 | Use Case Points (as both examples): UAW, UUCW (from §1.3 use cases), TCF, EF, AUCP, effort with productivity factor (cite Karner/Clemmons); five stages as run-in пункти 2.1.1–2.1.5. Weights are methodological judgements, stated as such | use cases of §1.3; Clemmons 2006 (UCP) | Т2.1–2.4, формули (2.1)–(2.5) |
+| 2.1 | Оцінювання тривалості розробки | 4 | Use Case Points (as both examples): UAW, UUCW (from §1.3 use cases), TCF, EF, AUCP, effort with productivity factor (cite Karner/Clemmons); five stages as paragraphs with transition sentences (no x.y.z, §0.1). Weights are methodological judgements, stated as such | use cases of §1.3; Clemmons 2006 (UCP) | Т2.1–2.4, формули (2.1)–(2.5) |
 | 2.2 | Розробка плану виконання проєкту | 2 | work breakdown with durations/dependencies + Gantt chart; real dates anchored to git history (first commit 2026-05-27 → 2026-09-25, 44 commits) and the thesis period | `git log` of `main`; Gap G8 | Т2.5, Р2.1 |
 | 2.3 | Аналіз ризиків та планування реакцій | 1.5 | risk register: probability/impact/response. Real, code-evidenced risks: ICE/NAT failures (`MEDIASOUP_ANNOUNCED_IP`), Google rejecting embedded user agent (solved by system-browser sign-in), native module rebuild per OS, hardware H.264 encoder availability, unsigned installers, single-developer schedule | `README.md`, `apps/desktop/src/main/googleAuth.ts`, `electron-builder.yml`, `.github/workflows/desktop-release.yml` | Т2.6 |
 | — | Висновки до розділу 2 | 0.5 | | | |
@@ -322,7 +615,7 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 
 | No. | ID | Content | Source of data |
 | --- | --- | --- | --- |
-| 1.1 | `tbl:analogs` | comparison of existing solutions | official docs (cited) |
+| 1.1 | `tbl:analogs` | comparison of stream-share with ≤ 4 existing solutions (§0.6) | official docs (cited) |
 | 1.2 | `tbl:delivery` | delivery technologies (WebRTC, HLS, RTMP): transport, typical latency class, browser support | specs / docs (cited) |
 | 2.1–2.4 | `tbl:ucp-*` | UCP: actors, use cases, technical factors, environmental factors | §1.3 + method |
 | 2.5 | `tbl:wbs` | works, duration, dependencies | git history (Gap G8) |
@@ -420,7 +713,6 @@ Only the first file of a chapter carries its `#` heading: `11-chapter1-b.md` (§
 ```markdown
 # 1 Аналіз предметної області та специфікація вимог      ← chapter: number typed by the writer
 ## 1.1 Аналіз предметної області                          ← subsection
-**1.1.1 Захоплення екрана у браузері.** Текст пункту…     ← run-in пункт
 ## Висновки до розділу 1
 # Вступ                                                    ← structural element (no number)
 
@@ -431,8 +723,8 @@ Only the first file of a chapter carries its `#` heading: `11-chapter1-b.md` (§
 ![Діаграма компонентів системи](../diagrams/fig-components.png){#fig:components width=16cm}
 
 : Порівняння наявних програмних рішень {#tbl:analogs}
-| Критерій | Twitch | … |
-|---|---|---|
+| Функціональна можливість | stream-share | Twitch + OBS Studio | … |   ← developed app first, ≤ 4 analogs (§0.6)
+|---|---|---|---|
 
 ```{#lst:follower .ts caption="Фрагмент класу SourceFollower"}
 …verbatim code…
@@ -442,7 +734,7 @@ Only the first file of a chapter carries its `#` heading: `11-chapter1-b.md` (§
 $$UCP = UAW + UUCW.$$
 :::
 
-::: {#sc:start-stream caption="Розпочати трансляцію окремого застосунку"}
+::: {#sc:start-stream caption="Трансляція окремого застосунку"}   ← full template: §0.4
 **Основна дійова особа:** …
 :::
 ```

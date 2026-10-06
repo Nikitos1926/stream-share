@@ -1,7 +1,7 @@
 # thesis/ — rules for agents writing the diploma thesis
 
 Branch `diploma` only; ticket branches are cut from `diploma`, PRs target `diploma`, never `main`.
-`thesis/PLAN.md` is binding: formatting (§1), outline + page budgets + code areas (§2),
+`thesis/PLAN.md` is binding: style addendum (§0), formatting (§1), outline + page budgets + code areas (§2),
 figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthfulness traps (§6).
 
 - Ukrainian academic register, impersonal; English only for the title, tech names, code, identifiers.
@@ -9,8 +9,16 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   and list it in the ticket comment. Check §6 of PLAN.md before describing a feature.
 - One chapter (or chapter part) per file in `chapters/` (names in PLAN.md §4.1); never edit
   another ticket's file.
-- Headings carry explicit numbers: `# 3 Проєктування програмної системи`, `## 3.1 …`,
-  run-in points `**3.1.1 Назва.** Текст`, every chapter ends with `## Висновки до розділу N`.
+- Headings carry explicit numbers: `# 3 Проєктування програмної системи`, `## 3.1 …`; every
+  chapter ends with `## Висновки до розділу N`. **No x.y.z level at all** (no `###`, no run-in
+  `**3.1.1 …**`).
+- **Style addendum 2026-10-06 = PLAN.md §0 (binding, overrides older rules).** In short:
+  - Identifiers are plain text with a kind noun, never in backticks, italics or quotes.
+  - No file paths or project tree; modules are named by role.
+  - Use-case scenarios follow the E2 template.
+  - Spacing values are in §0.5.
+  - `tbl:analogs` has a stream-share column and ≤ 4 analogs.
+  - Run the §0.7 checklist before every hand-off.
 - Figures/tables/listings/formulas/scenarios use the IDs and syntax of PLAN.md §4.3, are referenced
   in the text before they appear and are followed by an explanatory paragraph.
 - Diagrams: `diagrams/<name>.puml` (file name = figure ID with `fig-` prefix, e.g. `fig-components.puml`),
