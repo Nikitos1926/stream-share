@@ -8,7 +8,9 @@ thesis.lua — pandoc Lua filter for the stream-share thesis (thesis/PLAN.md §1
       : Назва {#tbl:x}                                    → «Таблиця 2.1 – Назва» above
       ```{#lst:x .ts caption="Назва"}                    → «Лістинг 4.1 – Назва» above
       ::: {#eq:x} $$…$$ :::                               → formula centred, «(2.1)» at the right
-      ::: {#sc:x caption="Назва"} … :::                   → «Сценарій 1.1 – Назва» above
+      ::: {#sc:x caption="Назва"} … :::                   → «Сценарій 1.1 – Назва» above, ruled
+                                                             body, lists as typed «N. » (§0.4)
+  * Inline code `x` is rendered as plain body text (PLAN.md §0.2); listings keep Courier New.
   * Resolves @fig:/@tbl:/@lst:/@sc: to «3.1» and @eq: to «(2.1)». An unknown target (e.g. a table
     of a chapter not written yet) prints a warning and renders «??»; THESIS_STRICT=1 makes it an error.
   * Renders [@key] / [@a; @b, с. 15] / @key from sources.yaml as «[1]», «[1, 2]», «[2, с. 15]»,
@@ -22,7 +24,13 @@ thesis.lua — pandoc Lua filter for the stream-share thesis (thesis/PLAN.md §1
 ]]
 
 local KINDS = { fig = "Рисунок", tbl = "Таблиця", lst = "Лістинг", sc = "Сценарій", eq = "" }
-local CAPTION_STYLE = "Table Caption" -- listing/scenario captions look like table captions
+local CAPTION_STYLE = "Table Caption" -- listing captions look like table captions
+-- Scenario layout (PLAN.md §0.4): caption, rule, flush-left body, rule. The rules are paragraph
+-- borders of the first/last body paragraph (make_reference_docx.py); a one-paragraph scenario
+-- gets both. Word merges equal borders of adjacent paragraphs, hence four body styles.
+local SC_CAPTION_STYLE = "Scenario Caption"
+local SC_STYLES = { first = "Scenario First", mid = "Scenario", last = "Scenario Last",
+  single = "Scenario Single" }
 local FORMULA_STYLE = "Formula"       -- reference.docx: centre tab + right tab (make_reference_docx.py)
 local REFS_TITLE = "Список використаних джерел"
 
@@ -222,6 +230,41 @@ local function render_cite(c, sources)
   return out
 end
 
+-- Scenario body: Markdown lists become typed «N. » paragraphs (not Word auto-lists), every
+-- paragraph gets a scenario style so it is flush left and the first/last carry the rules.
+local function scenario_body(blocks)
+  local paras = pandoc.List({})
+  local function add_inlines(inl) paras:insert(pandoc.Para(inl)) end
+  for _, b in ipairs(blocks) do
+    if b.t == "Para" or b.t == "Plain" then
+      add_inlines(b.content)
+    elseif b.t == "OrderedList" then
+      local n = b.listAttributes.start or 1
+      for _, item in ipairs(b.content) do
+        local inl = pandoc.Inlines({ pandoc.Str(n .. "."), pandoc.Space() })
+        inl:extend(pandoc.utils.blocks_to_inlines(item))
+        add_inlines(inl)
+        n = n + 1
+      end
+    elseif b.t == "BulletList" then
+      for _, item in ipairs(b.content) do
+        local inl = pandoc.Inlines({ pandoc.Str("–"), pandoc.Space() })
+        inl:extend(pandoc.utils.blocks_to_inlines(item))
+        add_inlines(inl)
+      end
+    else
+      err("scenario: unsupported block " .. b.t .. " (use paragraphs and lists only)")
+    end
+  end
+  local out = pandoc.Blocks({})
+  for i, p in ipairs(paras) do
+    local st = (#paras == 1 and SC_STYLES.single) or (i == 1 and SC_STYLES.first)
+        or (i == #paras and SC_STYLES.last) or SC_STYLES.mid
+    out:insert(pandoc.Div({ p }, { ["custom-style"] = st }))
+  end
+  return out
+end
+
 local function formula_block(div)
   local inl = pandoc.Inlines({})
   pandoc.Div(div.content):walk({
@@ -330,8 +373,9 @@ function Pandoc(doc)
           return nil
         end
         local capinl = pandoc.utils.blocks_to_inlines(pandoc.read(cap, "markdown-smart").blocks)
-        local out = pandoc.Blocks({ caption_para("Сценарій " .. labels[d.identifier], capinl) })
-        out:extend(d.content)
+        local out = pandoc.Blocks({ pandoc.Div({ pandoc.Para(prefix_inlines(
+          "Сценарій " .. labels[d.identifier], capinl)) }, { ["custom-style"] = SC_CAPTION_STYLE }) })
+        out:extend(scenario_body(d.content))
         return out
       end
       return nil
@@ -340,6 +384,10 @@ function Pandoc(doc)
   })
 
   doc.blocks = place_references(doc.blocks)
+
+  -- PLAN.md §0.2: identifiers are body text. Inline code (also in captions and table cells)
+  -- loses its monospace style; fenced listings (CodeBlock) are untouched.
+  doc = doc:walk({ Code = function(c) return pandoc.Str(c.text) end })
 
   local unused = {}
   for _, key in ipairs(order) do

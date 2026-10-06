@@ -32,6 +32,19 @@ def main(path):
     body = [e for e in doc.element.body if e.tag in (W + "p", W + "tbl")]  # skip bookmarks
     items = [(e.tag.split("}")[-1], style_of(e) if e.tag == W + "p" else "", text(e)) for e in body]
     texts = [t for _, _, t in items]
+    styles = {s.get(f"{W}styleId"): s for s in doc.styles.element.findall(f"{W}style")}
+    dflt = doc.styles.element.find(f"{W}docDefaults/{W}pPrDefault/{W}pPr/{W}spacing")
+
+    def style_val(sid, side, depth=0):
+        """Effective spacing `before`/`after` of a paragraph style (basedOn chain, docDefaults)."""
+        st = styles.get(sid)
+        sp = st.find(f"{W}pPr/{W}spacing") if st is not None else None
+        if sp is not None and sp.get(f"{W}{side}") is not None:
+            return int(sp.get(f"{W}{side}"))
+        parent = st.find(f"{W}basedOn") if st is not None else None
+        if parent is not None and depth < 20:
+            return style_val(parent.get(f"{W}val"), side, depth + 1)
+        return int(dflt.get(f"{W}{side}", "0")) if dflt is not None else 0
 
     def find(s, start=0):
         for i in range(start, len(items)):
@@ -87,7 +100,7 @@ def main(path):
                 expect(first is not None and first.get(qn("w:val")) == "center",
                        f"header row of the table under «{cap}» is not centred")
     # Listing: caption above the code.
-    i = find("Лістинг 1.1 – Перший лістинг")
+    i = find("Лістинг 1.1 – Перший лістинг з методом answer")
     if i >= 0:
         expect(items[i][1] == "TableCaption", "listing caption style")
         expect(items[i + 1][1] == "SourceCode" and "answer" in texts[i + 1], "no code below listing")
@@ -99,11 +112,75 @@ def main(path):
             expect(len(list(body[hits[0]].iter(W + "tab"))) == 2, f"formula {num} lacks tabs")
             expect(body[hits[0]].find(".//{http://schemas.openxmlformats.org/officeDocument/2006/math}oMath")
                    is not None, f"formula {num} is not OMML")
-    # Scenarios.
-    for cap in ("Сценарій 1.1 – Перший сценарій", "Сценарій 1.2 – Другий сценарій"):
+    # Scenarios (PLAN.md §0.4): own caption style, typed step numbers, rules on first/last body
+    # paragraph (a one-paragraph scenario has both).
+    for cap, body_styles in (("Сценарій 1.1 – Перший сценарій",
+                              ["ScenarioFirst"] + ["Scenario"] * 6 + ["ScenarioLast"]),
+                             ("Сценарій 1.2 – Другий сценарій", ["ScenarioSingle"])):
         i = find(cap)
         if i >= 0:
-            expect(items[i][1] == "TableCaption", f"«{cap}» caption style")
+            expect(items[i][1] == "ScenarioCaption", f"«{cap}» caption style")
+            got = [st for _, st, _ in items[i + 1:i + 1 + len(body_styles)]]
+            expect(got == body_styles, f"«{cap}» body styles {got}")
+    i = find("1. Гість натискає кнопку.")
+    expect(i >= 0 and body[i].find(f".//{W}numPr") is None, "scenario steps must be typed, not a list")
+    find("2а.1. Система показує помилку. Повернення до п. 1.")
+    for sid, sides in (("ScenarioFirst", {"top"}), ("ScenarioLast", {"bottom"}),
+                       ("ScenarioSingle", {"top", "bottom"}), ("Scenario", set())):
+        st = styles.get(sid)
+        bdr = st.find(f"{W}pPr/{W}pBdr") if st is not None else None
+        got = {e.tag.split("}")[-1] for e in bdr} if bdr is not None else set()
+        expect(got == sides, f"style {sid} borders {got}, expected {sides}")
+        ind = st.find(f"{W}pPr/{W}ind") if st is not None else None
+        expect(ind is not None and ind.get(f"{W}firstLine", "0") == "0",
+               f"style {sid} must have no first-line indent")
+
+    # Inline code is plain body text (§0.2); only listings use the code font.
+    contains("Інлайн-код useSourceFollower має")
+    contains("setDisplayMediaRequestHandler")
+    for k, e in enumerate(body):
+        if items[k][1] != "SourceCode" and e.find(f".//{W}rStyle[@{W}val='VerbatimChar']") is not None:
+            failures.append(f"inline code styling left in «{items[k][2][:40]}»")
+
+    # Vertical spacing (§0.5), twips: 24 pt = 480, 6 pt = 120. Gaps are `before` on the next
+    # paragraph, every `after` is 0 («max, not sum»).
+    def gap(k, side):
+        sp = body[k].find(f"{W}pPr/{W}spacing")
+        if sp is not None and sp.get(f"{W}{side}") is not None:
+            return int(sp.get(f"{W}{side}"))
+        return style_val(items[k][1] or "Normal", side)
+
+    def first(st, start=0):
+        return next((k for k in range(start, len(items)) if items[k][1] == st), -1)
+
+    for k, (kind, st, t) in enumerate(items):
+        if kind == "p" and not st.startswith("TitlePage") and st != "TOCTitle":
+            expect(gap(k, "after") == 0, f"«{t[:30]}» ({st}) has space after {gap(k, 'after')}")
+    i_fig = first("CaptionedFigure")
+    expect(gap(i_fig, "before") == 480, "figure: 24 pt before")
+    sp = styles["CaptionedFigure"].find(f"{W}pPr/{W}spacing")
+    expect(sp is not None and sp.get(f"{W}line") == "240", "figure paragraph must be single-spaced")
+    expect(gap(i_fig + 1, "before") == 120, "figure caption: 6 pt before")
+    expect(gap(i_fig + 2, "before") == 480, "after figure caption: 24 pt")
+    i_tc = find("Таблиця 1.1 – Перша таблиця")
+    expect(gap(i_tc, "before") == 480, "table caption: 24 pt before")
+    expect(gap(i_tc + 2, "before") >= 480, "after table: 24 pt")
+    i_lst = first("SourceCode")
+    expect(gap(i_lst - 1, "before") == 480, "listing caption: 24 pt before")
+    expect(gap(i_lst, "before") == 120, "listing code: 6 pt under its caption")
+    expect(gap(i_lst + 1, "before") == 480, "after listing: 24 pt")
+    i_eq = first("Formula")
+    expect(gap(i_eq, "before") == 480 and gap(i_eq + 1, "before") == 480,
+           "formula: 24 pt before and after (also before «де …»)")
+    i_sc = first("ScenarioCaption")
+    expect(gap(i_sc, "before") == 480, "scenario caption: 24 pt before")
+    i_end = first("ScenarioSingle")
+    expect(gap(i_end + 1, "before") == 480, "after scenario: 24 pt")
+    i_h2 = first("Heading2")
+    expect(gap(i_h2, "before") == 480 and gap(i_h2 + 1, "before") == 480,
+           "Heading 2: 24 pt before and after")
+    for st in ("TableCaption", "CaptionedFigure", "ScenarioCaption", "ScenarioFirst"):
+        expect(styles[st].find(f"{W}pPr/{W}keepNext") is not None, f"{st} must keep with next")
 
     # Cross-references and citations in the text.
     for s in ("(рис. 1.1)", "(табл. 1.1)", "(див. лістинг 1.1)", "формула (1.1)",

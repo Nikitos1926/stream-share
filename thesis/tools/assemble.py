@@ -9,7 +9,9 @@
     («different first page»);
   * every chapter / structural element on a new page (Heading 1 «page break before»);
   * tables ruled, full text width with content-fitted columns, header row centred (§1.7);
-  * «ДОДАТОК А» / title of the appendix on two lines (§1.4).
+  * «ДОДАТОК А» / title of the appendix on two lines (§1.4);
+  * the 24 pt gap after tables, listings, figure captions, formulas, scenarios and headings as
+    `before` on the next paragraph (§0.5, «max, not sum»).
 
 Usage: assemble.py IN.docx OUT.docx [--metadata thesis/metadata.yaml] [--template T.docx]
 """
@@ -323,6 +325,91 @@ def format_tables(doc):
                             rpr.append(el("w:szCs", **{"w:val": str(size)}))
 
 
+# --------------------------------------------------------------------------- vertical spacing
+# PLAN.md §0.5: the gap *after* an element, in twentieths of a point (24 pt = 480). Styles keep
+# `after` = 0 (make_reference_docx.py); the gap becomes `before` on the next paragraph, raised
+# only if that paragraph's own `before` is smaller — «max, not sum».
+GAP_AFTER = {
+    "tbl": 480,             # table (no paragraph of its own)
+    "SourceCode": 480,      # listing: last code line
+    "ImageCaption": 480,    # figure caption
+    "Formula": 480,         # formula line, also before «де …»
+    "ScenarioLast": 480,    # closing rule of a scenario
+    "ScenarioSingle": 480,
+    "Heading2": 480,        # subsection heading: one empty line after
+    "Heading3": 480,
+    "Heading1": 420,        # chapter heading: 21 pt, as before
+}
+
+
+def style_spacing(doc):
+    """styleId -> effective `before` (twips) of every paragraph style, following basedOn."""
+    styles = {s.get(qn("w:styleId")): s for s in doc.styles.element.findall(qn("w:style"))}
+    default = doc.styles.element.find(f"{qn('w:docDefaults')}/{qn('w:pPrDefault')}/"
+                                      f"{qn('w:pPr')}/{qn('w:spacing')}")
+    base = int(default.get(qn("w:before"), "0")) if default is not None else 0
+    cache = {}
+
+    def before(sid, depth=0):
+        if sid in cache:
+            return cache[sid]
+        st = styles.get(sid)
+        if st is None or depth > 20:
+            return base
+        sp = st.find(f"{qn('w:pPr')}/{qn('w:spacing')}")
+        if sp is not None and sp.get(qn("w:before")) is not None:
+            val = int(sp.get(qn("w:before")))
+        else:
+            parent = st.find(qn("w:basedOn"))
+            val = before(parent.get(qn("w:val")), depth + 1) if parent is not None else base
+        cache[sid] = val
+        return val
+
+    normal = next((sid for sid, st in styles.items() if st.get(qn("w:default")) == "1"
+                   and st.get(qn("w:type")) == "paragraph"), "Normal")
+    return lambda sid: before(sid or normal)
+
+
+def p_style(p):
+    s = p.find(qn("w:pPr") + "/" + qn("w:pStyle"))
+    return s.get(qn("w:val")) if s is not None else ""
+
+
+def set_before(p, twips):
+    ppr = p.get_or_add_pPr()
+    sp = ppr.find(qn("w:spacing"))
+    if sp is None:
+        sp = el("w:spacing")
+        # CT_PPrBase: spacing comes after pStyle…tabs…, before ind/jc/rPr; find the first later one.
+        later = {qn(t) for t in ("w:ind", "w:contextualSpacing", "w:mirrorIndents",
+                                 "w:suppressOverlap", "w:jc", "w:textDirection",
+                                 "w:textAlignment", "w:textboxTightWrap", "w:outlineLvl",
+                                 "w:divId", "w:cnfStyle", "w:rPr", "w:sectPr", "w:pPrChange")}
+        nxt = next((c for c in ppr if c.tag in later), None)
+        if nxt is not None:
+            nxt.addprevious(sp)
+        else:
+            ppr.append(sp)
+    sp.set(qn("w:before"), str(twips))
+
+
+def space_blocks(doc):
+    """Write the §0.5 gap after tables, listings, figures, formulas, scenarios and headings as
+    `before` on the following body paragraph (max of the two, never their sum)."""
+    before_of = style_spacing(doc)
+    blocks = [e for e in doc.element.body if e.tag in (qn("w:p"), qn("w:tbl"))]
+    for prev, cur in zip(blocks, blocks[1:]):
+        key = "tbl" if prev.tag == qn("w:tbl") else p_style(prev)
+        gap = GAP_AFTER.get(key)
+        if not gap or cur.tag != qn("w:p") or p_style(cur) == "Heading1":
+            continue
+        direct = cur.find(f"{qn('w:pPr')}/{qn('w:spacing')}")
+        own = (int(direct.get(qn("w:before"))) if direct is not None
+               and direct.get(qn("w:before")) is not None else before_of(p_style(cur)))
+        if own < gap:
+            set_before(cur, gap)
+
+
 def split_appendix_headings(doc):
     """PLAN.md §1.4 and both examples: «ДОДАТОК А» on one line, the title below it in sentence
     case (Heading 1 is all caps), as one heading so ЗМІСТ lists «Додаток А Лістинг програми»."""
@@ -371,6 +458,7 @@ def main():
     format_tables(doc)
     split_appendix_headings(doc)
     chapters_on_new_page(doc)
+    space_blocks(doc)
     doc.save(a.output)
 
 
