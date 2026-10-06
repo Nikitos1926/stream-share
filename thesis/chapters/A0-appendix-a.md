@@ -10,11 +10,7 @@
 Далі наведено клас слідування за вікнами застосунку в настільному застосунку (лістинг @lst:a-source-follower).
 
 ```{#lst:a-source-follower .ts caption="Клас SourceFollower настільного застосунку"}
-import log from 'electron-log/main';
-import type { FollowState, SourceChanged } from '../conveyor/schemas/stream.schema';
-import { findFamilyRoot, isInFamily, isShellProcess } from './processFamily';
-import type { ProcessTable } from './processTable';
-
+// ...
 export const POLL_INTERVAL_MS = 1500;
 export const RETURN_GRACE_MS = 4000;
 export const RETURN_WAIT_MS = 20_000;
@@ -296,15 +292,7 @@ export class SourceFollower {
 Далі наведено сервіс сервера сигналізації, що створює процеси-обробники, маршрутизатори й транспорти mediasoup та обмежує їхній бітрейт (лістинг @lst:a-mediasoup).
 
 ```{#lst:a-mediasoup .ts caption="Клас MediasoupService сервера сигналізації (скорочено)"}
-import { env } from '@stream-share/env/signaling';
-import {
-  MAX_VIDEO_BITRATE,
-  MIN_SERVER_INCOMING_BITRATE,
-  startBitrateFor,
-} from '@stream-share/shared';
-import mediasoup from 'mediasoup';
-import type { Router, WebRtcTransport, Worker } from 'mediasoup/types';
-
+// ...
 export type TransportRole = 'send' | 'recv';
 
 const RTC_MIN_PORT = env.MEDIASOUP_RTC_MIN_PORT;
@@ -844,12 +832,7 @@ export function useStreamer() {
 Далі наведено модуль входу через Google у системному браузері головного процесу настільного застосунку (лістинг @lst:a-google-auth).
 
 ```{#lst:a-google-auth .ts caption="Вхід через Google у системному браузері в настільному застосунку (скорочено)"}
-import { shell, type BrowserWindow } from 'electron';
-import { createHash, randomBytes } from 'node:crypto';
-import { createServer, type Server } from 'node:http';
-import type { AddressInfo } from 'node:net';
-import { bringWindowToFront } from './windowFocus';
-
+// ...
 const SIGN_IN_TIMEOUT_MS = 5 * 60 * 1000;
 
 export type GoogleSignInResult =
