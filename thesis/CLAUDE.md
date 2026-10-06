@@ -40,7 +40,7 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   результат», cells start with a capital, parameters as «Статус: 401», fact «Пройдено» /
   «Пройдено: <measured value>» / «Не пройдено: <actual>»; IDs А1…З5 match the test scripts' output.
   Appendix А lead-ins come from the `lead` field of `LISTINGS` in `tools/appendix.py` (role, no
-  path). Volume is over the limit (2026-10-06: main 85 of 80 pp, total 127 of ~120 by
+  path). Volume is at the limit (2026-10-06 re-assembly: main 79 of 80 pp, total 121 of ~120 by
   `pages.txt`): any addition needs an equal cut.
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
@@ -70,7 +70,8 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
 - «Продовження таблиці» for a table split across pages cannot be generated (Word has no such
   feature); the author adds it in Word after the final pagination (OPEN_ITEMS.md).
 - `assemble.py` also rules tables (full 175 mm width, columns fitted to content, header row
-  centred, 12 pt for ≥ 5 columns or words that do not fit), keeps АНОТАЦІЯ/ABSTRACT out of ЗМІСТ
+  centred, 12 pt for ≥ 5 columns or words that do not fit; a column is never narrower than its
+  longest word counted as ≥ 3 glyphs, capitals 1.35, so IDs like «ФВ-12» do not wrap), keeps АНОТАЦІЯ/ABSTRACT out of ЗМІСТ
   (TOC Title style), and splits «ДОДАТОК А» / title onto two lines.
 - Every full build runs `tools/qa.py`: each fig/tbl/lst/eq/sc defined once and referenced (ranges
   `@tbl:a–@tbl:c` count), main-text listings ≤ 25 lines; it regenerates `thesis/OPEN_ITEMS.md`

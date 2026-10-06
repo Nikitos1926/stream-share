@@ -242,12 +242,18 @@ CHAR_W = {28: 150, 24: 130}  # glyph width (twips) of TNR 14 / 12 pt, Cyrillic, 
 WIDE_COLS = 5              # PLAN.md §1.7: 12 pt allowed for wide tables
 
 
+def word_glyphs(word):
+    """Width of a word in average glyphs: capitals (Ф, В, Ш…) are much wider than the average."""
+    return sum(1.35 if ch.isupper() else 1 for ch in word)
+
+
 def column_widths(cols, size):
     """Auto-fit like a browser: each column gets at least its longest word, the rest of the text
     width is shared in proportion to how much longer the column's text is than that minimum."""
     cw = CHAR_W[size]
-    # ≥ 3 average glyphs per word: short IDs with a wide Cyrillic letter («П1», «Д10») must not wrap
-    mins = [max((max(len(w), 3) for c in col for w in c.split()), default=3) * cw + CELL_PAD
+    # ≥ 3 average glyphs per word: short IDs with a wide Cyrillic letter («П1», «Д10») must not wrap;
+    # capitals count 1.35 glyphs, else «ФВ-12» breaks after its hyphen in a column fitted to it
+    mins = [max((max(word_glyphs(w), 3) for c in col for w in c.split()), default=3) * cw + CELL_PAD
             for col in cols]
     maxs = [max(max((len(c) for c in col), default=1) * cw + CELL_PAD, m) for col, m in zip(cols, mins)]
     if sum(maxs) <= TEXT_WIDTH:

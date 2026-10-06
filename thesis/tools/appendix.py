@@ -21,11 +21,11 @@ OUT = THESIS / "chapters" / "A0-appendix-a.md"
 # (id, language, path, line ranges (1-based, inclusive) or None for the whole file, caption,
 #  lead-in naming the part by role — PLAN.md §0.3: never a file path in the text)
 LISTINGS = [
-    ("lst:a-source-follower", "ts", "apps/desktop/src/main/sourceFollower.ts", None,
+    ("lst:a-source-follower", "ts", "apps/desktop/src/main/sourceFollower.ts", [(6, 281)],
      "Клас SourceFollower настільного застосунку",
      "клас слідування за вікнами застосунку в настільному застосунку"),
     ("lst:a-mediasoup", "ts", "apps/signaling/src/services/mediasoup.service.ts",
-     [(1, 24), (41, 173)],
+     [(10, 24), (41, 173)],
      "Клас MediasoupService сервера сигналізації (скорочено)",
      "сервіс сервера сигналізації, що створює процеси-обробники, маршрутизатори й транспорти "
      "mediasoup та обмежує їхній бітрейт"),
@@ -39,7 +39,7 @@ LISTINGS = [
      "Хук useStreamer сторінки трансляції (скорочено)",
      "хук сторінки трансляції вебзастосунку, що керує захопленням і публікацією медіапотоків "
      "стрімера"),
-    ("lst:a-google-auth", "ts", "apps/desktop/src/main/googleAuth.ts", [(1, 24), (71, 168)],
+    ("lst:a-google-auth", "ts", "apps/desktop/src/main/googleAuth.ts", [(7, 24), (71, 168)],
      "Вхід через Google у системному браузері в настільному застосунку (скорочено)",
      "модуль входу через Google у системному браузері головного процесу настільного "
      "застосунку"),
