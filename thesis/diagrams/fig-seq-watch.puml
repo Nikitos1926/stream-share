@@ -10,7 +10,7 @@ hide footbox
 
 actor "Глядач" as U
 participant "Сторінка\n/:streamId/watch\n(Watch, useViewer)" as P
-participant "apps/web\nAuth.js (guest)" as A
+participant "Вебзастосунок\nAuth.js (guest)" as A
 participant "StreamsController /\nUsersController" as C
 participant "ViewersService" as VS
 participant "MediasoupService" as MS
