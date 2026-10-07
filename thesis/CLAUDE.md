@@ -103,6 +103,8 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
 - Every full build runs `tools/qa.py`: each fig/tbl/lst/eq/sc defined once and referenced (ranges
   `@tbl:a–@tbl:c` count), main-text listings ≤ 25 lines; it regenerates `thesis/OPEN_ITEMS.md`
   (all `[ПОТРЕБУЄ …]` placeholders with location — generated, never edit by hand).
+  It appends `thesis/CHECKLIST.md`, the hand-written result of the last full check against all
+  rules (PLAN.md §0.7 + §0A greps, PDF checks); update it after every full re-check.
 - `build.sh --pdf` → `out/thesis.pdf` via headless LibreOffice (`tools/pdf.sh` fetches it into
   `.cache/libreoffice`, no root; `tools/topdf.py` fills ЗМІСТ and prints **real page counts** per
   section — use these, not `wordcount.py`, for the PLAN.md §2 budget). `build.sh --release` = strict
