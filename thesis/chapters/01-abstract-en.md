@@ -1,18 +1,19 @@
-# Abstract
+# ABSTRACT
 
-[ПОТРЕБУЄ УТОЧНЕННЯ: Surname N. P.] Web service for streaming media content with the function of
-capturing individual applications : bachelor's qualification work in the specialty
-«[ПОТРЕБУЄ УТОЧНЕННЯ: specialty code and name in English]» / [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patronymic
-Surname] ; supervisor [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patronymic Surname]. – Odesa : Odesa Polytech. Nat.
+Kabakov N. S. Web service for streaming media content with the function of capturing individual
+applications : bachelor's qualification work in the specialty «121 Software Engineering» / Nikita
+Serhiiovych Kabakov ; supervisor [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patronymic Surname]. – Odesa : Odesa Polytech. Nat.
 Univ., [ПОТРЕБУЄ УТОЧНЕННЯ: year]. – [ПОТРЕБУЄ УТОЧНЕННЯ: total number of pages after layout] p.
 
 The qualification work contains the main text part on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout]
 pages, a list of used sources with 82 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
 appendices on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages.
 
-The purpose of the qualification work is to enable streaming of an individual application together
-with its own audio to viewers in a web browser with low delivery latency by developing the
-stream-share web service and a desktop application for capture.
+The purpose of the qualification work is to improve the efficiency of broadcasting individual
+applications by developing a media streaming web service with a desktop capture application that
+delivers to viewers in the browser the picture and own sound of the selected application only and,
+without any action from the streamer, switches the broadcast to a new window of that application
+within 1.5 s.
 
 The work analyses media delivery technologies, multiparty transmission topologies and the
 limitations of screen capture in the browser, compares four existing solutions and identifies the
