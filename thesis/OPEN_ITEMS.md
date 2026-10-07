@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **83** — `metadata.yaml` 3, `chapters/00-abstract-uk.md` 6, `chapters/01-abstract-en.md` 6, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 5, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 22.
+Total placeholders: **79** — `metadata.yaml` 3, `chapters/00-abstract-uk.md` 6, `chapters/01-abstract-en.md` 6, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `chapters/C0-appendix-v.md` 11, `front/task-sheet.md` 22.
 
 ## metadata.yaml
 
@@ -62,11 +62,7 @@ Total placeholders: **83** — `metadata.yaml` 3, `chapters/00-abstract-uk.md` 6
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 89 | 2.1 Оцінювання тривалості розробки | підтвердити оцінки E2, E3 і E7 – попередній досвід розробника та зайнятість протягом проєкту |
-| 123 | 2.1 Оцінювання тривалості розробки | фактичні трудовитрати в годинах, якщо їх обліковували |
-| 127 | 2.2 Розробка плану виконання проєкту | роль автора комітів гілки режиму слідування в проєкті |
-| 127 | 2.2 Розробка плану виконання проєкту | чи існував попередній календарний план і чи велася робота до 27.05.2026 |
-| 151 | 2.2 Розробка плану виконання проєкту | дата завершення роботи та етапи календарного плану із завдання на кваліфікаційну роботу |
+| 157 | 2.2 Розробка плану виконання проєкту | дата завершення |
 
 ## chapters/40-chapter4-a.md
 
