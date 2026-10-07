@@ -5,166 +5,62 @@
 ::: {#refs}
 1. Pantos R., May W. HTTP Live Streaming : RFC 8216. IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8216 (дата звернення: 05.10.2026).
 
-2. Understand live streaming latency. YouTube Help. URL: https://support.google.com/youtube/answer/7444635 (дата звернення: 05.10.2026).
+2. Present during a video meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9308856 (дата звернення: 05.10.2026).
 
-3. Present during a video meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9308856 (дата звернення: 05.10.2026).
+3. Go Live and Screen Share. Discord Support. URL: https://support.discord.com/hc/en-us/articles/360040816151-Go-Live-and-Screen-Share (дата звернення: 05.10.2026).
 
-4. Go Live and Screen Share. Discord Support. URL: https://support.discord.com/hc/en-us/articles/360040816151-Go-Live-and-Screen-Share (дата звернення: 05.10.2026).
+4. Screen Capture : W3C Working Draft 27 August 2026 / ed. by J.-I. Bruaroey, E. Alon. URL: https://www.w3.org/TR/screen-capture/ (дата звернення: 05.10.2026).
 
-5. Screen Capture : W3C Working Draft 27 August 2026 / ed. by J.-I. Bruaroey, E. Alon. URL: https://www.w3.org/TR/screen-capture/ (дата звернення: 05.10.2026).
+5. electron-native-screenshare : Cross-platform native audio capture for Electron screen sharing with process-level isolation. GitHub. URL: https://github.com/CilginSinek/electron-native-screenshare (дата звернення: 05.10.2026).
 
-6. electron-native-screenshare : Cross-platform native audio capture for Electron screen sharing with process-level isolation. GitHub. URL: https://github.com/CilginSinek/electron-native-screenshare (дата звернення: 05.10.2026).
+6. WebRTC: Real-Time Communication in Browsers : W3C Recommendation 13 March 2025 / ed. by C. Jennings et al. URL: https://www.w3.org/TR/webrtc/ (дата звернення: 05.10.2026).
 
-7. WebRTC: Real-Time Communication in Browsers : W3C Recommendation 13 March 2025 / ed. by C. Jennings et al. URL: https://www.w3.org/TR/webrtc/ (дата звернення: 05.10.2026).
+7. Alvestrand H. Overview: Real-Time Protocols for Browser-Based Applications : RFC 8825. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8825 (дата звернення: 05.10.2026).
 
-8. Alvestrand H. Overview: Real-Time Protocols for Browser-Based Applications : RFC 8825. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8825 (дата звернення: 05.10.2026).
+8. Rescorla E. WebRTC Security Architecture : RFC 8827. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8827 (дата звернення: 05.10.2026).
 
-9. Rescorla E. WebRTC Security Architecture : RFC 8827. IETF, 2021. URL: https://www.rfc-editor.org/rfc/rfc8827 (дата звернення: 05.10.2026).
+9. Westerlund M., Wenger S. RTP Topologies : RFC 7667. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7667 (дата звернення: 05.10.2026).
 
-10. Westerlund M., Wenger S. RTP Topologies : RFC 7667. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7667 (дата звернення: 05.10.2026).
+10. Video Broadcast. Twitch Developers. URL: https://dev.twitch.tv/docs/video-broadcast/ (дата звернення: 05.10.2026).
 
-11. HTTP Live Streaming (HLS) authoring specification for Apple devices. Apple Developer Documentation. URL: https://developer.apple.com/documentation/http-live-streaming/hls-authoring-specification-for-apple-devices (дата звернення: 05.10.2026).
+11. Comparative Study of WebRTC Open Source SFUs for Video Conferencing / E. Andre et al. 2018 Principles, Systems and Applications of IP Telecommunications (IPTComm). IEEE, 2018. P. 1–8. DOI: 10.1109/IPTCOMM.2018.8567642.
 
-12. Enabling Low-Latency HTTP Live Streaming (HLS). Apple Developer Documentation. URL: https://developer.apple.com/documentation/http-live-streaming/enabling-low-latency-http-live-streaming-hls (дата звернення: 05.10.2026).
+12. Design. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/design/ (дата звернення: 05.10.2026).
 
-13. Enhanced RTMP (V2) : Document Version v2-2026-01-31-r2 / Veovera Software Organization. URL: https://github.com/veovera/enhanced-rtmp/blob/main/docs/enhanced/enhanced-rtmp-v2.md (дата звернення: 05.10.2026).
+13. desktopCapturer. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/desktop-capturer (дата звернення: 05.10.2026).
 
-14. Video Broadcast. Twitch Developers. URL: https://dev.twitch.tv/docs/video-broadcast/ (дата звернення: 05.10.2026).
+14. session. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/session (дата звернення: 05.10.2026).
 
-15. RTP: A Transport Protocol for Real-Time Applications : RFC 3550 / H. Schulzrinne et al. IETF, 2003. URL: https://www.rfc-editor.org/rfc/rfc3550 (дата звернення: 05.10.2026).
+15. Window Capture Sources. OBS Knowledge Base. URL: https://obsproject.com/kb/window-capture-sources (дата звернення: 05.10.2026).
 
-16. Keranen A., Holmberg C., Rosenberg J. Interactive Connectivity Establishment (ICE): A Protocol for Network Address Translator (NAT) Traversal : RFC 8445. IETF, 2018. URL: https://www.rfc-editor.org/rfc/rfc8445 (дата звернення: 05.10.2026).
+16. Application Audio Capture Guide. OBS Knowledge Base. URL: https://obsproject.com/kb/application-audio-capture-guide (дата звернення: 05.10.2026).
 
-17. Uberti J., Jennings C., Rescorla E. JavaScript Session Establishment Protocol (JSEP) : RFC 9429. IETF, 2024. URL: https://www.rfc-editor.org/rfc/rfc9429 (дата звернення: 05.10.2026).
+17. 2k Streaming on Twitch. Twitch Help. URL: https://help.twitch.tv/s/article/stream-quality (дата звернення: 06.10.2026).
 
-18. Comparative Study of WebRTC Open Source SFUs for Video Conferencing / E. Andre et al. 2018 Principles, Systems and Applications of IP Telecommunications (IPTComm). IEEE, 2018. P. 1–8. DOI: 10.1109/IPTCOMM.2018.8567642.
+18. Join a meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9303069 (дата звернення: 06.10.2026).
 
-19. Overview. mediasoup documentation. URL: https://mediasoup.org/documentation/overview/ (дата звернення: 05.10.2026).
+19. Freigeben des Bildschirms oder Desktops in Zoom. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0060609 (дата звернення: 05.10.2026).
 
-20. MediaDevices: getDisplayMedia() method. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia (дата звернення: 05.10.2026).
+20. Joining a Zoom meeting without an account. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0059553 (дата звернення: 06.10.2026).
 
-21. Privacy-preserving screen sharing controls. Chrome for Developers. URL: https://developer.chrome.com/docs/web-platform/screen-sharing-controls (дата звернення: 05.10.2026).
+21. OMG Unified Modeling Language (OMG UML) : Version 2.5.1. Object Management Group, 2017. URL: https://www.omg.org/spec/UML/2.5.1 (дата звернення: 05.10.2026).
 
-22. desktopCapturer. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/desktop-capturer (дата звернення: 05.10.2026).
+22. Cockburn A. Writing Effective Use Cases. Boston : Addison-Wesley, 2001. 270 p.
 
-23. session. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/session (дата звернення: 05.10.2026).
+23. ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026).
 
-24. OBS Studio : Free and open source software for video recording and live streaming. OBS Project. URL: https://obsproject.com/ (дата звернення: 05.10.2026).
+24. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
 
-25. Window Capture Sources. OBS Knowledge Base. URL: https://obsproject.com/kb/window-capture-sources (дата звернення: 05.10.2026).
+25. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
 
-26. Application Audio Capture Guide. OBS Knowledge Base. URL: https://obsproject.com/kb/application-audio-capture-guide (дата звернення: 05.10.2026).
+26. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
 
-27. Issues with Non-Supported Browsers. Twitch Help. URL: https://help.twitch.tv/s/article/supported-browsers (дата звернення: 06.10.2026).
+27. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
 
-28. 2k Streaming on Twitch. Twitch Help. URL: https://help.twitch.tv/s/article/stream-quality (дата звернення: 06.10.2026).
+28. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
 
-29. Join a meeting. Google Meet Help. URL: https://support.google.com/meet/answer/9303069 (дата звернення: 06.10.2026).
+29. Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026).
 
-30. Freigeben des Bildschirms oder Desktops in Zoom. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0060609 (дата звернення: 05.10.2026).
-
-31. Joining a Zoom meeting without an account. Zoom Support. URL: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0059553 (дата звернення: 06.10.2026).
-
-32. OMG Unified Modeling Language (OMG UML) : Version 2.5.1. Object Management Group, 2017. URL: https://www.omg.org/spec/UML/2.5.1 (дата звернення: 05.10.2026).
-
-33. Cockburn A. Writing Effective Use Cases. Boston : Addison-Wesley, 2001. 270 p.
-
-34. ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026).
-
-35. Auto Update. electron-builder. URL: https://www.electron.build/docs/features/auto-update (дата звернення: 05.10.2026).
-
-36. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
-
-37. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
-
-38. OAuth 2.0 for iOS & Desktop Apps. Google for Developers. URL: https://developers.google.com/identity/protocols/oauth2/native-app (дата звернення: 05.10.2026).
-
-39. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
-
-40. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
-
-41. Workspace. pnpm Documentation. URL: https://pnpm.io/workspaces (дата звернення: 05.10.2026).
-
-42. Fette I., Melnikov A. The WebSocket Protocol : RFC 6455. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6455 (дата звернення: 05.10.2026).
-
-43. Design. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/design/ (дата звернення: 05.10.2026).
-
-44. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
-
-45. Drizzle ORM : Overview. Drizzle Team. URL: https://orm.drizzle.team/docs/overview (дата звернення: 05.10.2026).
-
-46. Zod : TypeScript-first schema validation with static type inference. URL: https://zod.dev/ (дата звернення: 05.10.2026).
-
-47. How Compose works. Docker Docs. URL: https://docs.docker.com/compose/intro/compose-application-model/ (дата звернення: 05.10.2026).
-
-48. Automatic HTTPS. Caddy Documentation. URL: https://caddyserver.com/docs/automatic-https (дата звернення: 05.10.2026).
-
-49. About PostgreSQL. The PostgreSQL Global Development Group. URL: https://www.postgresql.org/about/ (дата звернення: 05.10.2026).
-
-50. mediasoup-client. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/ (дата звернення: 05.10.2026).
-
-51. File-system conventions: proxy.js. Next.js Docs. URL: https://nextjs.org/docs/app/api-reference/file-conventions/proxy (дата звернення: 05.10.2026).
-
-52. Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026).
-
-53. Fastify Documentation. OpenJS Foundation. URL: https://fastify.dev/docs/latest/ (дата звернення: 05.10.2026).
-
-54. \@fastify/websocket : WebSocket support for Fastify. GitHub. URL: https://github.com/fastify/fastify-websocket (дата звернення: 05.10.2026).
-
-55. Context Isolation. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/context-isolation (дата звернення: 05.10.2026).
-
-56. utilityProcess. Electron Documentation. URL: https://www.electronjs.org/docs/latest/api/utility-process (дата звернення: 05.10.2026).
-
-57. TypeScript : JavaScript with syntax for types. Microsoft. URL: https://www.typescriptlang.org/ (дата звернення: 05.10.2026).
-
-58. Next.js Docs. Vercel. URL: https://nextjs.org/docs (дата звернення: 05.10.2026).
-
-59. React v19. React Blog. 2024. 5 December. URL: https://react.dev/blog/2024/12/05/react-19 (дата звернення: 05.10.2026).
-
-60. Janus WebRTC Server : Documentation. Meetecho. URL: https://janus.conf.meetecho.com/docs/ (дата звернення: 05.10.2026).
-
-61. About LiveKit. LiveKit Docs. URL: https://docs.livekit.io/intro/about/ (дата звернення: 05.10.2026).
-
-62. Introduction. Electron Documentation. URL: https://www.electronjs.org/docs/latest/ (дата звернення: 05.10.2026).
-
-63. Webview Versions. Tauri 2 Documentation. URL: https://v2.tauri.app/reference/webview-versions/ (дата звернення: 05.10.2026).
-
-64. Tauri Architecture. Tauri 2 Documentation. URL: https://v2.tauri.app/concept/architecture/ (дата звернення: 05.10.2026).
-
-65. What is Prisma ORM? Prisma Documentation. URL: https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma (дата звернення: 05.10.2026).
-
-66. electron-builder : A complete solution to package and build a ready for distribution Electron app. URL: https://www.electron.build/ (дата звернення: 05.10.2026).
-
-67. MessagePorts in Electron. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/message-ports (дата звернення: 05.10.2026).
-
-68. AudioWorklet. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet (дата звернення: 05.10.2026).
-
-69. mediasoup-client :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup-client/api/ (дата звернення: 05.10.2026).
-
-70. mediasoup :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/api/ (дата звернення: 05.10.2026).
-
-71. Roach A. B. WebRTC Video Processing and Codec Requirements : RFC 7742. IETF, 2016. URL: https://www.rfc-editor.org/rfc/rfc7742 (дата звернення: 05.10.2026).
-
-72. RTP Payload Format for H.264 Video : RFC 6184 / Y.-K. Wang et al. IETF, 2011. URL: https://www.rfc-editor.org/rfc/rfc6184 (дата звернення: 05.10.2026).
-
-73. MediaStreamTrack Content Hints : W3C Working Draft 19 September 2025. URL: https://www.w3.org/TR/mst-content-hint/ (дата звернення: 05.10.2026).
-
-74. Google. Auth.js. URL: https://authjs.dev/getting-started/providers/google (дата звернення: 05.10.2026).
-
-75. Credentials. Auth.js. URL: https://authjs.dev/getting-started/authentication/credentials (дата звернення: 05.10.2026).
-
-76. Set-Cookie header. MDN Web Docs. URL: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie (дата звернення: 05.10.2026).
-
-77. Hooks. Fastify. URL: https://fastify.dev/docs/latest/Reference/Hooks/ (дата звернення: 05.10.2026).
-
-78. drizzle-kit push. Drizzle ORM. URL: https://orm.drizzle.team/docs/drizzle-kit-push (дата звернення: 05.10.2026).
-
-79. Theme variables. Tailwind CSS. URL: https://tailwindcss.com/docs/theme (дата звернення: 05.10.2026).
-
-80. next-themes : Perfect Next.js dark mode in 2 lines of code. GitHub. URL: https://github.com/pacocoursey/next-themes (дата звернення: 05.10.2026).
-
-81. Identifiers for WebRTC's Statistics API : W3C Candidate Recommendation Draft 25 September 2025 / ed. by H. Alvestrand, V. Singh, H. Boström. URL: https://www.w3.org/TR/webrtc-stats/ (дата звернення: 05.10.2026).
-
-82. Scalability. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/scalability/ (дата звернення: 05.10.2026).
+30. mediasoup :: API. mediasoup documentation. URL: https://mediasoup.org/documentation/v3/mediasoup/api/ (дата звернення: 05.10.2026).
 
 :::

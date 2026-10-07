@@ -48,7 +48,7 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   результат», cells start with a capital, parameters as «Статус: 401», fact «Пройдено» /
   «Пройдено: <measured value>» / «Не пройдено: <actual>»; IDs А1…З5 match the test scripts' output.
   Appendix А lead-ins come from the `lead` field of `LISTINGS` in `tools/appendix.py` (role, no
-  path). Volume is at the limit (2026-10-06 re-assembly: main 79 of 80 pp, total 121 of ~120 by
+  path). Volume is at the limit (2026-10-07, after the §0A.5 source cut: main 80 of 80 pp, total 117 of ~120 by
   `pages.txt`): any addition needs an equal cut.
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new

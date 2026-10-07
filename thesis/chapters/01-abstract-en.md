@@ -6,7 +6,7 @@ Serhiiovych Kabakov ; supervisor [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patr
 Univ., [ПОТРЕБУЄ УТОЧНЕННЯ: year]. – [ПОТРЕБУЄ УТОЧНЕННЯ: total number of pages after layout] p.
 
 The qualification work contains the main text part on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout]
-pages, a list of used sources with 82 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
+pages, a list of used sources with 30 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
 appendices on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages.
 
 The purpose of the qualification work is to improve the efficiency of broadcasting individual
