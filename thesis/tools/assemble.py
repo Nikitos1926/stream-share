@@ -420,11 +420,12 @@ def space_blocks(doc):
 
 def split_appendix_headings(doc):
     """PLAN.md §1.4 and both examples: «ДОДАТОК А» on one line, the title below it in sentence
-    case (Heading 1 is all caps), as one heading so ЗМІСТ lists «Додаток А Лістинг програми»."""
+    case (Heading 1 is all caps), as one heading so ЗМІСТ lists «ДОДАТОК А Лістинг програми»
+    (typed in caps in the Markdown, user rule 2026-10-07)."""
     for p in doc.element.body.iter(qn("w:p")):
         if not is_heading1(p):
             continue
-        m = re.match(r"(Додаток\s+\S)\s+(.+)$", para_text(p))
+        m = re.match(r"(Додаток\s+\S)\s+(.+)$", para_text(p), re.IGNORECASE)
         if not m:
             continue
         for r in p.findall(qn("w:r")):

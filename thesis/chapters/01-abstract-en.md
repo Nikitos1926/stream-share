@@ -2,12 +2,12 @@
 
 Kabakov N. S. Web service for streaming media content with the function of capturing individual
 applications : bachelor's qualification work in the specialty «121 Software Engineering» / Nikita
-Serhiiovych Kabakov ; supervisor [ПОТРЕБУЄ УТОЧНЕННЯ: Name Patronymic Surname]. – Odesa : Odesa Polytech. Nat.
+Serhiiovych Kabakov ; supervisor Andrii Valeriiovych Lapaiev. – Odesa : Odesa Polytech. Nat.
 Univ., [ПОТРЕБУЄ УТОЧНЕННЯ: year]. – [ПОТРЕБУЄ УТОЧНЕННЯ: total number of pages after layout] p.
 
 The qualification work contains the main text part on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout]
 pages, a list of used sources with 30 titles on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages,
-appendices on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages.
+one appendix on [ПОТРЕБУЄ УТОЧНЕННЯ: number after layout] pages.
 
 The purpose of the qualification work is to improve the efficiency of broadcasting individual
 applications by developing a media streaming web service with a desktop capture application that

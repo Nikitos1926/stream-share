@@ -465,7 +465,7 @@ about Git.
 ### 0A.3 Goal: exact wording and where it is mirrored (ticket 4e05acb6)
 
 The goal is improving a process through the software, as in E2. The indicator is one actually
-measured in the thesis: Д3 switch 1,5 с and Д5 return 1,3 с in `tbl:tc-desktop`, Appendix В.
+measured in the thesis: Д3 switch 1,5 с and Д5 return 1,3 с in `tbl:tc-functional` (§5.2).
 The latency trials of §6.2 were never run, so latency is **not** the indicator any more.
 
 **UA, verbatim:**
@@ -678,8 +678,9 @@ uppercase, so that ЗМІСТ and any viewer show it that way. Type these litera
 
 Exceptions:
 
-- **Appendix headings stay** `# Додаток А Лістинг програми` etc. `assemble.py` puts «ДОДАТОК А»
-  in caps through the style and keeps the title in sentence case, as in §1.4 and both examples.
+- **The single appendix heading** is typed `# ДОДАТОК А Лістинг програми` (user rule 2026-10-07,
+  so ЗМІСТ shows the caps too). `assemble.py` splits it onto two lines and keeps the title in
+  sentence case, as in §1.4 and both examples.
 - `##` headings stay in sentence case, including «Висновки до розділу N».
 
 Tool matches to adjust in the same change. Without them the build breaks or the edit gets
@@ -725,17 +726,18 @@ binding, given by the user:
   - Verify in the PDF that the topic is not all caps.
 - `title_en`, wherever printed: «Web service for streaming media content with the function of
   capturing individual applications».
-- Group, supervisor and year stay placeholders. The user has not given them.
+- `supervisor`: «Андрій ЛАПАЄВ» (Лапаєв Андрій Валерійович, given 2026-10-07; degree and title
+  not given, so none are printed). Group and year stay placeholders.
 
 The same data goes into the bibliographic lines of the abstracts:
 
 - UA: «Кабаков Н. С. Вебсервіс для потокової передачі медіаконтенту з функцією захоплення
   окремих застосунків : кваліфікаційна робота бакалавра за спеціальністю «121 Інженерія
-  програмного забезпечення» / Нікіта Сергійович Кабаков ; керівник [ПОТРЕБУЄ УТОЧНЕННЯ: …]. –
+  програмного забезпечення» / Нікіта Сергійович Кабаков ; керівник Андрій Валерійович Лапаєв. –
   Одеса …»
 - EN: «Kabakov N. S. Web service for streaming media content with the function of capturing
   individual applications : bachelor's qualification work in the specialty «121 Software
-  Engineering» / Nikita Serhiiovych Kabakov ; supervisor …»
+  Engineering» / Nikita Serhiiovych Kabakov ; supervisor Andrii Valeriiovych Lapaiev …»
 
 The same data also goes into the task sheet: institute, department, specialty, program and the
 student's name.
@@ -1068,7 +1070,7 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 | 4.1 | `tbl:stack` | technologies with versions and role | `package.json` files |
 | 4.2 | `tbl:encoding` | encoder parameters per source profile, **computed from code formulas** | `encoding.ts`, `bitrate.ts` |
 | 4.3 | `tbl:api` | REST and WS endpoints | `controllers/*` |
-| 5.1–5.5 | `tbl:tc-*` | functional test cases | user runs (Gap G4) |
+| 5.2 | `tbl:tc-functional` | key functional test cases (was appendix В) | test scripts |
 | 5.6 | `tbl:nfr` | non-functional test results | user measurements (Gap G5) |
 | 6.1 | `tbl:trials` | operational trial results | user measurements (Gap G7) |
 
@@ -1092,10 +1094,9 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 the WS part of `streams.controller.ts`, `useStreamer.ts` (abridged), `googleAuth.ts`. Pin the
 commit hash in the appendix intro sentence.
 
-**Додаток Б «Структура таблиць бази даних»** (tables Б.1–Б.5, the column tables of §3.3) and
-**Додаток В «Тестові приклади функціонального тестування»** (tables В.1–В.5, the test-case tables
-of §5.2) were moved out of the main text to keep it within 60–80 pp. Appendices are lettered in the
-order of their first mention: А in §3.1.1, Б in §3.3.2, В in §5.2. Додаток А omits imports, helper
+*Superseded 2026-10-07 (user rule): the thesis has a single appendix, «ДОДАТОК А Лістинг
+програми».* The former Додаток Б (DB tables) moved into §3.3; the former Додаток В (test cases)
+became one table `tbl:tc-functional` in §5.2 with the key cases. Додаток А omits imports, helper
 code and fragments already shown in the main text, so the whole document stays ≤ ~120 pp.
 
 ---
@@ -1114,7 +1115,7 @@ thesis/
     00-abstract-uk.md  01-abstract-en.md  02-abbreviations.md  03-intro.md
     10-chapter1.md     11-chapter1-b.md   20-chapter2.md     30-chapter3.md
     39-chapter4-stack.md 40-chapter4-a.md 41-chapter4-b.md   50-chapter5.md   60-chapter6.md
-    90-conclusions.md  95-references.md   A0-appendix-a.md  B0-appendix-b.md  C0-appendix-v.md
+    90-conclusions.md  95-references.md   A0-appendix-a.md
   diagrams/             <id>.puml + rendered <id>.png side by side (both committed)
   screenshots/          real UI screenshots from the user (PNG)
   tools/                build.sh, make_reference_docx.py, thesis.lua, wordcount.py (not `build/`: ignored by the root .gitignore)
