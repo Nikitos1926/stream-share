@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **63** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 5, `chapters/01-abstract-en.md` 5, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 20.
+Total placeholders: **55** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 20.
 
 ## metadata.yaml
 
@@ -26,20 +26,12 @@ Total placeholders: **63** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 5
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 6 | АНОТАЦІЯ | рік |
-| 7 | АНОТАЦІЯ | загальна кількість сторінок після верстки |
-| 9 | АНОТАЦІЯ | кількість після верстки |
-| 10 | АНОТАЦІЯ | кількість після верстки |
-| 11 | АНОТАЦІЯ | кількість після верстки |
 
 ## chapters/01-abstract-en.md
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 6 | ABSTRACT | year |
-| 6 | ABSTRACT | total number of pages after layout |
-| 8 | ABSTRACT | number after layout |
-| 9 | ABSTRACT | number after layout |
-| 10 | ABSTRACT | number after layout |
 
 ## chapters/03-intro.md
 
