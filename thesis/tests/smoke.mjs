@@ -237,7 +237,7 @@ let privateId;
   );
   const t = await s.call('createTransport', { direction: 'send' });
   const ips = [...new Set(t.result.iceCandidates.map((c) => `${c.protocol}/${c.address}`))];
-  check('Б3', 'транспорт стрімера', t.ok && ips.length > 0, ips.join(', '));
+  check('Б3', 'транспорт стримера', t.ok && ips.length > 0, ips.join(', '));
   const p = await s.call('produce', fakeVideo);
   const [st] = await query('select status from stream where id = $1', [publicId]);
   check(
@@ -341,7 +341,7 @@ let privateId;
   ]);
   check(
     'З3',
-    'завершення трансляції стрімером',
+    'завершення трансляції стримером',
     end.ok && !!ev && row.status === 'ended',
     `end_reason=${row.end_reason}`,
   );

@@ -56,9 +56,9 @@ loop для кожного producerId
 end
 MS ->> P : RTP/SRTP
 
-alt стрімер втратив з'єднання
+alt стример втратив з'єднання
   C -->> P : подія streamerDisconnect
-  opt стрімер повернувся
+  opt стример повернувся
     C -->> P : подія streamerReconnected {producerId}
     P -> C : consume {rtpCapabilities, producerId}
   end

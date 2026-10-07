@@ -9,7 +9,7 @@ skinparam packageStyle rectangle
 left to right direction
 
 package "в) SFU (обрано)" as Sfu {
-  node "Стрімер" as F_S
+  node "Стример" as F_S
   component "SFU\n(пересилання RTP\nбез декодування)" as F_M
   node "Глядач 1" as F_V1
   node "Глядач N" as F_V3
@@ -19,7 +19,7 @@ package "в) SFU (обрано)" as Sfu {
 }
 
 package "б) MCU" as Mcu {
-  node "Стрімер" as C_S
+  node "Стример" as C_S
   component "MCU\n(декодування,\nзмішування,\nповторне кодування)" as C_M
   node "Глядач 1" as C_V1
   node "Глядач N" as C_V3
@@ -29,7 +29,7 @@ package "б) MCU" as Mcu {
 }
 
 package "а) Mesh" as Mesh {
-  node "Стрімер" as M_S
+  node "Стример" as M_S
   node "Глядач 1" as M_V1
   node "Глядач N" as M_V3
   M_S --> M_V1 : копія 1

@@ -23,7 +23,7 @@ state "ended" as ended : endedAt, endReason
 
 [*] --> Active
 Active --> ended : endStream\n[endReason = streamer_stop]
-Active --> ended : WebSocket стрімера закрито,\nочікування повернення вичерпано\n[endReason = timeout] / подія streamEnd
+Active --> ended : WebSocket стримера закрито,\nочікування повернення вичерпано\n[endReason = timeout] / подія streamEnd
 Active --> ended : запуск сервера сигналізації\n(stopUnfinishedStreams)\n[endReason = server_force]
 ended --> [*]
 @enduml
