@@ -20,10 +20,11 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   - `tbl:analogs` has a stream-share column and ≤ 4 analogs.
   - Run the §0.7 checklist before every hand-off.
 - **Revision addendum 2026-10-07 = PLAN.md §0A (binding, overrides §0–§6).** In short:
-  - Actors are Глядач and Стример (+ Google); exactly 5 use cases, each with a scenario (§0A.1).
+  - Actors are Глядач and Стример (+ Google); exactly 6 use cases, each with a scenario
+    (§0A.1 as amended by §0A.7: «Реєстрація» `<<extend>>` «Авторизація через Google»).
     Term spelling is «стример» everywhere (text, diagrams, test labels), never «стрімер»; «гість»
     only where it names the code's guest role (tests А5, А6, Б5, П4, З4).
-  - UCP values are fixed in §0A.2; the goal wording is fixed in §0A.3.
+  - UCP values are fixed in §0A.2 + §0A.7 (UCP ≈ 109,8); the goal wording is fixed in §0A.3.
   - Chapter 2 never names Git or any VCS, nor the source of its dates (§0A.4).
   - Exactly the 30 sources of §0A.5.
   - No «(підрозділ x.y)» or «розділ N» pointers in prose (§0A.6.2).

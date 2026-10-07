@@ -15,7 +15,11 @@ actor "Google" as Google <<зовнішня система>>
 Streamer -|> Viewer
 
 rectangle "Вебсервіс трансляції медіаконтенту" {
-  usecase "Реєстрація та вхід\nчерез Google" as UC_SignIn
+  usecase UC_SignIn as "Авторизація через Google
+--
+точки розширення:
+перший вхід"
+  usecase "Реєстрація" as UC_SignUp
   usecase "Перегляд трансляції" as UC_Watch
   usecase "Трансляція у браузері" as UC_Browser
   usecase "Трансляція окремого\nзастосунку" as UC_App
@@ -25,6 +29,7 @@ rectangle "Вебсервіс трансляції медіаконтенту" {
 Viewer --> UC_SignIn
 Viewer --> UC_Watch
 UC_SignIn --> Google
+UC_SignIn <.. UC_SignUp : <<extend>>
 
 Streamer --> UC_Browser
 Streamer --> UC_App

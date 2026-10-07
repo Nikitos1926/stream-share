@@ -345,6 +345,9 @@ The watch page creates a guest session automatically. So:
 - **Google** stays as an external-system actor `<<зовнішня система>>`, connected only to
   registration. E1 precedent: its payment system is an actor on the diagram and is counted in UAW.
 
+**Superseded by §0A.7 (user rule, later 2026-10-07):** use case 1 is split into «Авторизація
+через Google» + «Реєстрація» `<<extend>>`; six use cases. The rest of this item still holds.
+
 The diagram has exactly these five use cases and nothing else: no `include`, no `extend`, no
 use-case generalisation, and no abstract use case.
 
@@ -400,6 +403,9 @@ Text changes in `11-chapter1-b.md`:
   Б5, П4 and З4. Do not rename it.
 
 ### 0A.2 UCP values (ticket f7de6f46)
+
+**Superseded by §0A.7 for UUCW and everything derived from it** (UUCW 85, UUCP 93, UCP ≈ 109,8,
+≈ 3074 люд.-год). Actors, TCF, EF and PF below still hold.
 
 **Actors.** `tbl:ucp-actors` becomes Глядач: complex 3, Стример: complex 3, and Google
 (OAuth 2.0): average 2. That gives UAW = 8, the same value as before.
@@ -754,6 +760,26 @@ and number stay placeholders.
 **0A.6.5 Checklist additions.** Before hand-off, every later ticket runs the greps of §0A.4,
 §0A.5, §0A.6.1 and §0A.6.2 together with §0.7. The main text stays ≤ 80 pp. Removing tables and
 references should free space; do not pad it back.
+
+### 0A.7 Use-case relations: «Реєстрація» extends «Авторизація через Google» (ticket 9902d3d0)
+
+User rule (later 2026-10-07): keep the Глядач/Стример structure but add a justified `<<include>>`
+or `<<extend>>`. The code decides which one. The login action signs out any guest session, then
+Auth.js looks up the user linked to the Google account. Only when none exists (first sign-in)
+does the adapter create the user (role defaults to user) and link the account, after checking
+that no user has that email (otherwise Auth.js refuses the sign-in). There is no separate
+registration page. So:
+
+- «Авторизація через Google» (`sc:sign-in`): Глядач + Google, extension point «перший вхід»;
+  7 main steps + alternatives 3а, 3б, 5а, 6а (6а.1 = «Варіант використання «Реєстрація»», as in
+  E2 scenario 1.2, 4а.3) = 11 → complex, 15.
+- «Реєстрація» (`sc:sign-up`): `Реєстрація ..> Авторизація <<extend>>`, no actor association
+  (it cannot be started on its own); 4 main steps + 2а = 5 → average, 10.
+- No `<<include>>`: streamer use cases need sign-in only without a valid session, so it is a
+  precondition, not an always-performed step; the paragraph under fig:use-cases says so.
+- UUCW = 4 · 15 + 15 + 10 = 85; UUCP = 93; UCP = 93 · 1,135 · 1,04 = 109,78 ≈ **109,8**;
+  E = 28 · 109,78 ≈ **3074 люд.-год** ≈ 384 люд.-дні. «шість варіантів використання» in
+  chapters 1, 2 and the conclusions. Abstracts carry no UCP figure.
 
 ---
 
