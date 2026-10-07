@@ -7,7 +7,8 @@ Checks the Markdown in chapters/ (lexical order = document order):
   * every referenced ID exists;
   * every image file exists;
   * listings in the main text are ≤ 25 lines (appendices exempt).
-Collects every «[ПОТРЕБУЄ …]» placeholder (metadata.yaml, chapters, front/) with the nearest heading into OPEN_ITEMS.md
+Collects every «[ПОТРЕБУЄ …]» placeholder (metadata.yaml, chapters, front/) with the nearest heading into OPEN_ITEMS.md,
+followed by thesis/CHECKLIST.md (result of the last full rule check)
 with --open-items.
 
 Usage: qa.py [--open-items thesis/OPEN_ITEMS.md]      exit 1 on an error, warnings only print.
@@ -156,6 +157,10 @@ def write_open_items(out: Path, chapters: list[Path]) -> None:
             current = rel
             lines += ["", f"## {rel}", "", "| Рядок | Де | Що потрібно |", "| --- | --- | --- |"]
         lines.append(f"| {line} | {where} | {body} |")
+    checklist = THESIS / "CHECKLIST.md"  # hand-written result of the last full check (PLAN.md §0.7, §0A)
+    if checklist.exists():
+        lines += ["", "## Перевірка документа за всіма правилами", "",
+                  checklist.read_text(encoding="utf-8").rstrip()]
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {out} ({len(rows)} placeholders)")
 
