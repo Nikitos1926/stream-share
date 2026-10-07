@@ -16,5 +16,5 @@ specialty: "121 Інженерія програмного забезпеченн
 program: "Інженерія програмного забезпечення"
 supervisor: "Андрій ЛАПАЄВ"   # Лапаєв Андрій Валерійович, given by the user 2026-10-07
 city_year: "Одеса – [ПОТРЕБУЄ УТОЧНЕННЯ: рік]"
-keywords_uk: [вебсервіс, потокова передача медіаконтенту, пряма трансляція, захоплення застосунку, захоплення звуку процесу, WebRTC, SFU, mediasoup, Electron, Next.js, TypeScript, PostgreSQL]   # = chapters/00-abstract-uk.md
-keywords_en: [web service, media streaming, live streaming, application capture, process audio capture, WebRTC, SFU, mediasoup, Electron, Next.js, TypeScript, PostgreSQL]   # = chapters/01-abstract-en.md
+keywords_uk: [вебсервіс, потокова передача медіаконтенту, пряма трансляція, захоплення застосунку, захоплення звуку процесу, WebRTC, SFU, mediasoup, Electron, Next.js]   # = chapters/00-abstract-uk.md
+keywords_en: [web service, media streaming, live streaming, application capture, process audio capture, WebRTC, SFU, mediasoup, Electron, Next.js]   # = chapters/01-abstract-en.md
