@@ -9,7 +9,7 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   and list it in the ticket comment. Check §6 of PLAN.md before describing a feature.
 - One chapter (or chapter part) per file in `chapters/` (names in PLAN.md §4.1); never edit
   another ticket's file.
-- Headings carry explicit numbers: `# 3 Проєктування програмної системи`, `## 3.1 …`; every
+- Headings carry explicit numbers: `# 3 ПРОЄКТУВАННЯ ПРОГРАМНОЇ СИСТЕМИ` (level 1 typed in UPPER CASE except appendices, PLAN.md §0A.6.1), `## 3.1 …`; every
   chapter ends with `## Висновки до розділу N`. **No x.y.z level at all** (no `###`, no run-in
   `**3.1.1 …**`).
 - **Style addendum 2026-10-06 = PLAN.md §0 (binding, overrides older rules).** In short:
@@ -19,6 +19,12 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   - Spacing values are in §0.5.
   - `tbl:analogs` has a stream-share column and ≤ 4 analogs.
   - Run the §0.7 checklist before every hand-off.
+- **Revision addendum 2026-10-07 = PLAN.md §0A (binding, overrides §0–§6).** In short:
+  - Actors are Глядач and Стример (+ Google); exactly 5 use cases, each with a scenario (§0A.1).
+  - UCP values are fixed in §0A.2; the goal wording is fixed in §0A.3.
+  - Chapter 2 never names Git or any VCS, nor the source of its dates (§0A.4).
+  - Exactly the 30 sources of §0A.5.
+  - No «(підрозділ x.y)» or «розділ N» pointers in prose (§0A.6.2).
 - Figures/tables/listings/formulas/scenarios use the IDs and syntax of PLAN.md §4.3, are referenced
   in the text before they appear and are followed by an explanatory paragraph.
 - Diagrams: `diagrams/<name>.puml` (file name = figure ID with `fig-` prefix, e.g. `fig-components.puml`),
