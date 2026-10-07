@@ -34,6 +34,9 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   + `skinparam dpi 200` (Salt wireframes: `@startsalt` … `@endsalt` instead — PlantUML 1.2026.8 rejects
   `salt` inside `@startuml`; keep the other three lines). Render with `bash thesis/tools/build.sh --diagrams-only` and commit the PNG
   next to the `.puml`.
+  Sole exception: fig:gantt is `diagrams/fig-gantt.py` (matplotlib, Liberation Sans), because the user
+  wants the table-style Gantt of example 1 (fig. 2.1), which PlantUML cannot lay out; its data must
+  equal `tbl:wbs` word for word. `build.sh` runs every `diagrams/*.py` after PlantUML.
 - Listings ≤ 25 lines, copied verbatim from the repository; elisions as `// ...`.
 - Sources: add to `sources.yaml` (ДСТУ 8302:2015 string), cite as `[@key]`; only sources actually opened.
 - Check volume with `python3 thesis/tools/wordcount.py thesis/chapters/<file>.md` against the

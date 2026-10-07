@@ -525,7 +525,7 @@ The latency trials of §6.2 were never run, so latency is **not** the indicator 
 
 ### 0A.4 Planning chapter: style, timeline, no VCS (ticket f7de6f46)
 
-**Hard rule.** In `20-chapter2.md`, its captions and `fig-gantt.puml`, none of these appear:
+**Hard rule.** In `20-chapter2.md`, its captions and `fig-gantt.py`, none of these appear:
 
 - the words Git, GitHub, репозиторій, монорепозиторій, коміт, гілка, тег, «система контролю
   версій» or «історія»;
@@ -537,7 +537,7 @@ and GHCR in chapters 3–4 and the intro.
 
 Check with:
 
-`grep -niE 'git|репозитор|коміт|гілк|історі' thesis/chapters/20-chapter2.md thesis/diagrams/fig-gantt.puml`
+`grep -niE 'git|репозитор|коміт|гілк|історі' thesis/chapters/20-chapter2.md thesis/diagrams/fig-gantt.py`
 
 It must print nothing, apart from false hits such as «історичн» that you have reviewed.
 
@@ -550,8 +550,10 @@ It must print nothing, apart from false hits such as «історичн» that y
    № | Робота | Терміни | Тривалість, дн. | Попередники.
 4. A paragraph on the dependencies: why each work needs its predecessors (the gist is in the
    table below).
-5. `fig:gantt`, captioned «Діаграма Ганта проєкту», with the axis starting 27.05.2026, in days
-   or weeks.
+5. `fig:gantt`, captioned «Діаграма Ганта проєкту». Since 2026-10-07 (ticket 7039b022) it is styled
+   after E1 fig. 2.1 (`exmaple1.pdf`, p. 33): columns «Робота | Тривалість, дн. | months 2026»,
+   stages 1 (works 1–4), 2 (5–8), 3 (9) as grey rows with a light summary bar, works with
+   numbers, names and durations exactly as in `tbl:wbs`. Drawn by `diagrams/fig-gantt.py`.
 6. An analysis paragraph:
    - the works run in sequence because one developer does them;
    - the longest and most labour-intensive is work 1, then work 2;
@@ -1041,7 +1043,7 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 | --- | --- | --- | --- | --- |
 | 1.1 | `fig:use-cases` | use case | actors Гість, Користувач (стрімер / глядач), Google (external); use cases of §1.3 | routes in `apps/web/src/app`, `proxy.ts`, desktop IPC `conveyor/api/*` |
 | 1.2 | `fig:topologies` | component (conceptual) | mesh vs MCU vs SFU media flows, SFU highlighted as chosen | `mediasoup.service.ts` (SFU) |
-| 2.1 | `fig:gantt` | `@startgantt` | project tasks and their real dates | git history (Gap G8) |
+| 2.1 | `fig:gantt` | matplotlib (`fig-gantt.py`, E1 style) | project tasks and their real dates | git history (Gap G8) |
 | 3.1 | `fig:components` | component | web / signaling / desktop / packages(db, env, shared) / PostgreSQL / Google OAuth; HTTP, WS, WebRTC, IPC links | `apps/*`, `packages/*` imports |
 | 3.2 | `fig:deployment` | deployment | host with Docker Compose: caddy, web, signaling (UDP RTC port range), postgres, migrate, thumbnails volume; browser and desktop clients; GHCR / GitHub Releases | `infra/docker-compose.prod.yml`, `infra/caddy/Caddyfile`, workflows |
 | 3.3 | `fig:seq-broadcast` | sequence | streamer page ↔ WS `/ws/streams/:id/broadcast` ↔ StreamersService ↔ MediasoupService: `getRtpCapabilities` → `createTransport` → `connectTransport` → `produce`; status → live | `useStreamer.ts`, `streams.controller.ts`, `streamers.service.ts`, `mediasoup.service.ts`, `wsMethods.ts` |
