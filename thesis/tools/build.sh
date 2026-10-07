@@ -2,7 +2,7 @@
 # Thesis build: PlantUML -> PNG, Markdown chapters -> DOCX (pandoc + reference.docx + Lua filter).
 # Usage (from repo root, branch `diploma`):  mise install && bash thesis/tools/build.sh [--diagrams-only|--test|--pdf]
 # Output: thesis/out/thesis.docx (+ page estimate printed by wordcount.py).
-#   --diagrams-only  render diagrams/*.puml only
+#   --diagrams-only  render diagrams/*.puml and diagrams/*.py only
 #   --test           build tools/fixture/sample.md -> out/fixture.docx and check it (check_docx.py)
 #   --pdf            also out/thesis.pdf via LibreOffice (tools/pdf.sh) with real page counts
 #   --release        strict build + PDF, copied to thesis/final/ (committed deliverable)
@@ -57,18 +57,7 @@ FC="$CACHE/fontconfig.properties"
   done
 } > "$FC"
 
-shopt -s nullglob
-pumls=("$THESIS"/diagrams/*.puml)
-if (( ${#pumls[@]} )); then
-  # Each .puml must start with `!pragma layout smetana` (no Graphviz) — see thesis/CLAUDE.md.
-  java -Djava.awt.headless=true -Dsun.awt.fontconfig="$FC" -jar "$CACHE/plantuml.jar" \
-    -tpng -charset UTF-8 -failfast2 "${pumls[@]}"
-  echo "rendered ${#pumls[@]} diagram(s)"
-fi
-[[ "${1:-}" == "--diagrams-only" ]] && exit 0
-[[ "${1:-}" == "--release" ]] && export THESIS_STRICT=1
-
-# --- Python deps (python-docx, PyYAML) in a private venv: the sandbox sets PIP_USER=1 ---
+# --- Python deps (python-docx, PyYAML, matplotlib) in a private venv: the sandbox sets PIP_USER=1 ---
 VENV="$CACHE/venv"
 REQ="$HERE/requirements.txt"
 if [[ ! -x "$VENV/bin/python" ]] || ! cmp -s "$REQ" "$VENV/requirements.txt"; then
@@ -77,6 +66,20 @@ if [[ ! -x "$VENV/bin/python" ]] || ! cmp -s "$REQ" "$VENV/requirements.txt"; th
   cp "$REQ" "$VENV/requirements.txt"
 fi
 PY="$VENV/bin/python"
+
+shopt -s nullglob
+pumls=("$THESIS"/diagrams/*.puml)
+if (( ${#pumls[@]} )); then
+  # Each .puml must start with `!pragma layout smetana` (no Graphviz) — see thesis/CLAUDE.md.
+  java -Djava.awt.headless=true -Dsun.awt.fontconfig="$FC" -jar "$CACHE/plantuml.jar" \
+    -tpng -charset UTF-8 -failfast2 "${pumls[@]}"
+  echo "rendered ${#pumls[@]} diagram(s)"
+fi
+# Charts PlantUML cannot lay out (fig-gantt: table-style Gantt after example 1) are matplotlib
+# scripts diagrams/fig-*.py, rendered to the PNG next to them with the Liberation fonts.
+for py in "$THESIS"/diagrams/*.py; do "$PY" "$py" "$FONTDIR"; done
+[[ "${1:-}" == "--diagrams-only" ]] && exit 0
+[[ "${1:-}" == "--release" ]] && export THESIS_STRICT=1
 
 # --- reference.docx (styles from PLAN.md §1) ---
 "$PY" "$HERE/make_reference_docx.py" "$OUT/reference.docx"
