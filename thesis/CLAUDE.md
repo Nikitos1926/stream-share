@@ -46,13 +46,15 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   real table, «Таблиця 3.N – Опис таблиці <name>», columns «Поле | Тип даних | Обмеження | Опис»,
   one field per row, each with an E2-style lead-in («Таблиця stream (табл. …) зберігає…»); keep
   them in sync with the schema of the DB module. There is no appendix Б any more.
-- Appendix В (`C0-appendix-v.md`, test-case tables) is hand-written; its tables are defined there
-  and referenced from §5.2. Test-case
-  tables follow E2 table 5.1: «ID | Сценарій | Вхідні дані | Очікуваний результат | Фактичний
+- **Single appendix (user rule 2026-10-07):** the thesis has only «ДОДАТОК А Лістинг програми»
+  (heading typed in caps, title unchanged); never add another appendix. The former appendix В was
+  folded into §5.2 as one table tbl:tc-functional with the key cases (all failures, the timing
+  cases); the rest stay only in the test scripts' output. Test-case
+  table follows E2 table 5.1: «ID | Сценарій | Вхідні дані | Очікуваний результат | Фактичний
   результат», cells start with a capital, parameters as «Статус: 401», fact «Пройдено» /
   «Пройдено: <measured value>» / «Не пройдено: <actual>»; IDs А1…З5 match the test scripts' output.
   Appendix А lead-ins come from the `lead` field of `LISTINGS` in `tools/appendix.py` (role, no
-  path). Volume is at the limit (2026-10-07, after the DB tables moved into §3.3: main 80 of 80 pp, total 114
+  path). Volume is at the limit (2026-10-07, single appendix: main 80 of 80 pp, total 109
   of ~120 by `topdf.py`): any addition needs an equal cut. Chapter 3 widths of fig:seq-desktop-auth
   (15 cm), fig:state-stream and fig:er (13 cm) are set so those figures share a page with the text
   before them; a page that is half empty before a tall figure is the cheapest place to win a page.

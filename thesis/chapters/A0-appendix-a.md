@@ -1,4 +1,4 @@
-# Додаток А Лістинг програми
+# ДОДАТОК А Лістинг програми
 
 <!-- Generated from commit 7c2f481 by the appendix script in the thesis tools directory. Do not edit by hand. -->
 

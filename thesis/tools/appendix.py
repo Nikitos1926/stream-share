@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate chapters/A0-appendix-a.md («Додаток А Лістинг програми») verbatim from the pinned commit.
+"""Generate chapters/A0-appendix-a.md («ДОДАТОК А Лістинг програми») verbatim from the pinned commit.
 
 Code is read with `git show <COMMIT>:<path>`, so the appendix always matches the commit named in its
 intro sentence (application code on `diploma` is identical to that commit). Omitted line ranges are
@@ -45,7 +45,7 @@ LISTINGS = [
      "застосунку"),
 ]
 
-INTRO = f"""# Додаток А Лістинг програми
+INTRO = f"""# ДОДАТОК А Лістинг програми
 
 <!-- Generated from commit {COMMIT} by the appendix script in the thesis tools directory. Do not edit by hand. -->
 
