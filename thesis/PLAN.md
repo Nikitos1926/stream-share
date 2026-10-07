@@ -2,7 +2,8 @@
 
 **Title (EN, as given):** WEB SERVICE FOR STREAMING MEDIA CONTENT WITH THE FUNCTION OF CAPTURING
 INDIVIDUAL APPLICATIONS. **UA working title:** «Вебсервіс для потокової передачі медіаконтенту з
-функцією захоплення окремих застосунків» — `[ПОТРЕБУЄ УТОЧНЕННЯ: точна назва за наказом ректора]`.
+функцією захоплення окремих застосунків» (sentence case on the title page; see §0A.6.3).
+**Revision addendum 2026-10-07 = §0A** (binding; overrides §0–§6 where they differ).
 
 This file is the single reference every thesis-writing ticket follows. It does **not** contain
 thesis text. Branch rule: all thesis work lives on `diploma`; never merge it into `main`.
@@ -304,9 +305,451 @@ Then, not grep-able:
 - Every identifier is plain text with a kind noun and is tied to a listing, diagram or table (§0.2).
 - Implementation is described by role, with no walking through the project structure (§0.3).
 - Scenarios match §0.4 field by field.
-- Chapter 2 facts trace to real commits or PRs. No invented stages, dates or results.
+- Chapter 2 dates equal §0A.4 (source stays internal, never named). No invented stages, dates or results.
 - Volume is still within §2 (main text 60–80 pp, by `topdf.py` page counts). Truthfulness traps
   (§6) are re-checked for every changed claim.
+
+---
+
+
+## 0A. Revision addendum (2026-10-07) — binding, overrides §0–§6 where they differ
+
+The user reviewed the thesis again on 2026-10-07. This section turns those rules into concrete
+values that four parallel developer tickets apply. Each ticket reads only its own items:
+
+| Item | Ticket | Files it touches |
+| --- | --- | --- |
+| §0A.1 Use cases | 5c2b027c | `11-chapter1-b.md`, `fig-use-cases.puml`, actor names in `fig-capture-pipeline.puml` and `fig-seq-desktop-auth.puml` |
+| §0A.2 UCP, §0A.4 planning chapter | f7de6f46 | `20-chapter2.md`, `fig-gantt.puml`, sentence on the estimate in `90-conclusions.md` |
+| §0A.3 Goal, §0A.6 mechanical rules (except pointers) | 4e05acb6 | `metadata.yaml`, `front/task-sheet.md`, abstracts, `03-intro.md`, `60-chapter6.md` §6.2 and its conclusions, `90-conclusions.md`, every `# ` heading, tools |
+| §0A.5 References, §0A.6.2 pointers | db976aaa | `sources.yaml`, every `[@key]`, `95-references.md` (generated), all chapters for pointers |
+
+The tickets share some files. Keep each edit local to the paragraph it concerns, so the merges
+stay mechanical. When two tickets touch the same sentence, the ticket that merges second rebases
+and keeps both changes. The values below are fixed, so neither ticket has to wait for the other.
+E1 = `exmaple1.pdf` and E2 = `example2.pdf`, as in §0.
+
+### 0A.1 Use cases: actors Стример and Глядач (ticket 5c2b027c)
+
+What the code allows decides the actors. The proxy requires a non-guest sign-in for every page
+except the home page, the sign-in pages, the desktop return page and the watch page `<id>/watch`.
+The home page lists active streams only to signed-in non-guests; a guest sees the landing page.
+The watch page creates a guest session automatically. So:
+
+- **Глядач** is the base actor. An unregistered viewer (guest) only watches a stream by its
+  link, in a guest session created automatically. A viewer who has registered through Google
+  also opens streams from the list of active public streams.
+- **Стример** is a registered user who runs streams. On the diagram it is a generalisation,
+  `Стример –|> Глядач`: a streamer can do everything a viewer can, as `Клієнт –|> Гість` in E2.
+  Starting or ending a stream requires registration.
+- **Google** stays as an external-system actor `<<зовнішня система>>`, connected only to
+  registration. E1 precedent: its payment system is an actor on the diagram and is counted in UAW.
+
+The diagram has exactly these five use cases and nothing else: no `include`, no `extend`, no
+use-case generalisation, and no abstract use case.
+
+| # | Use case (diagram label = scenario caption) | Actor(s) linked | Scenario id |
+| --- | --- | --- | --- |
+| 1 | Реєстрація та вхід через Google | Глядач, Google | `sc:sign-in` |
+| 2 | Перегляд трансляції | Глядач | `sc:watch` |
+| 3 | Трансляція у браузері | Стример | `sc:browser-broadcast` |
+| 4 | Трансляція окремого застосунку | Стример | `sc:app-broadcast` |
+| 5 | Завершення трансляції | Стример | `sc:end-reconnect` |
+
+The following are deleted from the diagram and from the prose as use cases. Where they are real,
+they survive as steps or alternatives, or simply as requirements in `tbl:requirements`:
+
+- Отримання гостьового сеансу and Керування відтворенням become step 3 and step 6 of №2.
+- Перегляд переліку активних трансляцій becomes the new alternative 1а of №2.
+- Вхід із настільного застосунку is already alternative 3а of №1.
+- Відновлення трансляції is already alternative 1а of №5.
+- Вибір вікна, Захоплення звуку, Слідування, Налаштування якості, Приватний режим, Копіювання
+  посилання and Вимкнення звуку are steps of №3 and №4.
+- Завантаження настільного застосунку, Вихід із системи and «Проведення трансляції» (abstract)
+  are dropped. They stay only as FRs ФВ-01 and ФВ-18.
+
+Text changes in `11-chapter1-b.md`:
+
+- Rewrite the actor paragraphs for Глядач, Стример and Google, using the facts above. Keep one
+  sentence each, as in E2.
+- Rewrite the paragraph under the diagram. It describes the five use cases and the
+  generalisation, without «абстрактний», «включає» or «розширює».
+- Change the actor fields and step subjects in the scenarios:
+  - №1: «Основна дійова особа: незареєстрований глядач.» Steps say «Глядач …». Step 6 says
+    «Система створює запис користувача під час першого входу або оновлює його та встановлює
+    сеансовий файл cookie.»
+  - №2: «Основна дійова особа: глядач.» Trigger: «Глядач відкриває посилання на трансляцію або
+    обирає її в переліку активних трансляцій.»
+  - №3–№5: «Основна дійова особа: стример.» Every «користувач» in their steps becomes «стример».
+- Add exactly one alternative to №2 and change nothing else in its branch count:
+  «1а. Зареєстрований глядач відкриває головну сторінку. 1а.1. Система показує перелік активних
+  публічних трансляцій із мініатюрами. 1а.2. Глядач обирає трансляцію. Перехід до п. 2.»
+  This makes №2 6 main + 4 alternative = 10 transactions, the value §0A.2 uses.
+- Do not change the number of main steps or alternative branches of №1, №3, №4 or №5. §0A.2
+  counts them as 7+3, 9+3, 10+4 and 5+3.
+- Delete the paragraph «Варіанти, що зводяться до однієї дії (вихід, перегляд переліку
+  трансляцій, завантаження застосунку), окремо не деталізовано…». Keep only its second half, the
+  note on how №4 differs from №3, if it still reads on its own.
+- The intro sentence before the scenarios becomes «…складемо сценарії [@cockburn-use-cases] для
+  варіантів використання (сценарії @sc:sign-in – @sc:end-reconnect)». Every use case now has a
+  scenario, so «для основних із них» goes.
+- `tbl:requirements` ФВ-01…ФВ-19 stays as it is. ФВ-04 already states that guests only watch.
+- In `fig-capture-pipeline.puml` and `fig-seq-desktop-auth.puml`, actor «Користувач» becomes
+  «Стример».
+- In test tables and chapter 5, «гість» stays wherever it names the code's guest role, as in А6,
+  Б5, П4 and З4. Do not rename it.
+
+### 0A.2 UCP values (ticket f7de6f46)
+
+**Actors.** `tbl:ucp-actors` becomes Глядач: complex 3, Стример: complex 3, and Google
+(OAuth 2.0): average 2. That gives UAW = 8, the same value as before.
+
+**Use cases.** `tbl:ucp-use-cases` has exactly five rows, all complex:
+
+| Варіант використання | Транзакцій | Тип | Вага |
+| --- | --- | --- | --- |
+| Реєстрація та вхід через Google | 7 + 3 = 10 | складний | 15 |
+| Трансляція у браузері | 9 + 3 = 12 | складний | 15 |
+| Трансляція окремого застосунку | 10 + 4 = 14 | складний | 15 |
+| Перегляд трансляції | 6 + 4 = 10 | складний | 15 |
+| Завершення трансляції | 5 + 3 = 8 | складний | 15 |
+| Разом | – | – | 75 |
+
+UUCW = 75 and UUCP = 8 + 75 = 83.
+
+Delete the sentence about included, extending and non-detailed use cases being estimated from
+the requirements. Every use case now has a scenario. If ticket 5c2b027c lands with a different
+count, the weights do not change, because every count is > 7. Only the «Транзакцій» cell is
+updated.
+
+**TCF.** No change: Σ = 53,5 and TCF = 1,135.
+
+**EF.** The table gets a fourth column, «Обґрунтування оцінки», as in E2's F1–F8 table. The
+binding user rule fixes E2, E3 and E7. Names follow the methodology and E1/E2.
+
+| Фактор | Вага | Оцінка | Внесок | Обґрунтування (gist, write as a short phrase) |
+| --- | --- | --- | --- | --- |
+| E1 Знайомство з процесом розробки RUP | 1,5 | 1 | 1,5 | процес RUP формально не застосовувався |
+| E2 Досвід розроблення подібних застосунків | 0,5 | 0 | 0 | система такого класу розробляється вперше |
+| E3 Досвід об'єктно-орієнтованої розробки | 1 | 0 | 0 | досвіду розроблення подібної системи немає |
+| E4 Кваліфікація аналітика | 0,5 | 3 | 1,5 | середній рівень навичок збирання й формалізації вимог |
+| E5 Мотивація | 1 | 5 | 5 | висока зацікавленість у результаті |
+| E6 Стабільність вимог | 2 | 3 | 6 | вимоги розширювалися: захоплення звуку застосунку та режим слідування додано на завершальних етапах |
+| E7 Зайнятість розробника | −1 | 0 | 0 | розробник повністю зайнятий у проєкті |
+| E8 Складність мови програмування | −1 | 2 | −2 | TypeScript середньої складності |
+| Разом | – | – | 12 | – |
+
+- EF = 1,4 − 0,03 · 12 = **1,04**.
+- UCP = 83 · 1,135 · 1,04 = 97,97 ≈ **98,0**.
+- PF (Schneider–Winters): E1–E6 with a score below 3 are E1, E2 and E3; E7–E8 with a score
+  above 3, none. Three factors give **PF = 28**.
+- Effort = 98,0 · 28 ≈ **2743 люд.-год**, which at 8 h a day is ≈ **343 люд.-дні**.
+- Write E7's name the same way everywhere. Today it is «Часткова зайнятість», with a score of
+  3 and the old rationale. Replace all of it.
+
+Delete:
+
+- the «PF зросте до 28» conditional;
+- the comparison of the estimate with the actual development time;
+- every sentence on E6/E7 «узгоджено з історією…».
+
+Close 2.1 the way E2 does. The estimate exceeds what one developer can do within the
+development window. So the plan concentrates on the five use cases and relies on ready
+components (mediasoup, Auth.js, Next.js, Electron), so that only the application-capture and
+follow mode parts are built from scratch. This is the justification, with no numbers about real
+hours.
+
+`90-conclusions.md`: the planning sentence gives ≈ 98,0 UCP and ≈ 2743 люд.-год, with nothing
+about Git.
+
+### 0A.3 Goal: exact wording and where it is mirrored (ticket 4e05acb6)
+
+The goal is improving a process through the software, as in E2. The indicator is one actually
+measured in the thesis: Д3 switch 1,5 с and Д5 return 1,3 с in `tbl:tc-desktop`, Appendix В.
+The latency trials of §6.2 were never run, so latency is **not** the indicator any more.
+
+**UA, verbatim:**
+
+> Метою кваліфікаційної роботи є підвищення ефективності трансляції окремих застосунків шляхом
+> розроблення вебсервісу потокової передачі медіаконтенту з настільним застосунком для
+> захоплення, який передає глядачам у браузері зображення та власний звук лише обраного
+> застосунку і без дій стрімера перемикає трансляцію на нове вікно цього застосунку протягом
+> 1,5 с.
+
+**EN, verbatim:**
+
+> The purpose of the qualification work is to improve the efficiency of broadcasting individual
+> applications by developing a media streaming web service with a desktop capture application that
+> delivers to viewers in the browser the picture and own sound of the selected application only
+> and, without any action from the streamer, switches the broadcast to a new window of that
+> application within 1.5 s.
+
+**Mirrored in.** The same wording appears in each of these places:
+
+1. `03-intro.md` «Мета і задачі роботи»:
+   - the goal, verbatim;
+   - then one indicator sentence: «Показником досягнення мети є відсутність ручних дій стрімера
+     під час появи нового вікна застосунку та час перемикання трансляції на нього, який не
+     перевищує одного циклу опитування (1,5 с).»
+   - Delete the latency sentence, its placeholder and the «(підрозділ 6.2)» pointer.
+   - The task list stays as it is.
+2. `03-intro.md` object and subject, kept consistent with the goal:
+   - «Об'єктом роботи є процес трансляції окремих застосунків глядачам у реальному часі.»
+   - «Предметом роботи є методи та програмні засоби захоплення зображення й звуку окремого
+     застосунку, автоматичного перемикання трансляції між його вікнами та доставки медіапотоку
+     глядачам через WebRTC.»
+3. `00-abstract-uk.md` uses the goal verbatim.
+4. `01-abstract-en.md` uses the EN goal verbatim.
+5. `front/task-sheet.md` «Зміст завдання», first sentence: «Розробити вебсервіс потокової
+   передачі медіаконтенту з настільним застосунком для захоплення, що підвищує ефективність
+   трансляції окремих застосунків: передає глядачам у браузері зображення та власний звук лише
+   обраного застосунку і без дій стрімера перемикає трансляцію на нове вікно цього застосунку
+   протягом 1,5 с.» The rest stays.
+6. `60-chapter6.md` §6.2, the first sentence becomes the criterion:
+   - «Критерієм досягнення мети є автоматичне, без дій стрімера, перемикання трансляції на нове
+     вікно застосунку протягом 1,5 с.»
+   - It is confirmed by Д3 (1,5 с) and Д5 (1,3 с), and by the manual check Д10 once it is filled.
+   - The latency trials (`tbl:trials`) stay as an operational characteristic with their
+     placeholders. They are not the criterion.
+   - Delete «показник мети з вступу» and «Як і в підрозділі 5.3».
+7. «Висновки до розділу 6» says the same thing in one sentence.
+8. `90-conclusions.md`, the goal-achievement paragraph, today «Функціональну частину мети
+   досягнуто…»:
+   - the goal is achieved;
+   - switching takes 1,5 с and the return 1,3 с, Д3/Д5;
+   - no streamer action is needed;
+   - the application's own sound is passed;
+   - no latency claim.
+   - Also delete the sentence at about line 19 that says the timeline was «відновлено за
+     історією Git»; see §0A.4.
+
+### 0A.4 Planning chapter: style, timeline, no VCS (ticket f7de6f46)
+
+**Hard rule.** In `20-chapter2.md`, its captions and `fig-gantt.puml`, none of these appear:
+
+- the words Git, GitHub, репозиторій, монорепозиторій, коміт, гілка, тег, «система контролю
+  версій» or «історія»;
+- commit counts, idle-gap analysis, authorship, or file counts.
+
+No file of the thesis may say where the timeline came from. Outside chapter 2, GitHub may be
+named only as part of the system's infrastructure: Releases as the download source, Actions,
+and GHCR in chapters 3–4 and the intro.
+
+Check with:
+
+`grep -niE 'git|репозитор|коміт|гілк|історі' thesis/chapters/20-chapter2.md thesis/diagrams/fig-gantt.puml`
+
+It must print nothing, apart from false hits such as «історичн» that you have reviewed.
+
+**Structure of 2.2 «Розробка плану виконання проєкту»**, as in E2, pp. 29–32:
+
+1. One lead paragraph: the project is split into works, each with a defined result.
+2. One paragraph per work: «Робота «‹назва›» передбачає … Результат – …». The content comes
+   from the table below and §2 of this plan, with no commit language.
+3. Table `tbl:wbs`, captioned «Тривалість та залежності робіт проєкту». Columns:
+   № | Робота | Терміни | Тривалість, дн. | Попередники.
+4. A paragraph on the dependencies: why each work needs its predecessors (the gist is in the
+   table below).
+5. `fig:gantt`, captioned «Діаграма Ганта проєкту», with the axis starting 27.05.2026, in days
+   or weeks.
+6. An analysis paragraph:
+   - the works run in sequence because one developer does them;
+   - the longest and most labour-intensive is work 1, then work 2;
+   - the critical point is work 5, application capture, the novelty of the system;
+   - the total duration.
+
+The works and their real time frames are binding; the dates are internal facts:
+
+| № | Робота | Терміни (2026) | Дн. | Попередники | Обґрунтування залежності |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Створення каркаса системи та базової трансляції (вебзастосунок, сервер сигналізації з SFU, вхід через Google, модуль бази даних) | 27.05–13.07 | 48 | – | основа для всіх подальших робіт |
+| 2 | Гостьовий доступ і керування трансляцією (гостьові сеанси, приватні трансляції, вимкнення звуку, сповіщення, мініатюри, очищення неактивних сеансів) | 14.07–12.08 | 30 | 1 | розширює модель трансляції та сеансів роботи 1 |
+| 3 | Підготовка розгортання (контейнери, зворотний проксі Caddy, перевірка змінних оточення) | 13.08–29.08 | 17 | 2 | розгортається функціонально завершене ядро |
+| 4 | Доопрацювання інтерфейсу | 30.08–03.09 | 5 | 3 | інтерфейс шліфується на розгорнутій системі |
+| 5 | Захоплення окремих застосунків (вибір джерела, звук застосунку, пакування й випуск настільного застосунку, кнопка завантаження) | 04.09–14.09 | 11 | 1, 4 | використовує конвеєр трансляції роботи 1 |
+| 6 | Керування трансляцією, автооновлення та вхід через системний браузер | 15.09–19.09 | 5 | 5 | стосується настільного застосунку роботи 5 |
+| 7 | Оптимізація кодування відео (бітрейт, апаратне H.264) і перший випуск 0.0.1 | 20.09 | 1 | 6 | випуск після завершення функцій 5–6 |
+| 8 | Режим слідування та випуск 1.0.0 | 21.09–25.09 | 5 | 5, 7 | спирається на захоплення застосунків і стабільний випуск |
+| 9 | Тестування системи та оформлення пояснювальної записки | з 05.10 | `[ПОТРЕБУЄ УТОЧНЕННЯ: дата завершення]` | 8 | тестується й описується завершена версія |
+
+- Development runs 27.05–25.09, which is 122 calendar days.
+- If the user gives no end date, the Gantt bar of work 9 ends at its last known date, and the
+  open item stays in `OPEN_ITEMS.md`.
+- Do not explain the pause 26.09–04.10 or any gap.
+
+**2.3 risks.** Keep R1–R9 and their responses. Rephrase every «виявлено історією…» or «окремим
+комітом на етапі N» as «під час розробки» or «на етапі роботи N». The ratings are unchanged.
+
+**Висновки до розділу 2.** Give the UCP result from §0A.2, nine works over the frames above,
+and the key risks, with no data source named.
+
+§0.7's checklist item on chapter 2 facts has been changed to «chapter 2 dates
+equal §0A.4». The source stays internal.
+
+### 0A.5 References: keep exactly these 30 (ticket db976aaa)
+
+The user rule is 20–30 sources, only those that justify material. This supersedes §1.11's target
+of 25–35. Keep exactly the keys below, which are now in `sources.yaml` and already cited. Delete
+the other 52 from `sources.yaml` and remove their `[@key]` citations. Then regenerate with
+`python3 thesis/tools/references.py`; numbering follows first citation.
+
+| # | Key | Claim it carries (keep the citation on this claim) |
+| --- | --- | --- |
+| 1 | rfc8216 | HLS delivers in segments, so latency is seconds |
+| 2 | w3c-webrtc | WebRTC API; replaceTrack and setParameters work without renegotiation |
+| 3 | rfc8825 | WebRTC as an IETF protocol suite on RTP/SRTP |
+| 4 | rfc8827 | DTLS-SRTP encryption is mandatory |
+| 5 | rfc7667 | RTP topologies: MCU vs SFU |
+| 6 | andre2018 | scientific comparison of SFU media servers |
+| 7 | w3c-screen-capture | the user picks the surface; no enumeration; audio optional |
+| 8 | electron-desktop-capturer | enumeration of screens and windows in Electron |
+| 9 | electron-session | setDisplayMediaRequestHandler; loopback audio is system-wide and Windows-only |
+| 10 | electron-native-screenshare | per-process audio; PID from the window handle |
+| 11 | twitch-video-broadcast | Twitch ingest via RTMP from an external encoder |
+| 12 | twitch-stream-quality | viewing without an account, up to 1080p |
+| 13 | obs-window-capture | Window Match Priority (manual re-selection otherwise) |
+| 14 | obs-app-audio | OBS application audio only on Windows 10 2004+/11 |
+| 15 | discord-go-live | viewers must join the voice channel; Nitro quality limits |
+| 16 | meet-present | Meet sharing modes and audio |
+| 17 | meet-join | Meet guests need admission |
+| 18 | zoom-share-screen | Zoom shares whole-computer audio; Wayland limitation |
+| 19 | zoom-join-without-account | Zoom join from the browser without an account |
+| 20 | omg-uml | UML use-case model and diagrams |
+| 21 | cockburn-use-cases | scenario format |
+| 22 | iso25010 | quality model for non-functional requirements |
+| 23 | azzeh-nassif-ucp | the UCP method |
+| 24 | rfc8252 | native apps sign in via the external browser and a loopback redirect |
+| 25 | rfc7636 | PKCE |
+| 26 | google-embedded-webviews | Google blocks embedded webviews (risk R2, desktop sign-in) |
+| 27 | mediasoup-design | Node.js SFU with C++ workers; no imposed signalling |
+| 28 | mediasoup-api | router, transport and consumer API; bitrate limits; pipeToRouter (future work) |
+| 29 | electron-process-model | utility process for crash-prone components |
+| 30 | authjs-session-strategies | JWT cookie session that cannot be revoked server-side |
+
+These are removed:
+
+- apple-hls-authoring, apple-ll-hls, youtube-latency, enhanced-rtmp, rfc3550, rfc8445, rfc9429
+- mediasoup-overview, mdn-getdisplaymedia, chrome-screen-sharing-controls, obs-home,
+  twitch-browsers, google-oauth-native, electron-builder-autoupdate
+- typescript, pnpm-workspaces, zod, nextjs-docs, react-19, nextjs-proxy, fastify-docs, rfc6455,
+  fastify-websocket
+- janus-docs, livekit-about, mediasoup-scalability, mediasoup-client, electron-docs,
+  tauri-webview, tauri-architecture, electron-utility-process, electron-context-isolation,
+  electron-builder
+- postgresql-about, prisma-what-is, drizzle-overview, docker-compose-model, caddy-https,
+  electron-message-ports, mdn-audioworklet, mediasoup-client-api
+- rfc7742, rfc6184, w3c-mst-content-hint, w3c-webrtc-stats
+- authjs-credentials, authjs-google, mdn-set-cookie, fastify-hooks, drizzle-kit-push,
+  tailwind-theme, next-themes
+
+How to remove them:
+
+- A claim whose only source goes either stays as plain, verifiable text with no citation (stack
+  facts and how the code works), or is deleted when it is commentary that needs the source, such
+  as the LL-HLS, YouTube and Chrome remarks.
+- Never re-cite a claim to a kept source that does not support it.
+- §4.1: delete the alternatives-comparison tables `tbl:alt-sfu` and `tbl:alt-desktop` and their
+  references. Justify the chosen stack positively in prose, as E2 §4.1 does: what each tool gives
+  this system, with one kept source where one exists (mediasoup-design, electron-process-model,
+  authjs-session-strategies). Comparisons with Janus/LiveKit/Tauri go, along with their sources.
+- Update the source count in both abstracts from 82 to the number `references.py` reports, which
+  should be 30.
+- Afterwards, run `grep -c '^[0-9]' thesis/chapters/95-references.md`. The count must be ≤ 30.
+  The tool also fails on any uncited or unknown key.
+
+### 0A.6 Mechanical rules
+
+**0A.6.1 Level-1 headings in UPPER CASE (ticket 4e05acb6).** The style already renders Heading 1
+in caps (`make_reference_docx.py`, `all_caps`). The user wants the source itself to be
+uppercase, so that ЗМІСТ and any viewer show it that way. Type these literally in the Markdown:
+
+- `# АНОТАЦІЯ`
+- `# ABSTRACT`
+- `# ПЕРЕЛІК УМОВНИХ ПОЗНАЧЕНЬ`
+- `# ВСТУП`
+- `# 1 АНАЛІЗ ПРЕДМЕТНОЇ ОБЛАСТІ ТА СПЕЦИФІКАЦІЯ ВИМОГ`
+- `# 2 ПЛАНУВАННЯ ПРОГРАМНОГО ПРОЄКТУ`
+- `# 3 ПРОЄКТУВАННЯ ПРОГРАМНОЇ СИСТЕМИ`
+- `# 4 ПРОГРАМНА РЕАЛІЗАЦІЯ СИСТЕМИ`
+- `# 5 ТЕСТУВАННЯ ПРОГРАМНОЇ СИСТЕМИ`
+- `# 6 ЕКСПЛУАТАЦІЯ ПРОГРАМНОЇ СИСТЕМИ`
+- `# ЗАГАЛЬНІ ВИСНОВКИ`
+- `# СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ`
+
+Exceptions:
+
+- **Appendix headings stay** `# Додаток А Лістинг програми` etc. `assemble.py` puts «ДОДАТОК А»
+  in caps through the style and keeps the title in sentence case, as in §1.4 and both examples.
+- `##` headings stay in sentence case, including «Висновки до розділу N».
+
+Tool matches to adjust in the same change. Without them the build breaks or the edit gets
+reverted:
+
+- `tools/references.py`: `HEADER = "# СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ\n"`. Otherwise every regeneration
+  reverts the heading.
+- `tools/thesis.lua`: `REFS_TITLE` is compared through `pandoc.text.lower`, so it still matches.
+  Set its value to the uppercase text so the auto-inserted heading matches too.
+- `tools/assemble.py` (`FRONT_MATTER` lower-cased) and `tools/topdf.py` (`.upper()`) already
+  ignore case. Verify them with a build.
+- `tools/check_docx.py` runs on `tools/fixture/`. Leave the fixture as it is, unless the build's
+  self-test fails.
+- Check `grep -n '^# ' thesis/chapters/*.md`. Every line except the three appendices must have
+  no lowercase letter.
+
+**0A.6.2 No structural pointers in prose (ticket db976aaa).** E2 has none. Remove every
+«(підрозділ x.y)», «(розділ N)», «у підрозділі x.y», «розділ N описує…» and the like from the
+running text: abstracts, intro, chapters and conclusions. Rephrase by content, for example
+«під час аналізу аналогів», «у тестуванні», «вище», «далі». These stay:
+
+- references to рис., табл., формули, сценарії, лістинги and додатки;
+- the «Висновки до розділу N» headings;
+- §0.1's suggested «у підрозділі 1.3» is superseded.
+
+Check: `grep -nE '(під)?розділ[а-яіє]* [0-9]' thesis/chapters/*.md | grep -v '^[^:]*:[0-9]*:## Висновки'`
+must print nothing. Today there are about 16 hits.
+
+**0A.6.3 Title page and source data (ticket 4e05acb6).** The values in `metadata.yaml` are
+binding, given by the user:
+
+- `institute`: «Навчально-науковий інститут комп’ютерних систем»
+- `department`: «Кафедра інженерії програмного забезпечення»
+- `student`: «Нікіта КАБАКОВ», as in E2's «Катерина ГРАТІЛОВА»
+- `student_full`: «Кабаков Нікіта Сергійович»
+- `student_en`: «Nikita KABAKOV»
+- `specialty`: «121 Інженерія програмного забезпечення»
+- `program`: «Інженерія програмного забезпечення»
+- `title_uk`: «Вебсервіс для потокової передачі медіаконтенту з функцією захоплення окремих
+  застосунків». Sentence case, no placeholder, as E2's title page shows.
+  - If template style Т9 carries caps, override them in `assemble.py` with run-level
+    `w:caps w:val=0`, the same way as the appendix titles.
+  - Verify in the PDF that the topic is not all caps.
+- `title_en`, wherever printed: «Web service for streaming media content with the function of
+  capturing individual applications».
+- Group, supervisor and year stay placeholders. The user has not given them.
+
+The same data goes into the bibliographic lines of the abstracts:
+
+- UA: «Кабаков Н. С. Вебсервіс для потокової передачі медіаконтенту з функцією захоплення
+  окремих застосунків : кваліфікаційна робота бакалавра за спеціальністю «121 Інженерія
+  програмного забезпечення» / Нікіта Сергійович Кабаков ; керівник [ПОТРЕБУЄ УТОЧНЕННЯ: …]. –
+  Одеса …»
+- EN: «Kabakov N. S. Web service for streaming media content with the function of capturing
+  individual applications : bachelor's qualification work in the specialty «121 Software
+  Engineering» / Nikita Serhiiovych Kabakov ; supervisor …»
+
+The same data also goes into the task sheet: institute, department, specialty, program and the
+student's name.
+
+**0A.6.4 Remove «за наказом» placeholders (ticket 4e05acb6).** Delete every
+«[ПОТРЕБУЄ УТОЧНЕННЯ: … за наказом …]» variant: in `metadata.yaml`, both abstracts, the task
+sheet's «Тема роботи», the header of this file, and the corresponding `OPEN_ITEMS.md` entry.
+`grep -rn 'наказом' thesis/` may afterwards show only the task-sheet form line «Тема та керівник
+роботи затверджені наказом ректора від … № …». That line is part of the official form; its date
+and number stay placeholders.
+
+**0A.6.5 Checklist additions.** Before hand-off, every later ticket runs the greps of §0A.4,
+§0A.5, §0A.6.1 and §0A.6.2 together with §0.7. The main text stays ≤ 80 pp. Removing tables and
+references should free space; do not pad it back.
 
 ---
 
@@ -440,7 +883,7 @@ Examples present use cases as numbered scenarios, captioned like a table:
   - book: `Cockburn A. Writing Effective Use Cases. Upper Saddle River : Addison-Wesley, 2001. 204 p.`
   - article: `Автор А. А. Назва. Назва журналу. 2025. Т. 6, № 3. С. 363–378.`
 - Numbered list «1.», «2.», … at paragraph indent, 14 pt, 1.5 spacing, justified.
-- Target 25–35 sources, mostly official specs/docs (W3C, IETF RFCs, mediasoup, Electron, Next.js,
+- *Superseded by §0A.5: exactly the 30 sources listed there.* Target 25–35 sources, mostly official specs/docs (W3C, IETF RFCs, mediasoup, Electron, Next.js,
   Auth.js, Fastify, Drizzle, PostgreSQL, Docker), plus methodology (UCP, use cases, testing) and a
   few scientific publications on WebRTC/SFU latency. Every source is cited at least once.
 - Only real, verifiable sources; date of access = the date the writer actually opened it.
