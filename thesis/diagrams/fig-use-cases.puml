@@ -8,58 +8,25 @@ skinparam defaultFontSize 12
 skinparam packageStyle rectangle
 left to right direction
 
-actor "Гість" as Guest
-actor "Користувач\n(стрімер / глядач)" as User
-actor "Google\n(OAuth 2.0)" as Google <<зовнішня система>>
+actor "Глядач" as Viewer
+actor "Стример" as Streamer
+actor "Google" as Google <<зовнішня система>>
 
-User -|> Guest
+Streamer -|> Viewer
 
 rectangle "Вебсервіс трансляції медіаконтенту" {
+  usecase "Реєстрація та вхід\nчерез Google" as UC_SignIn
   usecase "Перегляд трансляції" as UC_Watch
-  usecase "Отримання\nгостьового сеансу" as UC_GuestSession
-  usecase "Керування відтворенням\n(гучність, PiP, повний екран)" as UC_Playback
-  usecase "Завантаження\nнастільного застосунку" as UC_Download
-
-  usecase "Вхід через Google" as UC_Login
-  usecase "Вхід із настільного\nзастосунку" as UC_DesktopLogin
-  usecase "Вихід із системи" as UC_Logout
-  usecase "Перегляд переліку\nактивних трансляцій" as UC_List
-
-  usecase "Проведення трансляції" as UC_Stream
-  usecase "Трансляція\nу браузері" as UC_BrowserStream
-  usecase "Трансляція\nокремого застосунку" as UC_AppStream
-  usecase "Вибір вікна\nабо екрана" as UC_PickSource
-  usecase "Захоплення звуку\nзастосунку" as UC_AppAudio
-  usecase "Слідування за вікнами\nзастосунку" as UC_Follow
-  usecase "Налаштування якості\nі частоти кадрів" as UC_Quality
-  usecase "Приватний режим\nтрансляції" as UC_Private
-  usecase "Копіювання посилання\nна перегляд" as UC_Link
-  usecase "Вимкнення звуку\nтрансляції" as UC_Mute
+  usecase "Трансляція у браузері" as UC_Browser
+  usecase "Трансляція окремого\nзастосунку" as UC_App
   usecase "Завершення трансляції" as UC_End
-  usecase "Відновлення трансляції" as UC_Reconnect
 }
 
-Guest --> UC_Watch
-Guest --> UC_Download
-Guest --> UC_Login
-UC_Watch ..> UC_GuestSession : <<include>>
-UC_Playback ..> UC_Watch : <<extend>>
-UC_DesktopLogin ..> UC_Login : <<extend>>
-UC_Login --> Google
+Viewer --> UC_SignIn
+Viewer --> UC_Watch
+UC_SignIn --> Google
 
-User --> UC_Logout
-User --> UC_List
-User --> UC_Stream
-User --> UC_End
-User --> UC_Reconnect
-
-UC_BrowserStream -|> UC_Stream
-UC_AppStream -|> UC_Stream
-UC_AppStream ..> UC_PickSource : <<include>>
-UC_AppStream ..> UC_AppAudio : <<include>>
-UC_Follow ..> UC_AppStream : <<extend>>
-UC_Quality ..> UC_Stream : <<extend>>
-UC_Private ..> UC_Stream : <<extend>>
-UC_Link ..> UC_Stream : <<extend>>
-UC_Mute ..> UC_Stream : <<extend>>
+Streamer --> UC_Browser
+Streamer --> UC_App
+Streamer --> UC_End
 @enduml

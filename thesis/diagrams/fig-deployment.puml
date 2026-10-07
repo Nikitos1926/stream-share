@@ -6,7 +6,7 @@ skinparam shadowing false
 skinparam monochrome true
 skinparam defaultFontSize 12
 
-node "Комп'ютер глядача або стрімера" as PC {
+node "Комп'ютер глядача або стримера" as PC {
   node "Браузер" as Br
   node "Настільний застосунок\n(інсталятор electron-builder)" as App
 }

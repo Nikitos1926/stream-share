@@ -30,7 +30,7 @@
 | Стовпець | Тип | Обмеження | Призначення |
 |---|---|---|---|
 | id | text | PK, UUID за замовчуванням | ідентифікатор трансляції, частина посилання на перегляд |
-| user_id | text | NOT NULL, FK → user.id | стрімер |
+| user_id | text | NOT NULL, FK → user.id | стример |
 | isPrivate | boolean | false за замовчуванням | приватна трансляція не потрапляє до загального переліку |
 | status | varchar | created за замовчуванням | стан (рис. @fig:state-stream) |
 | endReason | varchar | – | streamer_stop, timeout, server_force, admin_force |
