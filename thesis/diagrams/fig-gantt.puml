@@ -2,10 +2,9 @@
 !pragma layout smetana
 skinparam defaultFontName "Liberation Serif"
 skinparam dpi 200
-' Побудовано лише за історією Git (усі гілки, станом на 06.10.2026); D+0 = понеділок 25.05.2026.
-' Темна смуга – від першого до останнього коміту етапу (включно); світла – проміжок без комітів
-' між попереднім етапом і першим комітом етапу. Мітки – теги випусків і початок гілки записки.
+' Діаграма Ганта проєкту: дев'ять робіт табл. 2.5; D+0 = 27.05.2026, шкала – тижні від цієї дати.
 ' Назв місяців українською PlantUML не має, тому календарні дати – у табл. 2.5.
+' Дата завершення роботи 9 ще не визначена, тому її смуга закінчується останньою відомою датою.
 <style>
 ganttDiagram {
   FontName "Liberation Serif"
@@ -14,6 +13,7 @@ ganttDiagram {
     FontName "Liberation Serif"
     FontSize 12
     LineColor #333333
+    BackGroundColor #AAAAAA
   }
   milestone {
     FontName "Liberation Serif"
@@ -32,58 +32,22 @@ hide column start
 hide column end
 hide column duration
 
-[1 Каркас монорепозиторію] as [C1] starts D+2 and lasts 1 days
-[2 Базова трансляція, вхід через Google] as [C2] starts D+49 and lasts 1 days
-[​] as [G2] starts D+3 and lasts 46 days
-[3 Конфігурація TypeScript, залежності] as [C3] starts D+57 and lasts 1 days
-[​​] as [G3] starts D+50 and lasts 7 days
-[4 Гостьовий сеанс і функції трансляції] as [C4] starts D+73 and lasts 7 days
-[​​​] as [G4] starts D+58 and lasts 15 days
-[5 Розгортання на сервері] as [C5] starts D+95 and lasts 2 days
-[​​​​] as [G5] starts D+80 and lasts 15 days
-[6 Доопрацювання інтерфейсу] as [C6] starts D+101 and lasts 1 days
-[​​​​​] as [G6] starts D+97 and lasts 4 days
-[7 Настільний застосунок, випуск у CI] as [C7] starts D+111 and lasts 2 days
-[​​​​​​] as [G7] starts D+102 and lasts 9 days
-[8 Керування трансляцією, автооновлення] as [C8] starts D+115 and lasts 1 days
-[​​​​​​​] as [G8] starts D+113 and lasts 2 days
-[9 Вхід через системний браузер, виправлення] as [C9] starts D+117 and lasts 1 days
-[​​​​​​​​] as [G9] starts D+116 and lasts 1 days
-[10 Апаратне кодування H.264] as [C10] starts D+118 and lasts 1 days
-[11 Режим слідування за вікнами] as [C11] starts D+123 and lasts 1 days
-[​​​​​​​​​] as [G11] starts D+119 and lasts 4 days
-[Випуск 0.0.1] happens D+118
-[Випуск 1.0.0] happens D+123
-[Початок роботи над запискою] happens D+133
+[1 Каркас системи та базова трансляція] as [W1] starts D+0 and lasts 48 days
+[2 Гостьовий доступ і керування трансляцією] as [W2] starts D+48 and lasts 30 days
+[3 Підготовка розгортання] as [W3] starts D+78 and lasts 17 days
+[4 Доопрацювання інтерфейсу] as [W4] starts D+95 and lasts 5 days
+[5 Захоплення окремих застосунків] as [W5] starts D+100 and lasts 11 days
+[6 Керування трансляцією, автооновлення] as [W6] starts D+111 and lasts 5 days
+[7 Оптимізація кодування, випуск 0.0.1] as [W7] starts D+116 and lasts 1 day
+[8 Режим слідування, випуск 1.0.0] as [W8] starts D+117 and lasts 5 days
+[9 Тестування та оформлення записки] as [W9] starts D+131 and lasts 3 days
 
-[G2] displays on same row as [C2]
-[G3] displays on same row as [C3]
-[G4] displays on same row as [C4]
-[G5] displays on same row as [C5]
-[G6] displays on same row as [C6]
-[G7] displays on same row as [C7]
-[G8] displays on same row as [C8]
-[G9] displays on same row as [C9]
-[G11] displays on same row as [C11]
-
-[C1] is colored in #333333/#333333
-[C2] is colored in #333333/#333333
-[C3] is colored in #333333/#333333
-[C4] is colored in #333333/#333333
-[C5] is colored in #333333/#333333
-[C6] is colored in #333333/#333333
-[C7] is colored in #333333/#333333
-[C8] is colored in #333333/#333333
-[C9] is colored in #333333/#333333
-[C10] is colored in #333333/#333333
-[C11] is colored in #333333/#333333
-[G2] is colored in #DDDDDD/#999999
-[G3] is colored in #DDDDDD/#999999
-[G4] is colored in #DDDDDD/#999999
-[G5] is colored in #DDDDDD/#999999
-[G6] is colored in #DDDDDD/#999999
-[G7] is colored in #DDDDDD/#999999
-[G8] is colored in #DDDDDD/#999999
-[G9] is colored in #DDDDDD/#999999
-[G11] is colored in #DDDDDD/#999999
+[W1] -> [W2]
+[W2] -> [W3]
+[W3] -> [W4]
+[W4] -> [W5]
+[W5] -> [W6]
+[W6] -> [W7]
+[W7] -> [W8]
+[W8] -> [W9]
 @endgantt
