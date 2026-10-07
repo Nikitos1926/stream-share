@@ -42,14 +42,20 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   `--check` fails on an unresolved `[@key]`, a duplicate or uncited source, or a stale list) and
   `chapters/A0-appendix-a.md` (`python3 thesis/tools/appendix.py`, code read from the commit pinned
   in the script). Re-run both after changing citations or the appendix listings.
-- Appendices Б (`B0-appendix-b.md`, DB column tables) and В (`C0-appendix-v.md`, test-case tables)
-  are hand-written; their tables are defined there and referenced from §3.3 / §5.2. Test-case
+- DB tables are described in §3.3 right after the ER diagram (user rule 2026-10-07): one table per
+  real table, «Таблиця 3.N – Опис таблиці <name>», columns «Поле | Тип даних | Обмеження | Опис»,
+  one field per row, each with an E2-style lead-in («Таблиця stream (табл. …) зберігає…»); keep
+  them in sync with the schema of the DB module. There is no appendix Б any more.
+- Appendix В (`C0-appendix-v.md`, test-case tables) is hand-written; its tables are defined there
+  and referenced from §5.2. Test-case
   tables follow E2 table 5.1: «ID | Сценарій | Вхідні дані | Очікуваний результат | Фактичний
   результат», cells start with a capital, parameters as «Статус: 401», fact «Пройдено» /
   «Пройдено: <measured value>» / «Не пройдено: <actual>»; IDs А1…З5 match the test scripts' output.
   Appendix А lead-ins come from the `lead` field of `LISTINGS` in `tools/appendix.py` (role, no
-  path). Volume is at the limit (2026-10-07, after the §0A.5 source cut: main 80 of 80 pp, total 117 of ~120 by
-  `pages.txt`): any addition needs an equal cut.
+  path). Volume is at the limit (2026-10-07, after the DB tables moved into §3.3: main 80 of 80 pp, total 114
+  of ~120 by `topdf.py`): any addition needs an equal cut. Chapter 3 widths of fig:seq-desktop-auth
+  (15 cm), fig:state-stream and fig:er (13 cm) are set so those figures share a page with the text
+  before them; a page that is half empty before a tall figure is the cheapest place to win a page.
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
   abbreviation is used ≥ 3 times; expand it in the text at first use.
