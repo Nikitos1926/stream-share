@@ -189,7 +189,7 @@ def insert_toc(doc):
             break
         if is_heading1(p) and para_text(p).lower() in FRONT_MATTER:
             p.find(qn("w:pPr") + "/" + qn("w:pStyle")).set(qn("w:val"), "TOCTitle")
-    title = make_para("TOCTitle", "Зміст")
+    title = make_para("TOCTitle", "ЗМІСТ")
     toc = make_para("toc1", "")
     for r in field_runs('TOC \\o "1-2" \\h \\z \\u',
                         "Зміст буде сформовано після оновлення полів (Ctrl+A, F9)."):

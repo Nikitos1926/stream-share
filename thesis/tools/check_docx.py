@@ -64,8 +64,8 @@ def main(path):
             sp = s.find(f"{W}pPr/{W}spacing")
             expect(sp is not None and sp.get(f"{W}after") == "0" and sp.get(f"{W}before") == "0",
                    "title page styles must have no space before/after (page 1 overflows)")
-    i_abs, i_toc, i_intro = find("Анотація"), find("Зміст"), find("Вступ")
-    expect(i_abs < i_toc < i_intro, "order must be title, Анотація, Зміст, Вступ")
+    i_abs, i_toc, i_intro = find("Анотація"), find("ЗМІСТ"), find("Вступ")
+    expect(i_abs < i_toc < i_intro, "order must be title, Анотація, ЗМІСТ, Вступ")
     expect(items[i_toc][1] == "TOCTitle", "ЗМІСТ title must use the TOC Title style")
     expect(items[i_abs][1] == "TOCTitle", "АНОТАЦІЯ must not be an outline heading (kept out of ЗМІСТ)")
     instr = " ".join(t.text for t in doc.element.body.iter(W + "instrText"))

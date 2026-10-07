@@ -1,19 +1,19 @@
-# Title page and abstract fields. Values in [ПОТРЕБУЄ УТОЧНЕННЯ: …] must come from the user (PLAN.md §5, G1).
+# Title page and abstract fields, given by the user (PLAN.md §0A.6.3). Remaining [ПОТРЕБУЄ УТОЧНЕННЯ: …] values must come from the user.
 # Layout follows docs/formatting_examples/Appendix_A_-_Sample_Title_Page_Formatting.docx.
 lang: uk-UA
 ministry: "МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ"
 university: "НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ «ОДЕСЬКА ПОЛІТЕХНІКА»"
-institute: "[ПОТРЕБУЄ УТОЧНЕННЯ: інститут]"   # examples: «Навчально-науковий інститут комп’ютерних систем»
-department: "[ПОТРЕБУЄ УТОЧНЕННЯ: кафедра]"   # examples: «Кафедра інженерії програмного забезпечення»
+institute: "Навчально-науковий інститут комп’ютерних систем"
+department: "Кафедра інженерії програмного забезпечення"
 work_type: "КВАЛІФІКАЦІЙНА РОБОТА БАКАЛАВРА"
-title_uk: "ВЕБСЕРВІС ДЛЯ ПОТОКОВОЇ ПЕРЕДАЧІ МЕДІАКОНТЕНТУ З ФУНКЦІЄЮ ЗАХОПЛЕННЯ ОКРЕМИХ ЗАСТОСУНКІВ [ПОТРЕБУЄ УТОЧНЕННЯ: за наказом]"   # exact wording of the rector’s order
-title_en: "WEB SERVICE FOR STREAMING MEDIA CONTENT WITH THE FUNCTION OF CAPTURING INDIVIDUAL APPLICATIONS"
-student: "[ПОТРЕБУЄ УТОЧНЕННЯ: Ім’я ПРІЗВИЩЕ]"
-student_full: "[ПОТРЕБУЄ УТОЧНЕННЯ: Прізвище Ім’я По батькові — для бібліографічного опису]"
-student_en: "[ПОТРЕБУЄ УТОЧНЕННЯ: Name SURNAME]"
+title_uk: "Вебсервіс для потокової передачі медіаконтенту з функцією захоплення окремих застосунків"
+title_en: "Web service for streaming media content with the function of capturing individual applications"
+student: "Нікіта КАБАКОВ"
+student_full: "Кабаков Нікіта Сергійович"
+student_en: "Nikita KABAKOV"
 group: "[ПОТРЕБУЄ УТОЧНЕННЯ: група]"
-specialty: "[ПОТРЕБУЄ УТОЧНЕННЯ: спеціальність]"   # probably «121 Інженерія програмного забезпечення»
-program: "[ПОТРЕБУЄ УТОЧНЕННЯ: освітня програма]"
+specialty: "121 Інженерія програмного забезпечення"
+program: "Інженерія програмного забезпечення"
 supervisor: "[ПОТРЕБУЄ УТОЧНЕННЯ: керівник]"   # науковий ступінь, вчене звання, Ім’я ПРІЗВИЩЕ
 city_year: "Одеса – [ПОТРЕБУЄ УТОЧНЕННЯ: рік]"
 keywords_uk: [вебсервіс, потокова передача медіаконтенту, пряма трансляція, захоплення застосунку, захоплення звуку процесу, WebRTC, SFU, mediasoup, Electron, Next.js, TypeScript, PostgreSQL]   # = chapters/00-abstract-uk.md

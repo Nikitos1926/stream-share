@@ -59,10 +59,10 @@ then `tools/assemble.py`; Python deps go into `.cache/venv` from `tools/requirem
 - `thesis.lua` numbers `fig:/tbl:/lst:/eq:/sc:` per chapter (from the `#` heading's number, or the
   letter of `# Додаток А …`), writes the captions, resolves `@id` (→ «3.1», `@eq:` → «(2.1)») and
   `[@key]` (→ «[n]», order of first citation). The source list goes into `::: {#refs} :::`, else
-  under `# Список використаних джерел`, else before the first appendix. Unknown source key = error;
+  under `# СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ`, else before the first appendix. Unknown source key = error;
   unknown cross-reference = warning + «??» (error with `THESIS_STRICT=1`, use it for the final build).
   A literal `@` in prose (npm scopes) is escaped `\@`, never put in backticks (PLAN.md §0.2).
-- `assemble.py` adds the title page (Appendix_A styles, fields from `metadata.yaml`; optional
+- `assemble.py` adds the title page (Appendix_A styles, fields from `metadata.yaml`, topic in sentence case; optional
   `consultants:` list), ЗМІСТ + TOC field before the first `#` element after АНОТАЦІЯ/ABSTRACT,
   and the header page number (top right, none on the title page). Fields fill in Word: Ctrl+A, F9.
 - Spacing (PLAN.md §0.5) is mechanical: styles in `make_reference_docx.py` carry only `before`

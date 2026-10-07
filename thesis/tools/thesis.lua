@@ -32,7 +32,7 @@ local SC_CAPTION_STYLE = "Scenario Caption"
 local SC_STYLES = { first = "Scenario First", mid = "Scenario", last = "Scenario Last",
   single = "Scenario Single" }
 local FORMULA_STYLE = "Formula"       -- reference.docx: centre tab + right tab (make_reference_docx.py)
-local REFS_TITLE = "Список використаних джерел"
+local REFS_TITLE = "СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ"
 
 local strict = os.getenv("THESIS_STRICT") == "1"
 local errors, warnings = {}, {}

@@ -1,4 +1,4 @@
-# Перелік умовних позначень
+# ПЕРЕЛІК УМОВНИХ ПОЗНАЧЕНЬ
 
 <!-- Regulations §6.5: two-column list, alphabetical, Ukrainian first; only abbreviations used more
 than twice. Each line is «скорочення – розшифрування»; assembly renders the div as a borderless
