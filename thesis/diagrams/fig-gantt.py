@@ -53,13 +53,13 @@ W = 160.0
 NAME_W, DUR_W = 60.0, 17.0
 CHART_X = NAME_W + DUR_W
 MONTH_W = (W - CHART_X) / len(MONTHS)
-HEAD_H, ROW_H, ROW2_H = 8.5, 5.6, 8.6
-BAR_H = 2.8
-FS = 7.5  # pt
+HEAD_H, ROW_H, ROW2_H = 7.0, 4.4, 6.8
+BAR_H = 2.4
+FS = 7.0  # pt
 HEADER_BG, HEADER_FG = "#34495E", "white"
 STAGE_BG, STAGE_LINE, GRID = "#ECF0F1", "#2C3E50", "#DDDDDD"
 TEXT = "#222222"
-WRAP = 44  # символів у рядку колонки «Задача»
+WRAP = 45  # символів у рядку колонки «Задача»
 
 
 def x_of(d: date) -> float:
@@ -133,7 +133,7 @@ def main() -> None:
 
         x0, x1 = x_of(s), x_of(e + timedelta(days=1))
         bw = max(x1 - x0, 0.7)  # одноденна робота 7 лишається видимою
-        r = min(0.8, bw / 2)
+        r = min(0.7, bw / 2)
         ax.add_patch(FancyBboxPatch((x0 + r, cy - BAR_H / 2 + r), bw - 2 * r, BAR_H - 2 * r,
                                     boxstyle=f"round,pad={r}", color=colour, lw=0, zorder=3))
         y += h
