@@ -308,7 +308,22 @@ export class MediasoupService {
   private readonly workers: Worker[] = [];
   constructor() {}
 
-// ...
+  async pickLeastLoadedWorker(): Promise<Worker> {
+    if (!this.workers.length) {
+      throw new Error('Workers is empty');
+    }
+
+    const usages = await Promise.all(
+      this.workers.map(async (w) => ({
+        entry: w,
+        usage: await w.getResourceUsage(),
+      })),
+    );
+    usages.sort((a, b) => a.usage.ru_utime - b.usage.ru_utime);
+
+    return usages[0]!.entry;
+  }
+
   async createWorkers(): Promise<Worker[]> {
     for (let i = 0; i < NUM_WORKERS; i++) {
       const worker = await mediasoup.createWorker({

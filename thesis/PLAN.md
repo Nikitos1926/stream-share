@@ -1132,8 +1132,8 @@ IDs are the Markdown cross-reference IDs (§4.3). Numbers are indicative; the fi
 | --- | --- | --- | --- |
 | 4.1 | `lst:get-sources` | enumerating windows/screens and resolving the PID | `apps/desktop/src/conveyor/handlers/stream.handler.ts` |
 | 4.2 | `lst:audio-worker` | per-application audio capture in the utility process | `apps/desktop/src/audioWorker/audioCapture.worker.ts` |
-| 4.3 | `lst:follower` | decision step of `SourceFollower` | `apps/desktop/src/main/sourceFollower.ts` |
-| 4.4 | `lst:worker-pick` | least-loaded mediasoup worker | `apps/signaling/src/services/mediasoup.service.ts` |
+| – | ~~`lst:follower`~~ | removed 2026-10-10 (volume): the text points to listing А.1, which holds the whole class | `apps/desktop/src/main/sourceFollower.ts` |
+| – | ~~`lst:worker-pick`~~ | removed 2026-10-10 (volume): the method is now part of listing А.2 | `apps/signaling/src/services/mediasoup.service.ts` |
 | 4.5 | `lst:codecs` | router media codecs, H.264 first | same |
 | 4.6 | `lst:encoding` | encoder parameter selection | `apps/web/src/lib/media/encoding.ts` |
 | 4.7 | `lst:ws-message` | typed WS message construction / parsing | `packages/shared/src/ws/*` |
