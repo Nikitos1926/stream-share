@@ -345,8 +345,7 @@ The watch page creates a guest session automatically. So:
 - **Google** stays as an external-system actor `<<зовнішня система>>`, connected only to
   registration. E1 precedent: its payment system is an actor on the diagram and is counted in UAW.
 
-**Superseded by §0A.7 (user rule, later 2026-10-07):** use case 1 is split into «Авторизація
-через Google» + «Реєстрація» `<<extend>>`; six use cases. The rest of this item still holds.
+**Superseded entirely by §0A.8 (user's diagram, 2026-10-10).** Kept for history only.
 
 The diagram has exactly these five use cases and nothing else: no `include`, no `extend`, no
 use-case generalisation, and no abstract use case.
@@ -404,7 +403,7 @@ Text changes in `11-chapter1-b.md`:
 
 ### 0A.2 UCP values (ticket f7de6f46)
 
-**Superseded by §0A.7 for UUCW and everything derived from it** (UUCW 85, UUCP 93, UCP ≈ 109,8,
+**Superseded by §0A.8 for UAW, UUCW and everything derived from them** (UAW 11, UUCW 160, UUCP 171, UCP ≈ 201,8, ≈ 5652 люд.-год; earlier §0A.7 values: UUCW 85, UUCP 93, UCP ≈ 109,8,
 ≈ 3074 люд.-год). Actors, TCF, EF and PF below still hold.
 
 **Actors.** `tbl:ucp-actors` becomes Глядач: complex 3, Стример: complex 3, and Google
@@ -761,7 +760,7 @@ and number stay placeholders.
 §0A.5, §0A.6.1 and §0A.6.2 together with §0.7. The main text stays ≤ 80 pp. Removing tables and
 references should free space; do not pad it back.
 
-### 0A.7 Use-case relations: «Реєстрація» extends «Авторизація через Google» (ticket 9902d3d0)
+### 0A.7 Use-case relations: «Реєстрація» extends «Авторизація через Google» (ticket 9902d3d0) — superseded by §0A.8
 
 User rule (later 2026-10-07): keep the Глядач/Стример structure but add a justified `<<include>>`
 or `<<extend>>`. The code decides which one. The login action signs out any guest session, then
@@ -780,6 +779,31 @@ registration page. So:
 - UUCW = 4 · 15 + 15 + 10 = 85; UUCP = 93; UCP = 93 · 1,135 · 1,04 = 109,78 ≈ **109,8**;
   E = 28 · 109,78 ≈ **3074 люд.-год** ≈ 384 люд.-дні. «шість варіантів використання» in
   chapters 1, 2 and the conclusions. Abstracts carry no UCP figure.
+
+### 0A.8 Use-case model from the user's diagram (ticket abae4606, 2026-10-10)
+
+The user supplied a PlantUML use-case diagram; it replaces §0A.1/§0A.7. It was checked against the
+code and UML rules and corrected (the PR into `diploma` lists every correction). Binding result:
+
+- Actors: Гість (unregistered: watches by link, controls playback, signs up / in), Глядач –|> Гість
+  (registered: list of live public streams, sign-out), Стример –|> Глядач (all streaming functions),
+  Google (external system, association with sign-in). Associations are plain lines.
+- 13 use cases in three packages, each with a scenario (id): Реєстрація та вхід через Google
+  (sc:sign-in), Вихід із системи (sc:sign-out); Приєднатися до трансляції (sc:join), Обрати
+  трансляцію в переліку активних трансляцій (sc:stream-list), Відтворити відеопотік (sc:play),
+  Регулювати гучність і режим перегляду (sc:playback-controls); Вибрати джерело захоплення
+  (sc:source), Захопити екран, вікно або вкладку браузера (sc:browser-capture), Захопити окремий
+  застосунок (sc:app-capture), Налаштувати параметри потоку (sc:stream-settings), Запустити
+  трансляцію (sc:start), Отримати посилання на трансляцію (sc:invite-link), Завершити трансляцію
+  (sc:end-reconnect).
+- Relations: Join `<<include>>` Play; Stream-list `<<extend>>` Join at extension point «вибір
+  трансляції» (registered only); browser-capture and app-capture specialise Source (use-case
+  generalisation: always exactly one of the two, neither is an optional add-on).
+- Not on the diagram because the code has no such feature: nickname search, a separate «create
+  session» step (the stream record is created by «Start stream»), viewer-side quality control.
+- UCP: UAW = 3 · 3 + 2 = 11; UUCW = 6 · 15 + 7 · 10 = 160 (transactions in tbl:ucp-use-cases,
+  counted as main steps + alternative branches); UUCP = 171; UCP = 171 · 1,135 · 1,04 ≈ **201,8**;
+  E = 28 · 201,85 ≈ **5652 люд.-год**. TCF, EF and PF are unchanged. Abstracts carry no UCP figure.
 
 ---
 

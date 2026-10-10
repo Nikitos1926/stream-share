@@ -8,30 +8,55 @@ skinparam defaultFontSize 12
 skinparam packageStyle rectangle
 left to right direction
 
+actor "Гість" as Guest
 actor "Глядач" as Viewer
 actor "Стример" as Streamer
 actor "Google" as Google <<зовнішня система>>
 
+Viewer -|> Guest
 Streamer -|> Viewer
 
-rectangle "Вебсервіс трансляції медіаконтенту" {
-  usecase UC_SignIn as "Авторизація через Google
+rectangle "Вебсервіс потокової трансляції" {
+  package "Управління трансляцією" {
+    usecase "Вибрати джерело\nзахоплення" as UC_Source
+    usecase "Захопити окремий\nзастосунок" as UC_App
+    usecase "Захопити екран, вікно\nабо вкладку браузера" as UC_Tab
+    usecase "Налаштувати\nпараметри потоку" as UC_Config
+    usecase "Запустити трансляцію" as UC_Start
+    usecase "Отримати посилання\nна трансляцію" as UC_GetLink
+    usecase "Завершити трансляцію" as UC_Stop
+  }
+  package "Перегляд трансляції" {
+    usecase UC_Join as "Приєднатися до трансляції
 --
 точки розширення:
-перший вхід"
-  usecase "Реєстрація" as UC_SignUp
-  usecase "Перегляд трансляції" as UC_Watch
-  usecase "Трансляція у браузері" as UC_Browser
-  usecase "Трансляція окремого\nзастосунку" as UC_App
-  usecase "Завершення трансляції" as UC_End
+вибір трансляції"
+    usecase "Обрати трансляцію в переліку\nактивних трансляцій" as UC_List
+    usecase "Відтворити відеопотік" as UC_Play
+    usecase "Регулювати гучність\nі режим перегляду" as UC_Volume
+  }
+  package "Автентифікація" {
+    usecase "Реєстрація та вхід\nчерез Google" as UC_Google
+    usecase "Вихід із системи" as UC_Logout
+  }
 }
 
-Viewer --> UC_SignIn
-Viewer --> UC_Watch
-UC_SignIn --> Google
-UC_SignIn <.. UC_SignUp : <<extend>>
+Streamer -- UC_Source
+Streamer -- UC_Config
+Streamer -- UC_Start
+Streamer -- UC_GetLink
+Streamer -- UC_Stop
+UC_App -|> UC_Source
+UC_Tab -|> UC_Source
 
-Streamer --> UC_Browser
-Streamer --> UC_App
-Streamer --> UC_End
+Guest -- UC_Join
+Guest -- UC_Volume
+UC_List ..> UC_Join : <<extend>>
+UC_Join ..> UC_Play : <<include>>
+
+Guest -- UC_Google
+UC_Google -- Google
+' layout only: keeps Google on the right
+UC_Play -[hidden]- Google
+Viewer -- UC_Logout
 @enduml
