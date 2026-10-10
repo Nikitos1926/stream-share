@@ -47,7 +47,8 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
 - Generated files — never edit by hand: `chapters/95-references.md` (`python3 thesis/tools/references.py`;
   `--check` fails on an unresolved `[@key]`, a duplicate or uncited source, or a stale list) and
   `chapters/A0-appendix-a.md` (`python3 thesis/tools/appendix.py`, code read from the commit pinned
-  in the script). Re-run both after changing citations or the appendix listings.
+  in the script). Re-run both after changing citations or the appendix listings. Strict and `--release`
+  builds run `references.py --check` and stop on a stale list.
 - DB tables are described in §3.3 right after the ER diagram (user rule 2026-10-07): one table per
   real table, «Таблиця 3.N – Опис таблиці <name>», columns «Поле | Тип даних | Обмеження | Опис»,
   one field per row, each with an E2-style lead-in («Таблиця stream (табл. …) зберігає…»); keep
