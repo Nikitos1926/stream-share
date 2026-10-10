@@ -74,6 +74,9 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   надійності:» etc., items typed as escaped `1\)` body paragraphs (justified, 1.5 spacing, like
   E1) — not Markdown lists, which pandoc renders as single-spaced «Compact» items with «•»
   bullets (the ВСТУП task list still does). No table, no IDs; `tbl:nfr` rows follow the categories.
+  Content (user rule 2026-10-10): short verifiable requirements to the system, not implementation
+  (no auth scheme, cookie attributes, process layout, codecs, libraries, stack); only numbers
+  confirmed by code or tests; never invent a target (no latency target exists).
 - `front/task-sheet.md` is the separate «Завдання на кваліфікаційну роботу» form (not built into
   the thesis). Abbreviations list (`chapters/02-abbreviations.md`): add an entry when a new
   abbreviation is used ≥ 3 times; expand it in the text at first use.

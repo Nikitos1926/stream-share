@@ -12,13 +12,12 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 20.
+Total placeholders: **50** — `metadata.yaml` 1, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 2, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/50-chapter5.md` 6, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 19.
 
 ## metadata.yaml
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 14 | group | група |
 | 18 | city_year | рік |
 
 ## chapters/00-abstract-uk.md
@@ -37,15 +36,14 @@ Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 80 | ВСТУП | доповіді на конференціях або публікації за темою роботи з повними бібліографічними даними; якщо їх немає, абзац вилучається |
+| 78 | ВСТУП | доповіді на конференціях або публікації за темою роботи з повними бібліографічними даними; якщо їх немає, абзац вилучається |
 
 ## chapters/11-chapter1-b.md
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 3 | 1.3 Функціональні вимоги до програмної системи | звірити перелік вимог із формулюваннями індивідуального завдання на кваліфікаційну роботу |
-| 454 | 1.4 Нефункціональні вимоги | цільове значення затримки |
-| 472 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
+| 462 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
 
 ## chapters/20-chapter2.md
 
@@ -63,7 +61,6 @@ Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 62 | 5.3 Нефункціональне тестування | цільове значення |
 | 62 | 5.3 Нефункціональне тестування | середнє та максимальне значення, мережа |
 | 63 | 5.3 Нефункціональне тестування | значення для 720p30, 1080p60, 1440p60, вихідної |
 | 64 | 5.3 Нефункціональне тестування | допустиме значення |
@@ -99,7 +96,6 @@ Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 | --- | --- | --- |
 | 13 | — | Ім’я ПРІЗВИЩЕ |
 | 14 | — | число, місяць, рік |
-| 19 | Здобувач освіти | шифр групи |
 | 32 | — | дата |
 | 32 | — | номер наказу |
 | 56 | Графічна частина | чи передбачена кафедрою; якщо так – вид матеріалу (презентація / плакати) та кількість аркушів |

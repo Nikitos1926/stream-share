@@ -467,27 +467,27 @@ hours.
 `90-conclusions.md`: the planning sentence gives ≈ 98,0 UCP and ≈ 2743 люд.-год, with nothing
 about Git.
 
-### 0A.3 Goal: exact wording and where it is mirrored (ticket 4e05acb6)
+### 0A.3 Goal: exact wording and where it is mirrored (ticket 4e05acb6, reworded 2026-10-10 by ticket 5c10bbbc)
 
-The goal is improving a process through the software, as in E2. The indicator is one actually
-measured in the thesis: Д3 switch 1,5 с and Д5 return 1,3 с in `tbl:tc-functional` (§5.2).
-The latency trials of §6.2 were never run, so latency is **not** the indicator any more.
+The goal is improving a process through the software, in the examples' pattern «Метою роботи є
+підвищення … шляхом …» (user 2026-10-10): short, result-oriented, no list of functions. Its
+indicators, stated right after it in ВСТУП, are those actually measured: only the chosen app's
+picture and own sound, no streamer action, Д3 switch 1,5 с and Д5 return 1,3 с (§5.2). Latency
+was never measured and is **not** the indicator.
 
-**UA, verbatim:**
+**UA, verbatim** (ВСТУП, АНОТАЦІЯ, завдання; in ЗАГАЛЬНІ ВИСНОВКИ as «Мету роботи – підвищення … –
+досягнуто»):
 
-> Метою кваліфікаційної роботи є підвищення ефективності трансляції окремих застосунків шляхом
-> розроблення вебсервісу потокової передачі медіаконтенту з настільним застосунком для
-> захоплення, який передає глядачам у браузері зображення та власний звук лише обраного
-> застосунку і без дій стрімера перемикає трансляцію на нове вікно цього застосунку протягом
-> 1,5 с.
+> Метою роботи є підвищення ефективності трансляції окремих застосунків шляхом розроблення
+> вебсервісу потокової передачі медіаконтенту з функцією вибіркового захоплення застосунків.
 
 **EN, verbatim:**
 
-> The purpose of the qualification work is to improve the efficiency of broadcasting individual
-> applications by developing a media streaming web service with a desktop capture application that
-> delivers to viewers in the browser the picture and own sound of the selected application only
-> and, without any action from the streamer, switches the broadcast to a new window of that
-> application within 1.5 s.
+> The purpose of the work is to improve the efficiency of broadcasting individual applications by
+> developing a media streaming web service with the function of selective application capture.
+
+The detailed mirror list below predates the 2026-10-10 wording: wherever it quotes the old long
+goal or the old task-sheet sentence, the wording above and the current files win.
 
 **Mirrored in.** The same wording appears in each of these places:
 
@@ -1000,7 +1000,7 @@ approbation (only if real — Gap G6). Code: `README.md` features list.
 | 1.1 | Аналіз предметної області | 4 | streaming media content (live vs on-demand); screen/window/application capture and why per-application capture + per-application audio is not available in the browser; WebRTC stack (ICE, DTLS-SRTP, RTP/RTCP); topologies mesh / MCU / SFU and why SFU fits one-to-many; delivery latency classes WebRTC vs HLS/RTMP (cited, not measured); actors (стрімер, глядач, гість) | `apps/desktop/src/conveyor/handlers/stream.handler.ts`, `apps/desktop/src/audioWorker/*`, `apps/signaling/src/services/mediasoup.service.ts`; W3C WebRTC, W3C Screen Capture, RFC 8825/8829, mediasoup docs | Т1.2, Р1.2 |
 | 1.2 | Аналіз наявних програмних рішень | 3.5 | Twitch + OBS Studio, YouTube Live, Discord (Go Live), Google Meet / Zoom screen share, Parsec — comparison by: viewing in browser without install, capture of one application, capture of that application's audio, delivery latency class, private broadcasts, guest viewing without account, following the application's child windows; conclusion = niche | official product docs only; unverifiable cells → `[ПОТРЕБУЄ УТОЧНЕННЯ]` | Т1.1 |
 | 1.3 | Функціональні вимоги до програмної системи | 5 | use-case diagram + 5 scenarios: (1) вхід через Google (web; desktop via system browser), (2) розпочати трансляцію у браузері, (3) розпочати трансляцію окремого застосунку в desktop-застосунку (вибір вікна, звук застосунку, слідування за дочірніми вікнами), (4) переглянути трансляцію (у т. ч. як гість), (5) завершити трансляцію / відновлення з'єднання стрімера; plus private stream + thumbnails as requirements text | `apps/web/src/app/**` routes, `apps/web/src/proxy.ts`, `apps/web/src/lib/auth/auth.ts`, `Watch.tsx`, `broadcast/page.tsx`, `apps/desktop/src/conveyor/*`, `apps/desktop/src/main/sourceFollower.ts`, `packages/shared/src/enums/wsMethods.ts` | Р1.1, Сц1.1–1.5 |
-| 1.4 | Нефункціональні вимоги | 2 | format of E1 1.4 (user 2026-10-10, ticket 9b0b97ad): one lead-in sentence (ISO/IEC 25010), then per category a plain line «Вимоги до надійності:» / продуктивності / безпеки / сумісності / супроводжуваності / зручності використання, each followed by typed «1\)», «2\)» items as body paragraphs (no table, no IDs, «система повинна …», «;» / last «.»). **Only numbers present in code** or measured (1,5 с); target latency etc. → Gap G7. `tbl:nfr` (§5.3) rows follow these categories | `apps/web/src/lib/media/encoding.ts`, `packages/shared/src/media/bitrate.ts`, `apps/desktop/electron-builder.yml`, `apps/desktop/src/main/updater.ts`, `packages/env/*` | — |
+| 1.4 | Нефункціональні вимоги | 2 | format of E1 1.4 (user 2026-10-10, ticket 9b0b97ad): one lead-in sentence (ISO/IEC 25010), then per category a plain line «Вимоги до надійності:» / продуктивності / безпеки / сумісності / супроводжуваності / зручності використання, each followed by typed «1\)», «2\)» items as body paragraphs (no table, no IDs, «система повинна …», «;» / last «.»). Rewritten 2026-10-10 (ticket 5c10bbbc): concise verifiable requirements to the system, no implementation details (auth scheme, cookie attributes, process layout, codecs, libraries, stack); related items merged; **only numbers present in code** or measured (30 с reconnect window, 1,5 с, 3840×2160/60 кадр/с); no latency target (none given, never invent one). `tbl:nfr` (§5.3) rows follow these categories | `apps/web/src/lib/media/encoding.ts`, `packages/shared/src/media/bitrate.ts`, `apps/desktop/electron-builder.yml`, `apps/desktop/src/main/updater.ts`, `packages/env/*` | — |
 | — | Висновки до розділу 1 | 0.5 | | | |
 
 ### Розділ 2 Планування програмного проєкту — 8 pp.
