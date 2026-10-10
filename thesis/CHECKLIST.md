@@ -10,8 +10,8 @@ it into OPEN_ITEMS.md.
 | §0A.6.2 no «(розділ N)», «підрозділ x.y» pointers | 0 hits |
 | §0A.4 no Git/VCS/repository/commit in chapter 2 | 0 hits; nine works 27.05–25.09.2026 |
 | §0A.6.4 «за наказом» | only the official form line of the task sheet |
-| §0A.1 + §0A.7 use cases | 6 use cases, 6 scenarios (sc:sign-in … sc:end-reconnect); «Реєстрація» «extend» «Авторизація через Google» at «перший вхід», justified under fig. 1.2 |
-| §0A.2 + §0A.7 UCP | E2 = E3 = E7 = 0 with a justification column; UCP ≈ 109,8, ≈ 3074 люд.-год in ch. 2 and the conclusions |
+| §0A.8 use cases | 13 use cases in 3 packages, 13 scenarios (sc:sign-in … sc:end-reconnect); Join «include» Play, «Обрати трансляцію в переліку…» «extend» Join at «вибір трансляції», capture variants by generalisation, justified under fig. 1.2 |
+| §0A.2 + §0A.8 UCP | E2 = E3 = E7 = 0 with a justification column; UAW 11, UUCW 160, UCP ≈ 201,8, ≈ 5652 люд.-год in ch. 2 and the conclusions |
 | §0A.3 goal | identical wording in ВСТУП and both abstracts; 1,5 с in ch. 5, 6 and the conclusions |
 | §0A.5 references | 30 sources, all cited, numbered by first citation |
 | DB tables (2026-10-07) | tables 3.2–3.6 right after fig. 3.8 (ER): user, account, stream, stream_to_user, audit_log, which are all the tables of the DB schema |
