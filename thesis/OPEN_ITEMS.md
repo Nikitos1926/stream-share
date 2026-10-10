@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **50** — `metadata.yaml` 1, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 2, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/50-chapter5.md` 6, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 19.
+Total placeholders: **47** — `metadata.yaml` 1, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 2, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/50-chapter5.md` 3, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 19.
 
 ## metadata.yaml
 
@@ -62,11 +62,8 @@ Total placeholders: **50** — `metadata.yaml` 1, `chapters/00-abstract-uk.md` 1
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 62 | 5.3 Нефункціональне тестування | середнє та максимальне значення, мережа |
-| 63 | 5.3 Нефункціональне тестування | значення для 720p30, 1080p60, 1440p60, вихідної |
-| 64 | 5.3 Нефункціональне тестування | допустиме значення |
-| 64 | 5.3 Нефункціональне тестування | CPU, GPU, модель процесора й відеокарти, кодер encoderImplementation |
-| 65 | 5.3 Нефункціональне тестування | N, CPU сервера, freezeCount у глядачів |
-| 67 | 5.3 Нефункціональне тестування | матриця результатів з версіями |
+| 65 | 5.3 Нефункціональне тестування | значення для 720p30, 1080p60, 1440p60, вихідної |
+| 66 | 5.3 Нефункціональне тестування | матриця результатів з версіями |
 
 ## chapters/60-chapter6.md
 

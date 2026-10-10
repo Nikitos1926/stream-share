@@ -1041,7 +1041,7 @@ approbation (only if real — Gap G6). Code: `README.md` features list.
 | --- | --- | --- | --- | --- | --- |
 | 5.1 | Принципи вибору тестових прикладів | 1 | test cases derived from §1.3 use cases + NFRs; positive/negative inputs; the repository has **no automated tests** — say so honestly; static verification (`pnpm lint`, `pnpm typecheck`, `pnpm build`) is real and reproducible | root `package.json` scripts, `eslint.config.mjs`, `tsconfig.base.json` | — |
 | 5.2 | Функціональне тестування | 3.5 | test-case tables (ID, сценарій, вхідні дані, очікуваний результат, фактичний результат) for: автентифікація; трансляція з браузера; захоплення застосунку в desktop; перегляд (у т. ч. гість, приватна трансляція); завершення/відновлення. **Actual results only from real runs** (Gap G4) | — | Т5.1–5.5 |
-| 5.3 | Нефункціональне тестування | 2 | performance (delivery latency, CPU/GPU load, achieved bitrate/fps per profile via `chrome://webrtc-internals`), compatibility (OS × browser matrix), security checks (route gate, cookie flags). **Measured numbers only from the user** (Gap G5) | — | Т5.6 |
+| 5.3 | Нефункціональне тестування | 2 | one `tbl:nfr` row per remaining §1.4 requirement (2026-10-10): reliability (З2 reconnect window), performance (Д3 1,5 с switch; achieved resolution/fps via `chrome://webrtc-internals`), compatibility (OS × browser matrix), security (route gate, session cookie, owner-only control: А7/Б5/З4), plus the delivery-latency measurement (no target). No rows for requirements dropped from §1.4 (CPU/GPU load, viewer count, bitrate limits). **Measured numbers only from the user** (Gap G5) | — | Т5.6 |
 | — | Висновки до розділу 5 | 0.5 | | | |
 
 ### Розділ 6 Експлуатація програмної системи — 6 pp.
