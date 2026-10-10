@@ -19,7 +19,7 @@ start
 desktopCapturer.getSources
 (screen, window, мініатюри, піктограми);
 |Сторінка (renderer)|
-:Стример обирає вікно застосунку;
+:Користувач обирає вікно застосунку;
 |Головний процес|
 :stream:pickSource —
 зберегти selectedSourceId,

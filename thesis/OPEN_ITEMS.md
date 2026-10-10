@@ -44,8 +44,8 @@ Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 3 | 1.3 Функціональні вимоги до програмної системи | звірити перелік вимог із формулюваннями індивідуального завдання на кваліфікаційну роботу |
-| 454 | 1.4 Нефункціональні вимоги | цільове значення затримки |
-| 472 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
+| 466 | 1.4 Нефункціональні вимоги | цільове значення затримки |
+| 484 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
 
 ## chapters/20-chapter2.md
 
@@ -132,8 +132,8 @@ it into OPEN_ITEMS.md.
 | §0A.6.2 no «(розділ N)», «підрозділ x.y» pointers | 0 hits |
 | §0A.4 no Git/VCS/repository/commit in chapter 2 | 0 hits; nine works 27.05–25.09.2026 |
 | §0A.6.4 «за наказом» | only the official form line of the task sheet |
-| §0A.8 use cases | 13 use cases in 3 packages, 13 scenarios (sc:sign-in … sc:end-reconnect); Join «include» Play, «Обрати трансляцію в переліку…» «extend» Join at «вибір трансляції», capture variants by generalisation, justified under fig. 1.2; diagram, scenarios, tbl:requirements and the code agree (Гість cannot reach «Почати трансляцію»: hidden button + route guard) |
-| §0A.2 + §0A.8 UCP | E2 = E3 = E7 = 0 with a justification column; UAW 11, UUCW 160 (6 complex, 7 average – transaction counts match the 13 scenarios), UCP ≈ 201,8, ≈ 5652 люд.-год in ch. 2 and the conclusions; the abstracts give no UCP figure |
+| §0A.8 use cases | 2 actors Гість ◁ Користувач (+ Google), 14 use cases in 3 packages, 14 scenarios (sc:sign-in … sc:end-reconnect); Join «include» Play; «Перейти … за посиланням» (Гість) and «Обрати … в переліку» (Користувач only) specialise Join; capture variants by generalisation; justified under fig. 1.2; no Стример/Глядач actor anywhere; diagram, scenarios, tbl:requirements and the code agree (guest: watch page only; list only for non-guests) |
+| §0A.2 + §0A.8 UCP | E2 = E3 = E7 = 0 with a justification column; UAW 8, UUCW 165 (5 complex, 9 average – transaction counts match the 14 scenarios), UCP ≈ 204,2, ≈ 5718 люд.-год in ch. 2 and the conclusions; the abstracts give no UCP figure |
 | Нефункціональні вимоги (2026-10-10) | six categories in the format of example E1, each value matches the code/config (tbl:nfr in ch. 5 tests them) |
 | §0A.3 goal | identical wording in ВСТУП and both abstracts; 1,5 с in ch. 5, 6 and the conclusions |
 | §0A.5 references | 30 sources, all cited, numbered by first citation |
