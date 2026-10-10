@@ -49,15 +49,15 @@
 
 23. ISO/IEC 25010. ISO 25000 Portal. URL: https://iso25000.com/en/iso-25000-standards/iso-25010 (дата звернення: 05.10.2026).
 
-24. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
+24. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
 
-25. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
+25. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
 
-26. Azad B. Upcoming security changes to Google's OAuth 2.0 authorization endpoint in embedded webviews. Google Developers Blog. 2021. 29 June. URL: https://developers.googleblog.com/en/upcoming-security-changes-to-googles-oauth-20-authorization-endpoint-in-embedded-webviews/ (дата звернення: 05.10.2026).
+26. Denniss W., Bradley J. OAuth 2.0 for Native Apps : RFC 8252 (BCP 212). IETF, 2017. URL: https://www.rfc-editor.org/rfc/rfc8252 (дата звернення: 05.10.2026).
 
-27. Azzeh M., Nassif A. B. Analyzing the Relationship between Project Productivity and Environment Factors in the Use Case Points Method : preprint. arXiv:1705.09920. 2017. 24 p. URL: https://arxiv.org/abs/1705.09920 (дата звернення: 05.10.2026).
+27. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
 
-28. Process Model. Electron Documentation. URL: https://www.electronjs.org/docs/latest/tutorial/process-model (дата звернення: 05.10.2026).
+28. Sakimura N., Bradley J., Agarwal N. Proof Key for Code Exchange by OAuth Public Clients : RFC 7636. IETF, 2015. URL: https://www.rfc-editor.org/rfc/rfc7636 (дата звернення: 05.10.2026).
 
 29. Session strategies. Auth.js. URL: https://authjs.dev/concepts/session-strategies (дата звернення: 05.10.2026).
 

@@ -115,6 +115,8 @@ if (( ! ${#chapters[@]} )); then echo "no chapters yet"; exit 0; fi
 build_docx "$THESIS/chapters" "$OUT/thesis.docx" -- "${chapters[@]}"
 python3 "$HERE/wordcount.py" "${chapters[@]}"
 python3 "$HERE/qa.py" --open-items "$THESIS/OPEN_ITEMS.md"
+# strict builds also fail on a stale source list (citation order changed without re-running references.py)
+[[ "${THESIS_STRICT:-}" == "1" ]] && python3 "$HERE/references.py" --check
 echo "built $OUT/thesis.docx — open in Word, Ctrl+A, F9 to fill ЗМІСТ and page numbers"
 if [[ "${1:-}" == "--pdf" || "${1:-}" == "--release" ]]; then
   bash "$HERE/pdf.sh" "$OUT/thesis.docx" "$OUT/thesis.pdf" | tee "$OUT/pages.txt"
