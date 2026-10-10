@@ -12,7 +12,7 @@ Roman embedded, sign with КЕП, get the bibliographic description at https://b
 Screenshots in `screenshots/` are labelled stub images: replace each file with a real one.
 Measured volume for the abstracts' volume sentence: `thesis/final/pages.txt` (`build.sh --release`).
 
-Total placeholders: **55** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/41-chapter4-b.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 20.
+Total placeholders: **54** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1, `chapters/01-abstract-en.md` 1, `chapters/03-intro.md` 1, `chapters/11-chapter1-b.md` 3, `chapters/20-chapter2.md` 1, `chapters/40-chapter4-a.md` 1, `chapters/50-chapter5.md` 7, `chapters/60-chapter6.md` 17, `front/task-sheet.md` 20.
 
 ## metadata.yaml
 
@@ -44,26 +44,20 @@ Total placeholders: **55** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 3 | 1.3 Функціональні вимоги до програмної системи | звірити перелік вимог із формулюваннями індивідуального завдання на кваліфікаційну роботу |
-| 467 | 1.4 Нефункціональні вимоги | цільове значення затримки |
-| 485 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
+| 454 | 1.4 Нефункціональні вимоги | цільове значення затримки |
+| 472 | 1.4 Нефункціональні вимоги | чи випробувано застосунок на macOS |
 
 ## chapters/20-chapter2.md
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
-| 166 | 2.2 Розробка плану виконання проєкту | дата завершення |
+| 162 | 2.2 Розробка плану виконання проєкту | дата завершення |
 
 ## chapters/40-chapter4-a.md
 
 | Рядок | Де | Що потрібно |
 | --- | --- | --- |
 | 64 | 4.2 Реалізація захоплення окремих застосунків | операційні системи, на яких фактично перевірено захоплення звуку окремого застосунку. |
-
-## chapters/41-chapter4-b.md
-
-| Рядок | Де | Що потрібно |
-| --- | --- | --- |
-| 115 | 4.6 Реалізація інтерфейсу користувача та розгортання | РИСУНОК: скріншот головної сторінки зі списком активних трансляцій у світлій і темній темах – замінити заглушку рисунка |
 
 ## chapters/50-chapter5.md
 
@@ -126,7 +120,7 @@ Total placeholders: **55** — `metadata.yaml` 2, `chapters/00-abstract-uk.md` 1
 
 ## Перевірка документа за всіма правилами
 
-Last full check: 2026-10-07, `build.sh --release` with `THESIS_STRICT=1` (qa.py and
+Last full check: 2026-10-10 (after the use-case diagram correction and the NFR rewrite), `build.sh --release` with `THESIS_STRICT=1` (qa.py and
 `references.py --check` pass). Each later revision re-runs it and updates this file; qa.py copies
 it into OPEN_ITEMS.md.
 
@@ -138,15 +132,16 @@ it into OPEN_ITEMS.md.
 | §0A.6.2 no «(розділ N)», «підрозділ x.y» pointers | 0 hits |
 | §0A.4 no Git/VCS/repository/commit in chapter 2 | 0 hits; nine works 27.05–25.09.2026 |
 | §0A.6.4 «за наказом» | only the official form line of the task sheet |
-| §0A.8 use cases | 13 use cases in 3 packages, 13 scenarios (sc:sign-in … sc:end-reconnect); Join «include» Play, «Обрати трансляцію в переліку…» «extend» Join at «вибір трансляції», capture variants by generalisation, justified under fig. 1.2 |
-| §0A.2 + §0A.8 UCP | E2 = E3 = E7 = 0 with a justification column; UAW 11, UUCW 160, UCP ≈ 201,8, ≈ 5652 люд.-год in ch. 2 and the conclusions |
+| §0A.8 use cases | 13 use cases in 3 packages, 13 scenarios (sc:sign-in … sc:end-reconnect); Join «include» Play, «Обрати трансляцію в переліку…» «extend» Join at «вибір трансляції», capture variants by generalisation, justified under fig. 1.2; diagram, scenarios, tbl:requirements and the code agree (Гість cannot reach «Почати трансляцію»: hidden button + route guard) |
+| §0A.2 + §0A.8 UCP | E2 = E3 = E7 = 0 with a justification column; UAW 11, UUCW 160 (6 complex, 7 average – transaction counts match the 13 scenarios), UCP ≈ 201,8, ≈ 5652 люд.-год in ch. 2 and the conclusions; the abstracts give no UCP figure |
+| Нефункціональні вимоги (2026-10-10) | six categories in the format of example E1, each value matches the code/config (tbl:nfr in ch. 5 tests them) |
 | §0A.3 goal | identical wording in ВСТУП and both abstracts; 1,5 с in ch. 5, 6 and the conclusions |
 | §0A.5 references | 30 sources, all cited, numbered by first citation |
 | DB tables (2026-10-07) | tables 3.2–3.6 right after fig. 3.8 (ER): user, account, stream, stream_to_user, audit_log, which are all the tables of the DB schema |
 | Single appendix | only «ДОДАТОК А Лістинг програми», listings А.1–А.5 |
 | Title page / supervisor | data of §0A.6.3; topic in sentence case; Керівник Андрій ЛАПАЄВ |
-| Gantt (first-example style) | fig. 2.1 on p. 35, three stages, nine works = tbl:wbs |
+| Gantt (first-example style) | fig. 2.1 on p. 39, three stages, nine works = tbl:wbs |
 | Abstracts on one page | АНОТАЦІЯ alone on p. 2, ABSTRACT alone on p. 3 |
-| Abstract counts | 107 с.; main text 80 pp; 30 sources on 3 pp; one appendix on 17 pp (= pages.txt). The Regulations template and both examples give no figure or table counts (the document has 23 figures and 24 tables) |
-| Numbering and captions | figures 1.1–6.6 (23), tables 1.1–6.1 (24), listings 4.1–4.10 and А.1–А.5: consecutive per chapter, each referenced before it appears (qa.py); no unresolved «??» |
-| Volume | main text 80 pp (8–87), within 60–80; total 107, at most ~120 |
+| Abstract counts | 107 с.; main text 80 pp; 30 sources on 3 pp; one appendix on 17 pp (= pages.txt). The Regulations template and both examples give no figure or table counts (the document has 22 figures and 23 tables) |
+| Numbering and captions | figures 1.1–6.6 (22), tables 1.1–6.1 (23), listings 4.1–4.8 and А.1–А.5: consecutive per chapter, each referenced before it appears (qa.py); no unresolved «??» |
+| Volume | main text 80 pp (8–87), within 60–80; total 107, at most ~120. Per section: ВСТУП 3, ch. 1 22, ch. 2 8, ch. 3 18, ch. 4 15, ch. 5 7, ch. 6 5, ВИСНОВКИ 2, sources 3, appendix 17. On 2026-10-10 two listings (4.3, 4.4) moved to А.1/А.2 and the theme screenshot placeholder was dropped to stay within 80 |

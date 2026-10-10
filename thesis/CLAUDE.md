@@ -59,16 +59,16 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   результат», cells start with a capital, parameters as «Статус: 401», fact «Пройдено» /
   «Пройдено: <measured value>» / «Не пройдено: <actual>»; IDs А1…З5 match the test scripts' output.
   Appendix А lead-ins come from the `lead` field of `LISTINGS` in `tools/appendix.py` (role, no
-  path). Volume is at the limit (2026-10-07, single appendix: main 80 of 80 pp, total 107
-  of ~120 by `topdf.py`): any addition needs an equal cut. Chapter 3 widths of fig:seq-desktop-auth
+  path). Volume is at the limit (2026-10-10, single appendix: main 80 of 80 pp, total 107
+  of ~120 by `topdf.py`): any addition needs an equal cut; chapter-end conclusions carry no
+  slack (ch. 3 and ch. 5 end within a few lines of a new page). Chapter 3 widths of fig:seq-desktop-auth
   (15 cm), fig:state-stream and fig:er (13 cm) are set so those figures share a page with the text
   before them; a page that is half empty before a tall figure is the cheapest place to win a page.
 - АНОТАЦІЯ and ABSTRACT fit on one page each (user rule 2026-10-07): bibliographic line, volume
   line (Regulations §6.3.2 template: main-text pages, sources and their pages, «додаток на N
   сторінках»), goal (§0A.3 verbatim) + object/subject worded as in ВСТУП, one results paragraph
   that states the key result of the conclusions (only the chosen app's picture and own sound,
-  switch to a new window within 1,5 s), ≤ 10 keywords. On 2026-10-07 they use 26 and 25 of 28
-  lines; numbers come from the `topdf.py` report — update them whenever the page counts change,
+  switch to a new window within 1,5 s), ≤ 10 keywords. On 2026-10-10 both still fit (p. 2 and p. 3); numbers come from the `topdf.py` report — update them whenever the page counts change,
   and check the PDF that page 3 starts with ABSTRACT.
 - §1.4 «Нефункціональні вимоги» follows E1 1.4 (user rule 2026-10-10): lead-in line «Вимоги до
   надійності:» etc., items typed as escaped `1\)` body paragraphs (justified, 1.5 spacing, like
