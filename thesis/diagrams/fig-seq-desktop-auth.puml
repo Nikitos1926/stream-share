@@ -8,7 +8,7 @@ skinparam defaultFontSize 12
 skinparam sequenceMessageAlign center
 hide footbox
 
-actor "Стример" as U
+actor "Користувач" as U
 participant "Вікно застосунку\n(LoginProviders,\nwindow.conveyor)" as R
 participant "Головний процес\n(сервер 127.0.0.1)" as M
 participant "Системний\nбраузер" as B

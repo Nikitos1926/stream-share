@@ -8,7 +8,7 @@ skinparam defaultFontSize 12
 skinparam sequenceMessageAlign center
 hide footbox
 
-actor "Стример" as U
+actor "Користувач" as U
 participant "Сторінка /broadcast\n(useStreamer,\nmediasoup-client)" as P
 participant "StreamsController" as C
 participant "StreamsService" as SS

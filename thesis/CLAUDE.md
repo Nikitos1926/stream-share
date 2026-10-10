@@ -20,12 +20,13 @@ figure/table/listing IDs (§3), Markdown conventions (§4.3), gaps (§5), truthf
   - `tbl:analogs` has a stream-share column and ≤ 4 analogs.
   - Run the §0.7 checklist before every hand-off.
 - **Revision addendum 2026-10-07 = PLAN.md §0A (binding, overrides §0–§6).** In short:
-  - Use-case model = PLAN.md §0A.8 (user's diagram, 2026-10-10): actors Гість ◁ Глядач ◁ Стример
-    (+ Google); exactly 13 use cases, each with a scenario; Join `<<include>>` Play, Stream-list
-    `<<extend>>` Join, browser/app capture specialise «Вибрати джерело захоплення».
+  - Use-case model = PLAN.md §0A.8 (2026-10-10): actors Гість ◁ Користувач (+ Google) — never
+    Стример/Глядач as actors; exactly 14 use cases, each with a scenario; Join `<<include>>` Play,
+    «Перейти до трансляції за посиланням» (Гість) and «Обрати трансляцію в переліку…» (Користувач
+    only) specialise Join, browser/app capture specialise «Вибрати джерело захоплення».
     Term spelling is «стример» everywhere (text, diagrams, test labels), never «стрімер»; «гість»
-    only where it names the code's guest role (tests А5, А6, Б5, П4, З4).
-  - UCP values are fixed in §0A.2 + §0A.8 (UCP ≈ 201,8); the goal wording is fixed in §0A.3.
+    only where it names the code's guest role (tests А5, А6, Б5, П4, З4) or the actor.
+  - UCP values are fixed in §0A.2 + §0A.8 (UCP ≈ 204,2); the goal wording is fixed in §0A.3.
   - Chapter 2 never names Git or any VCS, nor the source of its dates (§0A.4).
   - Exactly the 30 sources of §0A.5.
   - No «(підрозділ x.y)» or «розділ N» pointers in prose (§0A.6.2).
