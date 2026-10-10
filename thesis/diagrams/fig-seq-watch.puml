@@ -8,7 +8,7 @@ skinparam defaultFontSize 12
 skinparam sequenceMessageAlign center
 hide footbox
 
-actor "Глядач" as U
+actor "Гість" as U
 participant "Сторінка\n/:streamId/watch\n(Watch, useViewer)" as P
 participant "Вебзастосунок\nAuth.js (guest)" as A
 participant "StreamsController /\nUsersController" as C

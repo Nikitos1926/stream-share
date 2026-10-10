@@ -403,7 +403,7 @@ Text changes in `11-chapter1-b.md`:
 
 ### 0A.2 UCP values (ticket f7de6f46)
 
-**Superseded by §0A.8 for UAW, UUCW and everything derived from them** (UAW 11, UUCW 160, UUCP 171, UCP ≈ 201,8, ≈ 5652 люд.-год; earlier §0A.7 values: UUCW 85, UUCP 93, UCP ≈ 109,8,
+**Superseded by §0A.8 for UAW, UUCW and everything derived from them** (current: UAW 8, UUCW 165, UUCP 173, UCP ≈ 204,2, ≈ 5718 люд.-год; superseded three-actor values: UAW 11, UUCW 160, UCP ≈ 201,8; earlier §0A.7 values: UUCW 85, UUCP 93, UCP ≈ 109,8,
 ≈ 3074 люд.-год). Actors, TCF, EF and PF below still hold.
 
 **Actors.** `tbl:ucp-actors` becomes Глядач: complex 3, Стример: complex 3, and Google
@@ -780,30 +780,46 @@ registration page. So:
   E = 28 · 109,78 ≈ **3074 люд.-год** ≈ 384 люд.-дні. «шість варіантів використання» in
   chapters 1, 2 and the conclusions. Abstracts carry no UCP figure.
 
-### 0A.8 Use-case model from the user's diagram (ticket abae4606, 2026-10-10)
+### 0A.8 Use-case model: actors Гість and Користувач (tickets abae4606 → 71b95b57, 2026-10-10)
 
-The user supplied a PlantUML use-case diagram; it replaces §0A.1/§0A.7. It was checked against the
-code and UML rules and corrected (the PR into `diploma` lists every correction). Binding result:
+Built from the user's PlantUML diagram (2026-10-10), then corrected twice by the user's feedback.
+The second correction drops Стример/Глядач as actors and restores «Перейти до трансляції за
+посиланням». The rules below are checked against the code: the proxy lets an unauthenticated visitor
+open only the home page, the login page and the watch page; the home page shows the stream list
+only to a non-guest. Binding result:
 
-- Actors: Гість (unregistered: watches by link, controls playback, signs up / in), Глядач –|> Гість
-  (registered: list of live public streams, sign-out), Стример –|> Глядач (all streaming functions),
-  Google (external system, association with sign-in). Associations are plain lines.
-- 13 use cases in three packages, each with a scenario (id): Реєстрація та вхід через Google
-  (sc:sign-in), Вихід із системи (sc:sign-out); Приєднатися до трансляції (sc:join), Обрати
-  трансляцію в переліку активних трансляцій (sc:stream-list), Відтворити відеопотік (sc:play),
-  Регулювати гучність і режим перегляду (sc:playback-controls); Вибрати джерело захоплення
-  (sc:source), Захопити екран, вікно або вкладку браузера (sc:browser-capture), Захопити окремий
-  застосунок (sc:app-capture), Налаштувати параметри потоку (sc:stream-settings), Запустити
-  трансляцію (sc:start), Отримати посилання на трансляцію (sc:invite-link), Завершити трансляцію
-  (sc:end-reconnect).
-- Relations: Join `<<include>>` Play; Stream-list `<<extend>>` Join at extension point «вибір
-  трансляції» (registered only); browser-capture and app-capture specialise Source (use-case
-  generalisation: always exactly one of the two, neither is an optional add-on).
+- Actors: exactly two human actors. **Гість** is unregistered: joins only by link, controls
+  playback, signs up / in. **Користувач –|> Гість** is registered: list of live public streams,
+  sign-out, all streaming functions. **Google** is an external system, associated with sign-in.
+  Associations are plain lines; Гість has no «Вихід із системи».
+- 14 use cases in three packages, each with a scenario (id):
+  - «Автентифікація»: Реєстрація та вхід через Google (sc:sign-in), Вихід із системи (sc:sign-out).
+  - «Перегляд трансляції»: Приєднатися до трансляції (sc:join, the general one), Перейти до
+    трансляції за посиланням (sc:by-link, Гість), Обрати трансляцію в переліку активних трансляцій
+    (sc:stream-list, Користувач), Відтворити відеопотік (sc:play), Регулювати гучність і режим
+    перегляду (sc:playback-controls).
+  - «Управління трансляцією»: Вибрати джерело захоплення (sc:source), Захопити екран, вікно або
+    вкладку браузера (sc:browser-capture), Захопити окремий застосунок (sc:app-capture),
+    Налаштувати параметри потоку (sc:stream-settings), Запустити трансляцію (sc:start), Отримати
+    посилання на трансляцію (sc:invite-link), Завершити трансляцію (sc:end-reconnect).
+- Relations:
+  - Join `<<include>>` Play.
+  - By-link and Stream-list specialise Join (use-case generalisation). Joining always happens in
+    exactly one of the two ways, and the remaining steps are shared. Children scenarios hand over
+    to sc:join steps.
+  - Browser-capture and app-capture specialise Source in the same way.
+- In scenarios, «стример» / «глядач» survive only as common nouns for the other party (e.g.
+  «сповіщення глядачів»), never as an actor or as the subject of the primary actor's steps.
+  Sequence/activity diagrams use actors «Користувач» (broadcast, desktop sign-in, capture) and
+  «Гість» (watch).
 - Not on the diagram because the code has no such feature: nickname search, a separate «create
   session» step (the stream record is created by «Start stream»), viewer-side quality control.
-- UCP: UAW = 3 · 3 + 2 = 11; UUCW = 6 · 15 + 7 · 10 = 160 (transactions in tbl:ucp-use-cases,
-  counted as main steps + alternative branches); UUCP = 171; UCP = 171 · 1,135 · 1,04 ≈ **201,8**;
-  E = 28 · 201,85 ≈ **5652 люд.-год**. TCF, EF and PF are unchanged. Abstracts carry no UCP figure.
+- Code discrepancy (noted for the user, not fixed): the REST endpoint that creates a stream does
+  not check the role (test Б5), so a guest can create a stream through the API. The UI does not
+  allow it (the broadcast page redirects to login), so the diagram follows the user's intent.
+- UCP: UAW = 2 · 3 + 2 = 8; UUCW = 5 · 15 + 9 · 10 = 165 (transactions in tbl:ucp-use-cases,
+  counted as main steps + alternative branches); UUCP = 173; UCP = 173 · 1,135 · 1,04 ≈ **204,2**;
+  E = 28 · 204,21 ≈ **5718 люд.-год**. TCF, EF and PF are unchanged. Abstracts carry no UCP figure.
 
 ---
 
