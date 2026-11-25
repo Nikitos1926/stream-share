@@ -11,7 +11,7 @@ import { Source } from '@/lib/types';
 
 type MediaSourcePickerProps = {
   status: StreamStatus | null;
-  selectSource: () => void | Promise<void>;
+  selectSource: (source?: Source) => void | Promise<void>;
   onSourcePicked?: (source: Source) => void;
 };
 
@@ -44,7 +44,7 @@ export function MediaSourcePicker({
       if (picked) onSourcePicked?.(picked);
       setIsOpen(false);
       reset();
-      await selectSource();
+      await selectSource(picked);
     } catch (e) {
       console.log(e);
       void window.conveyor?.stream.releaseSource();

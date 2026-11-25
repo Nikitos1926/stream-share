@@ -23,6 +23,7 @@ import {
   StreamQuality,
   VideoSettings,
 } from '../media/encoding';
+import { Source } from '../types';
 
 export { StreamQuality, STREAM_FPS_OPTIONS, type StreamFps } from '../media/encoding';
 
@@ -38,6 +39,10 @@ export function useStreamer() {
   const [currentStream, setCurrentStream] = useState<Stream | null>(null);
   const [status, setStatus] = useState<StreamStatus | null>(null);
   const [videoSettings, setVideoSettings] = useState<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
+  /** A minimized window: it cannot be captured yet, so capture waits for the stream to start. */
+  const [pendingSource, setPendingSource] = useState<Source | null>(null);
+  const pendingSourceRef = useRef<Source | null>(null);
+  const isStartingRef = useRef<boolean>(false);
   const sourceHeightRef = useRef<number>(0);
   const videoSettingsRef = useRef<VideoSettings>(DEFAULT_VIDEO_SETTINGS);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -188,6 +193,11 @@ export function useStreamer() {
     if (isDesktop) teardownAudioCapture();
   }, [isDesktop]);
 
+  const updatePendingSource = useCallback((source: Source | null) => {
+    pendingSourceRef.current = source;
+    setPendingSource(source);
+  }, []);
+
   const detachEndedListener = useCallback(() => {
     const track = mediaStreamRef.current?.getVideoTracks()[0];
     const listener = endedListenerRef.current;
@@ -206,8 +216,9 @@ export function useStreamer() {
 
     stopMediaTracks();
     clearPreview();
+    updatePendingSource(null);
     setStatus(null);
-  }, [clearPreview, stopMediaTracks]);
+  }, [clearPreview, stopMediaTracks, updatePendingSource]);
 
   const stopBroadcast = useCallback(async () => {
     if (wsClientRef.current) {
@@ -222,8 +233,9 @@ export function useStreamer() {
     stopCapturingThumbnailRef.current?.();
     stopMediaTracks();
     clearPreview();
+    updatePendingSource(null);
     setStatus(null);
-  }, [clearPreview, stopMediaTracks]);
+  }, [clearPreview, stopMediaTracks, updatePendingSource]);
 
   const captureStream = useCallback(async () => {
     let controller;
@@ -292,9 +304,10 @@ export function useStreamer() {
     const newStream = await captureStream();
     mediaStreamRef.current = newStream;
     videoRef.current.srcObject = newStream;
+    updatePendingSource(null);
     // In Preview there is no transport yet; the new stream is produced when going live.
     if (transportRef.current) await replaceStream(newStream);
-  }, [captureStream, detachEndedListener, replaceStream, stopMediaTracks]);
+  }, [captureStream, detachEndedListener, replaceStream, stopMediaTracks, updatePendingSource]);
 
   /**
    * Browser: a closed window ends the stream, as before.
@@ -398,13 +411,35 @@ export function useStreamer() {
     [createProducer, deriveEncodingForTrack, handleSocketClose],
   );
 
+  const capturePendingSource = useCallback(async () => {
+    if (!videoRef.current) return false;
+    try {
+      const stream = await captureStream();
+      videoRef.current.srcObject = stream;
+      mediaStreamRef.current = stream;
+      updatePendingSource(null);
+      return true;
+    } catch {
+      toast.error('Cannot capture this window. Pick it again');
+      return false;
+    }
+  }, [captureStream, updatePendingSource]);
+
   const broadcast = useCallback(async () => {
-    const stream = await createStream(isPrivate);
-    if (!stream) return;
-    await connectToStream(stream);
-    setCurrentStream(stream);
-    stopCapturingThumbnailRef.current = startCapturingThumbnail(stream.id);
-  }, [connectToStream, isPrivate, startCapturingThumbnail]);
+    // Capturing a pending source takes a moment; a second click must not create a second stream.
+    if (isStartingRef.current) return;
+    isStartingRef.current = true;
+    try {
+      if (pendingSourceRef.current && !(await capturePendingSource())) return;
+      const stream = await createStream(isPrivate);
+      if (!stream) return;
+      await connectToStream(stream);
+      setCurrentStream(stream);
+      stopCapturingThumbnailRef.current = startCapturingThumbnail(stream.id);
+    } finally {
+      isStartingRef.current = false;
+    }
+  }, [capturePendingSource, connectToStream, isPrivate, startCapturingThumbnail]);
 
   const pickSource = useCallback(async () => {
     if (!videoRef.current) return;
@@ -427,20 +462,46 @@ export function useStreamer() {
 
     videoRef.current.srcObject = stream;
     mediaStreamRef.current = stream;
+    updatePendingSource(null);
     setStatus(StreamStatus.Preview);
 
-    if (forcedTabSwitch) {
+    // Only a browser switches to the picked tab. On desktop the page also becomes hidden when
+    // another window covers it, which must not start the stream.
+    if (forcedTabSwitch && !isDesktop) {
       broadcast();
     }
-  }, [broadcast, captureStream, detachEndedListener, stopMediaTracks]);
+  }, [
+    broadcast,
+    captureStream,
+    detachEndedListener,
+    isDesktop,
+    stopMediaTracks,
+    updatePendingSource,
+  ]);
 
-  const selectSource = useCallback(async () => {
-    if (status === StreamStatus.Live) {
-      await changeSource();
-    } else {
-      await pickSource();
-    }
-  }, [status, changeSource, pickSource]);
+  const deferSource = useCallback(
+    (source: Source) => {
+      detachEndedListener();
+      stopMediaTracks();
+      clearPreview();
+      updatePendingSource(source);
+      setStatus(StreamStatus.Preview);
+    },
+    [clearPreview, detachEndedListener, stopMediaTracks, updatePendingSource],
+  );
+
+  const selectSource = useCallback(
+    async (source?: Source) => {
+      if (status === StreamStatus.Live) {
+        await changeSource();
+      } else if (source?.isMinimized) {
+        deferSource(source);
+      } else {
+        await pickSource();
+      }
+    },
+    [status, changeSource, deferSource, pickSource],
+  );
 
   const reconnect = useCallback(async () => {
     if (!currentStream || !hasActiveStream || !videoRef.current) return;
@@ -471,6 +532,7 @@ export function useStreamer() {
     quality: videoSettings.quality,
     fps: videoSettings.fps,
     sourceHeight,
+    pendingSource,
     setIsPrivate,
     toggleMute,
     changeQuality,

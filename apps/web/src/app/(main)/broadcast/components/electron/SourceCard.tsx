@@ -14,12 +14,23 @@ export function SourceCard({ source, onSelect }: SourceCardProps) {
       className="flex flex-col items-center gap-1 rounded-lg border border-line bg-surface shadow-md transition-transform duration-200 hover:z-10 hover:scale-105 hover:shadow-xl hover:shadow-black/40"
     >
       <div className="flex aspect-video size-full justify-center gap-2 rounded-lg bg-black">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={source.thumbnail} alt="" className="aspect-video size-full object-contain" />
+        {source.isMinimized ? (
+          <div className="flex size-full items-center justify-center">
+            {source.appIcon && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={source.appIcon} alt="" className="size-12" />
+            )}
+          </div>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={source.thumbnail} alt="" className="aspect-video size-full object-contain" />
+        )}
       </div>
       <div className="flex size-full items-center gap-2 px-2 pb-1">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {!source.isScreen && <img src={source.appIcon} alt="" className="size-4" />}
+        {!source.isScreen && source.appIcon && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={source.appIcon} alt="" className="size-4" />
+        )}
         <Typography className="overflow-hidden text-ellipsis whitespace-nowrap">
           {source.name}
         </Typography>

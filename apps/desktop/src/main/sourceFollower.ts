@@ -13,6 +13,8 @@ export type FollowerDeps = {
   listWindows: () => Promise<WindowSource[]>;
   listProcesses: () => Promise<ProcessTable>;
   resolvePid: (sourceId: string) => number;
+  /** True for minimized and hidden windows too, which listWindows leaves out. */
+  isWindowOpen: (sourceId: string) => boolean;
   setSelectedSourceId: (sourceId: string) => void;
   emit: (payload: SourceChanged) => void;
 };
@@ -162,10 +164,13 @@ export class SourceFollower {
         return;
       }
       const appeared = windows.filter((w) => !this.knownWindowIds.has(w.id));
-      const gone = [...this.knownWindowIds].filter((id) => !ids.has(id));
       this.knownWindowIds = ids;
 
-      if (this.active && gone.includes(this.active.sourceId)) {
+      if (
+        this.active &&
+        !ids.has(this.active.sourceId) &&
+        !this.deps.isWindowOpen(this.active.sourceId)
+      ) {
         const result = this.beginReturn(windows);
         if (result.reason === 'return') this.deps.emit(result);
       }
@@ -189,6 +194,9 @@ export class SourceFollower {
   }
 
   private beginReturn(windows: WindowSource[]): SourceChanged {
+    const replacement = this.findActiveReplacement(windows);
+    if (replacement) return this.replaceActive(replacement);
+
     this.active = null;
     const target = this.findReturnTarget(windows);
     if (target) return this.completeReturn(target);
@@ -197,6 +205,23 @@ export class SourceFollower {
       log.info('[follower] anchor not visible, waiting for it to come back');
     }
     return { reason: 'noop' };
+  }
+
+  /** The followed app closed one window but still has another, so it is still running. */
+  private findActiveReplacement(windows: WindowSource[]): PidWindow | undefined {
+    const active = this.active;
+    if (!active) return undefined;
+    const window = windows.find(
+      (w) => w.id !== active.sourceId && this.deps.resolvePid(w.id) === active.pid,
+    );
+    return window && { ...window, pid: active.pid };
+  }
+
+  private replaceActive(target: PidWindow): SourceChanged {
+    this.active = { sourceId: target.id, pid: target.pid, name: target.name };
+    this.deps.setSelectedSourceId(target.id);
+    log.info('[follower] staying with the app in', target.name, target.id);
+    return { reason: 'return', sourceId: target.id, name: target.name };
   }
 
   private findReturnTarget(windows: WindowSource[]): WindowSource | undefined {

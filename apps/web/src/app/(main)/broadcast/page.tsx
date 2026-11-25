@@ -37,6 +37,7 @@ export default function Broadcast() {
     quality,
     fps,
     sourceHeight,
+    pendingSource,
     setIsPrivate,
     toggleMute,
     changeQuality,
@@ -53,17 +54,17 @@ export default function Broadcast() {
   const isPreview = status === StreamStatus.Preview;
   const isDesktop = useIsDesktop();
   const isWindowFocused = useIsWindowFocused();
-  const isPreviewPaused = !isWindowFocused && (isPreview || isLive);
+  const isPreviewPaused = !isWindowFocused && !pendingSource && (isPreview || isLive);
 
   useEffect(() => {
-    if (!videoRef.current || !(isPreview || isLive)) return;
+    if (!videoRef.current || pendingSource || !(isPreview || isLive)) return;
 
     const video = videoRef.current;
 
     if (isWindowFocused) {
       if (video.paused) video.play();
     } else if (video.played) video.pause();
-  }, [isLive, isPreview, isWindowFocused, videoRef]);
+  }, [isLive, isPreview, isWindowFocused, pendingSource, videoRef]);
 
   const constructInviteLink = () => {
     return currentStream && isLive
@@ -100,7 +101,7 @@ export default function Broadcast() {
       <Button
         className="w-full md:w-auto"
         variant={isLive || isPreview ? 'secondary' : 'primary'}
-        onClick={selectSource}
+        onClick={() => selectSource()}
       >
         <Monitor />
         <Typography>{isLive || isPreview ? 'Change source' : 'Pick source'}</Typography>
@@ -119,6 +120,17 @@ export default function Broadcast() {
             muted
             className="h-full w-full rounded-md bg-black object-contain"
           />
+          {pendingSource && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              {pendingSource.appIcon && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={pendingSource.appIcon} alt="" className="size-16" />
+              )}
+              <Typography className="max-w-[80%] truncate text-white">
+                {pendingSource.name}
+              </Typography>
+            </div>
+          )}
           {isPreviewPaused && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md">
               <Typography className="rounded-md bg-canvas px-4 py-2">

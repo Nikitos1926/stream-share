@@ -26,6 +26,7 @@ export const streamIpcInvokeSchema = {
     return: z.array(
       z.strictObject({
         isScreen: z.boolean(),
+        isMinimized: z.boolean(),
         appIcon: z.string(),
         display_id: z.string(),
         id: z.string(),
